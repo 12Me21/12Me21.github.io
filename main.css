@@ -48,9 +48,10 @@
 		border: 1px solid gray;
 		background-color: rgba(255,255,255,.9);
 		display: inline-block;
-		vertical-align: middle;
-		margin: 0px;
-		padding: 0px;
+		vertical-align: bottom;
+		margin-left: 1px;
+		margin-bottom: 4px;
+		padding: 1px;
 		font-family: "Consolas";
 		font-size: 16px;
 	}
