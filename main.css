@@ -1,58 +1,53 @@
 <style>
 	.uselesss {}
  	p.welcome {
- 		font-family: "Consolas",monospace;
  		margin-bottom: 1px;
 		padding-bottom: 0px;
-		font-size: 18px;
+		font-family: "Consolas",monospaced;
  	}
 	.version {
- 		color: #DDD;
- 		font-family: "Consolas",monospace;
+ 		font-family: "Consolas",monospaced;
  		font-size: 12px;
+		color: #DDD;
  	}
  	.llheader {
- 		font-family: "Consolas",monospace;
- 		display: inline-block;
- 		margin-top: 8px;
- 		margin-bottom: 1px;
- 		font-size: 16px;
+		display: inline-block;
+		margin-top: 8px; margin-bottom: 1px;
+ 		font-family: "Consolas",monospaced;
  	}
  	a:link, a:visited {
- 		font-family: "Agency FB","PT Sans Narrow";
- 		border: 2px solid green;
- 		padding: 1px 2px;
- 		background-color: rgba(255,255,255,.2);
- 		text-decoration: none;
- 		display: inline-block;
+		display: inline-block;
+		margin-left: 5px; margin-bottom: 0px; margin-top: 1px; margin-right: 3px;
+ 		border-bottom: 2px solid green; border-right: 2px solid green; border-top: 2px solid lime; border-left: 2px solid lime;
+		padding: 1px 2px;
+		background-color: rgba(255,255,255,.2);
+		font-family: "Agency FB";
  		font-size: 16px;
- 		margin-right: 0px;
- 		margin-left: 4px;
- 		margin-bottom: 0px;
- 		margin-top: 1px;
+		text-decoration: none;
  	}
  	a:hover, a:active {
- 		font-family: "Agency FB","PT Sans Narrow";
- 		border: 2px solid blue;
+ 		display: inline-block;
+ 		margin-left: 6px; margin-bottom: 1px; margin-top: 2px; margin-right: 4px;
+		border-bottom: 2px solid lime; border-right: 2px solid lime; border-top: 2px solid green; border-left: 2px solid green;
  		padding: 0px 1px;
  		background-color: rgba(192,255,255,.7);
- 		text-decoration: none;
- 		display: inline-block;
- 		font-size: 16px;
- 		margin-right: 1px;
- 		margin-left: 5px;
- 		margin-bottom: 1px;
- 		margin-top: 2px;
+ 		font-family: "Agency FB";
+		font-size: 16px;
+		text-decoration: none;
  	}
-	p.songtitle {	/* fix later */
-		border: 1px solid gray;
-		background-color: rgba(255,255,255,.9);
+	div.songtitle {	/* will fix for non-firefox later (probably not) */
 		display: inline-block;
 		vertical-align: bottom;
-		margin-left: 1px;
-		margin-bottom: 4px;
-		padding: 1px;
-		font-family: "Consolas";
-		font-size: 16px;
+		height: 28px;
+		margin: 0px;
+		padding-right: 5px; padding-left: 3px;
+		background-color: rgba(0,0,0,.64);
+		font-family: "Agency FB",sans-serif;
+		font-variant: small-caps;
+		font-size: 21px;
+		color: #BBB;
+	}
+	.sbkey {
+		font-family: "comic sans MS",sans-serif;
 	}
  </style>
