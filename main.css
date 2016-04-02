@@ -4,6 +4,7 @@
  		font-family: "Consolas",monospace;
  		margin-bottom: 1px;
 		padding-bottom: 0px;
+		font-size: 16px;
  	}
 	.version {
  		color: #DDD;
@@ -47,5 +48,6 @@
 		margin: 0px;
 		padding: 0px;
 		font-family: "Consolas";
+		font-size: 16px;
 	}
  </style>
