@@ -1,23 +1,23 @@
 <style>
 	.uselesss {}
  	p.welcome {
- 		font-family: "Consolas";
+ 		font-family: "Consolas",monospace;
  		margin-bottom: 1px;
 		padding-bottom: 0px;
  	}
 	.version {
  		color: #DDD;
- 		font-family: "Consolas";
+ 		font-family: "Consolas",monospace;
  		font-size: 12px;
  	}
  	.llheader {
- 		font-family: "Consolas";
+ 		font-family: "Consolas",monospace;
  		display: inline-block;
  		margin-top: 8px;
  		margin-bottom: 1px;
  	}
  	a:link, a:visited {
- 		font-family: "Agency FB",condensed;
+ 		font-family: "Agency FB","PT Sans Narrow";
  		border: 2px solid green;
  		padding: 1px 2px;
  		background-color: rgba(255,255,255,.2);
@@ -29,7 +29,7 @@
  		margin-top: 1px;
  	}
  	a:hover, a:active {
- 		font-family: "Agency FB";
+ 		font-family: "Agency FB","PT Sans Narrow";
  		border: 2px solid blue;
  		padding: 0px 1px;
  		background-color: rgba(192,255,255,.7);
