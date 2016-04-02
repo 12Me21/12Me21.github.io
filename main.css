@@ -1,0 +1,51 @@
+<style>
+	.uselesss {}
+ 	p.welcome {
+ 		font-family: "Consolas";
+ 		margin-bottom: 1px;
+		padding-bottom: 0px;
+ 	}
+	.version {
+ 		color: #DDD;
+ 		font-family: "Consolas";
+ 		font-size: 12px;
+ 	}
+ 	.llheader {
+ 		font-family: "Consolas";
+ 		display: inline-block;
+ 		margin-top: 8px;
+ 		margin-bottom: 1px;
+ 	}
+ 	a:link, a:visited {
+ 		font-family: "Agency FB";
+ 		border: 2px solid green;
+ 		padding: 1px 2px;
+ 		background-color: rgba(255,255,255,.2);
+ 		text-decoration: none;
+ 		display: inline-block;
+ 		font-size: 16px;
+ 		margin-left: 5px;
+ 		margin-bottom: 0px;
+ 		margin-top: 1px;
+ 	}
+ 	a:hover, a:active {
+ 		font-family: "Agency FB";
+ 		border: 2px solid blue;
+ 		padding: 0px 1px;
+ 		background-color: rgba(192,255,255,.7);
+ 		text-decoration: none;
+ 		display: inline-block;
+ 		font-size: 16px;
+ 		margin-left: 6px;
+ 		margin-bottom: 1px;
+ 		margin-top: 2px;
+ 	}
+	p.songtitle {	/* fix later */
+		border: 1px solid gray;
+		background-color: rgba(255,255,255,.9);
+		display: inline-block;
+		margin: 0px;
+		padding: 0px;
+		font-family: "Consolas";
+	}
+ </style>
