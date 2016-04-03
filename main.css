@@ -59,4 +59,9 @@
 	.sbkey {
 		font-family: "comic sans MS",sans-serif;
 	}
+	input.smilebasic {
+		font-family: "SmileBASIC",monospaced;
+ 		color: white;
+ 		background-color: black;
+	}
  </style>
