@@ -2,6 +2,7 @@
 	.uselesss {}
 	@font-face { font-family: Agency FB; src: url('Agency_FB.ttf'); } 
 	@font-face { font-family: Consolas; src: url('Consolas.ttf'); } 
+ 	@font-face { font-family: SmileBASIC; src: url('SMILEBASIC.ttf'); }
  	p.welcome {
  		margin-bottom: 1px;
 		padding-bottom: 0px;
@@ -16,6 +17,9 @@
 		display: inline-block;
 		margin-top: 8px; margin-bottom: 1px;
  		font-family: "Consolas",monospaced;
+ 	}
+ 	.smilebasic {
+ 		font-family: "SmileBASIC",monospaced;
  	}
  	a:link, a:visited {
 		display: inline-block;
