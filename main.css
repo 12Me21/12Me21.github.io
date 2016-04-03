@@ -20,6 +20,7 @@
  	}
  	.smilebasic {
  		font-family: "SmileBASIC",monospaced;
+ 		color: white;
  	}
  	a:link, a:visited {
 		display: inline-block;
