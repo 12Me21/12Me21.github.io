@@ -21,7 +21,7 @@
  	.smilebasic {
  		font-family: "SmileBASIC",monospaced;
  		color: white;
- 		line-height: 0px;
+ 		line-height: 16px;
  	}
  	a:link, a:visited {
 		display: inline-block;
