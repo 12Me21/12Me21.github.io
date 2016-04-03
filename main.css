@@ -35,7 +35,7 @@
 		border-radius: 3px;
  	}
  	a:link { /* chrome shit */
- 		color: aqua;	
+ 		color: rgb(0,192,255);	
  	}
  	a:hover, a:active {
  		display: inline-block;
