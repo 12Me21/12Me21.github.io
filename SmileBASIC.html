@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<style>
+			@font-face {font-family: SmileBASIC; src: url(http://12Me21.github.io/resources/SMILEBASIC.ttf);}
+			textarea {
+				margin: 0;
+				border: 0;
+				padding: 0;
+				height: 240px;
+				width: 400px;
+				font-size: 8px;
+				line-height: 8px;
+				background-color: #111;
+				color: #EEE;
+				font-family: SmileBASIC, monospace;
+				overflow: hidden;  
+			}
+		</style>
+		<script>
+			function readLine() {
+				var textarea = document.getElementsByTagName("textarea")[0];
+				do{
+					if (textarea.clientHeight != textarea.scrollHeight){
+						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
+					}
+				}
+				while (textarea.clientHeight != textarea.scrollHeight);
+			}
+		</script>
+	</head>
+	<body>
+		<textarea autofocus onkeyup="Javascript: if (event.keyCode==13) readLine();" spellcheck="false" autocorrect="false">SNAILBASIC -3.2.1<br>(C)2016-2016 SnailBoom Co.Ltd.<br>8327168 bytes free<br></textarea>
+	</body>
+</html>
