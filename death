@@ -1,0 +1,13 @@
+
+<!DOCTYPE html>
+<head>
+	<link rel="stylesheet" href="./main.css"</link>
+</head>
+<body>
+	<audio autoplay>
+		<source src="./BGM/06 Relief.mp3" type="audio/mpeg">
+		Stop using Windows 98 please.
+	</audio>
+	
+	<!--<a href="./main.html">Back</a>-->
+</body>
