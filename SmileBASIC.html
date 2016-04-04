@@ -18,8 +18,8 @@
 		</style>
 		<script>
 			function readLine() {
-				textarea.value+="Syntax error\n"
 				var textarea = document.getElementsByTagName("textarea")[0];
+				textarea.value+="Syntax error\n"
 				do{
 					if (textarea.clientHeight != textarea.scrollHeight){
 						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
