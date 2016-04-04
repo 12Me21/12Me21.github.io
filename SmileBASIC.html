@@ -18,6 +18,7 @@
 		</style>
 		<script>
 			function readLine() {
+				textarea.value+="Syntax error\n"
 				var textarea = document.getElementsByTagName("textarea")[0];
 				do{
 					if (textarea.clientHeight != textarea.scrollHeight){
@@ -25,7 +26,6 @@
 					}
 				}
 				while (textarea.clientHeight != textarea.scrollHeight);
-				textarea.value+="Syntax error\n"
 			}
 		</script>
 	</head>
