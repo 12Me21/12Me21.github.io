@@ -24,8 +24,8 @@
 	<script>
 		function readLine() {
 			var textarea = document.getElementsByTagName("textarea")[0];
-			var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2].toUpperCase();
-			if (lastline.substr(0,7)=="BGMPLAY"){
+			var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2];
+			if (lastline.substr(0,7).toUpperCase()=="BGMPLAY"){
 				var command = parseInt(lastline.split(" ")[lastline.split(" ").length -1]);
 				var songnum=" ";
 				if (command>=0 && command<=9) {
@@ -40,10 +40,10 @@
 				} else {
 					textarea.value+="Out of range(BGMPLAY:1)\n";
 				}
-			} else if (lastline.substr(0,7)=="ACLS") {
+			} else if (lastline.substr(0,7).toUpperCase()=="ACLS") {
 				//audio.stop(); :(
 				location.reload(true);
-			} else if (lastline.substr(0,4)=="GOTO") {
+			} else if (lastline.substr(0,4).toUpperCase()=="GOTO") {
 				var lbl = lastline.split("@")[lastline.split("@").length -1];
 				if (checkUrl(lbl)==true) {
 					window.location.href = lbl;
