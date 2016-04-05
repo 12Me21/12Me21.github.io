@@ -15,12 +15,24 @@
 				font-family: SmileBASIC, monospace;
 				overflow: hidden;  
 				resize: none;
+				/*pointer-events: none;*/
 			}
 		</style>
 		<script>
 			function readLine() {
 				var textarea = document.getElementsByTagName("textarea")[0];
-				textarea.value+="Syntax error\n"
+				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2];
+				if (lastline.substr(0,8)=="BGMPLAY "){
+					//audio.stop(); Y U NO WORK?
+				audio = new Audio("http://12Me21.github.io/BGM/BGM"+lastline.substr(7,2)+".mp3");
+					audio.play();
+					textarea.value+="OK\n"
+				} else if (lastline.substr(0,7)=="BGMSTOP"){
+					//audio.stop(); :(
+					textarea.value+="OK\n";
+				} else {	
+					textarea.value+="Syntax error\n";
+				}
 				do{
 					if (textarea.clientHeight != textarea.scrollHeight){
 						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
