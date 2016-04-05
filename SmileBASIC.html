@@ -22,12 +22,10 @@
 			}
 		</style>
 		<script>
-			document.createElement('audio');
-			
 			document.addEventListener('DOMContentLoaded', function() {
 				var textarea = document.getElementsByTagName("textarea")[0];
 				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
-				setSelectionRange(textarea,textarea.value.length,textarea.value.length);
+				setCursor(textarea,textarea.value.length);
 			}, false);
 			
 			function readLine() {
@@ -79,12 +77,11 @@
 				return (xhr.status == "200");
 			}
 		
-			function setSelectionRange(input, selectionStart, selectionEnd) {					
+			function setCursor(input, location) {					
 				input.focus()
 				var range = input.createTextRange();
-				range.collapse(true);
-				range.moveEnd('character', selectionEnd);
-				range.moveStart('character', selectionStart);
+				range.moveEnd('character', location);
+				range.moveStart('character', location);
 				range.select();
 			}
 			
