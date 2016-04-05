@@ -40,9 +40,16 @@
 				} else {
 					textarea.value+="Out of range(BGMPLAY:1)\n";
 				}
-			} else if (lastline.substr(0,7)=="BGMSTOP"){
+			} else if (lastline.substr(0,7)=="BGMSTOP") {
 				//audio.stop(); :(
 				location.reload(true);
+			} else if (lastline.substr(0,6)="GOTO"){
+				var url = lastline.split("@")[lastline.split("@").length -1]
+				if (checkUrl(url)==true) {
+					window.location.href = url;
+				} else {
+					textarea.value+="Invalid label(GOTO:1)\n";
+				}
 			} else {	
 				textarea.value+="Syntax error\n";
 			}
@@ -53,6 +60,20 @@
 				}
 			}
 			while (textarea.clientHeight != textarea.scrollHeight);
+		}
+			
+		function checkUrl(url) {
+			var request = false;
+			if (window.XMLHttpRequest) {
+				request = new XMLHttpRequest;
+			} else if (window.ActiveXObject) {
+				request = new ActiveXObject("Microsoft.XMLHttp");
+			}
+			if (request) {
+				request.open("GET", url);
+				if (request.status == 200) { return true; }
+			}
+			return false;
 		}
 	</script>
 </head>
