@@ -22,6 +22,8 @@
 			}
 		</style>
 		<script>
+			document.createElement('audio');
+			
 			document.addEventListener('DOMContentLoaded', function() {
 				var textarea = document.getElementsByTagName("textarea")[0];
 				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
@@ -39,16 +41,15 @@
 					} else {
 						songnum=command;
 					}
-					if (songnum>=0 && songnum <=42) {
-						//audio.stop(); Y U NO WORK?
-						audio = new Audio("http://12Me21.github.io/BGM/BGM"+songnum+".mp3");
-						audio.play();
+					if (command>=0 && command <=42) {
+						var music = document.getElementById("music");
+						music.src = "http://12Me21.github.io/BGM/BGM"+songnum+".mp3"
+						music.play()
 					} else {
 						textarea.value+="Out of range(BGMPLAY:1)\n";
 					}
-				} else if (lastline.substr(0,7).toUpperCase()=="ACLS") {
-					//audio.stop(); :(
-					location.reload(true);
+				} else if (lastline.substr(0,7).toUpperCase()=="CLS") {
+					textarea.value=""
 				} else if (lastline.substr(0,4).toUpperCase()=="GOTO") {
 					var lbl = lastline.split("@")[lastline.split("@").length -1];
 					if (checkUrl(lbl)==true) {
@@ -56,6 +57,8 @@
 					} else {
 						textarea.value+="Invalid label(GOTO:1)\n";
 					}
+				} else if (lastline.substr(0,7).toUpperCase()=="BGMSTOP") {
+					
 				} else {	
 					textarea.value+="Syntax error\n";
 				}
@@ -66,34 +69,27 @@
 					}
 				}
 				while (textarea.clientHeight != textarea.scrollHeight);
-				}
-				function checkUrl(url) {
+			}
+			function checkUrl(url) {
 				var xhr = new XMLHttpRequest();
 				xhr.open('HEAD', url, false);
 				xhr.send();
-				if (xhr.status != "200") { //don't be optimistic
-					return false;
-				} else {
-					return true;
-				}
+				return (xhr.status == "200");
 			}
 		
-			function setSelectionRange(input, selectionStart, selectionEnd) {
-				if (input.setSelectionRange) {
-					input.focus();
-					input.setSelectionRange(selectionStart, selectionEnd);
-				} else if (input.createTextRange) {
-					var range = input.createTextRange();
-					range.collapse(true);
-					range.moveEnd('character', selectionEnd);
-					range.moveStart('character', selectionStart);
-					range.select();
-				}
+			function setSelectionRange(input, selectionStart, selectionEnd) {					
+				input.focus()
+				var range = input.createTextRange();
+				range.collapse(true);
+				range.moveEnd('character', selectionEnd);
+				range.moveStart('character', selectionStart);
+				range.select();
 			}
 		</script>
 	</head>
 	<body style="background-color:#333">
 		<textarea autofocus onkeyup="Javascript: if (event.keyCode==13) readLine();" onload="codeAddress();" spellcheck="false" autocorrect="false"></textarea>
 		<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>ACLS<br>GOTO @page</p>
+		<audio id="music"></audio>
 	</body>
 </html>
