@@ -44,9 +44,9 @@
 				//audio.stop(); :(
 				location.reload(true);
 			} else if (lastline.substr(0,6)="GOTO"){
-				var url = lastline.split("@")[lastline.split("@").length -1]
-				if (checkUrl(url)==true) {
-					window.location.href = url;
+				var lbl = lastline.split("@")[lastline.split("@").length -1];
+				if (checkUrl(lbl)==true) {
+					window.location.href = lbl;
 				} else {
 					textarea.value+="Invalid label(GOTO:1)\n";
 				}
@@ -62,19 +62,18 @@
 			while (textarea.clientHeight != textarea.scrollHeight);
 		}
 			
-		function checkUrl(url) {
-			var request = false;
-			if (window.XMLHttpRequest) {
-				request = new XMLHttpRequest;
-			} else if (window.ActiveXObject) {
-				request = new ActiveXObject("Microsoft.XMLHttp");
-			}
-			if (request) {
-				request.open("GET", url);
-				if (request.status == 200) { return true; }
-			}
-			return false;
-		}
+	function checkUrl(url)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, false);
+    xhr.send();
+     
+    if (xhr.status == "404") {
+        return false;
+    } else {
+        return true;
+    }
+}
 	</script>
 </head>
 <body style="background-color:#333">
