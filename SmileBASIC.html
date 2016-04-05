@@ -19,34 +19,44 @@
 				/*pointer-events: none;*/
 			}
 		</style>
-		<script>
-			function readLine() {
-				var textarea = document.getElementsByTagName("textarea")[0];
-				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2];
-				if (lastline.substr(0,8)=="BGMPLAY "){
+	<script>
+		function readLine() {
+			var textarea = document.getElementsByTagName("textarea")[0];
+			var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2];
+			if (lastline.substr(0,7)=="BGMPLAY"){
+				var command = parseInt(lastline.split(" ")[lastline.split(" ").length -1]);
+				var songnum=" ";
+				if (command>=0 && command<=9) {
+					songnum=" "+command;
+				} else {
+					songnum=command;
+				}
+				if (songnum>=0 && songnum <=42) {
 					//audio.stop(); Y U NO WORK?
-				audio = new Audio("http://12Me21.github.io/BGM/BGM"+lastline.substr(-2,2)+".mp3");
+					audio = new Audio("http://12Me21.github.io/BGM/BGM"+songnum+".mp3");
 				audio.play();
-				textarea.value+="OK\n"//lastline.substr(-2,2)+"\n"'
-				} else if (lastline.substr(0,7)=="BGMSTOP"){
-					//audio.stop(); :(
-					textarea.value+="OK\n";
-				} else {	
-					textarea.value+="Syntax error\n";
+				} else {
+					textarea.value+="Out of range(BGMPLAY:1)\n";
 				}
-				do{
-					if (textarea.clientHeight != textarea.scrollHeight){
-						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
-					}
-				}
-				while (textarea.clientHeight != textarea.scrollHeight);
+			} else if (lastline.substr(0,7)=="BGMSTOP"){
+				//audio.stop(); :(
+			} else {	
+				textarea.value+="Syntax error\n";
 			}
-		</script>
-	</head>
-	<body>
+			textarea.value+="OK\n";
+			do{
+				if (textarea.clientHeight != textarea.scrollHeight){
+					textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
+				}
+			}
+			while (textarea.clientHeight != textarea.scrollHeight);
+		}
+	</script>
+</head>
+<body>
 		<textarea autofocus onkeyup="Javascript: if (event.keyCode==13) readLine();" spellcheck="false" autocorrect="false">SMILEMUSIC 0.2.1
 (C)2016-2016 SmileBoom Co.Ltd.
 Sound composed by JOEDOWN
 </textarea>
-	</body>
+</body>
 </html>
