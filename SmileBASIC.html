@@ -24,7 +24,7 @@
 	<script>
 		function readLine() {
 			var textarea = document.getElementsByTagName("textarea")[0];
-			var lastline = toUpperCase(textarea.value.split("\n")[textarea.value.split("\n").length - 2]);
+			var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2].toUpperCase();
 			if (lastline.substr(0,7)=="BGMPLAY"){
 				var command = parseInt(lastline.split(" ")[lastline.split(" ").length -1]);
 				var songnum=" ";
@@ -78,6 +78,6 @@
 (C)2011-2016 SmileBoom Co.Ltd.
 Sound composed by JOEDOWN
 </textarea>
-<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>BGMSTOP<br>GOTO @page</p>
+<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>ACLS<br>GOTO @page</p>
 </body>
 </html>
