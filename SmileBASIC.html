@@ -58,7 +58,9 @@
 						textarea.value+="Invalid label(GOTO:1)\n";
 					}
 				} else if (lastline.substr(0,7).toUpperCase()=="BGMSTOP") {
-					
+					var music = document.getElementById("music");
+					music.src = ""
+					music.play()
 				} else {	
 					textarea.value+="Syntax error\n";
 				}
