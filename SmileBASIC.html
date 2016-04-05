@@ -1,3 +1,19 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @12Me21
+ Unwatch 1
+  Star 0
+  Fork 0 12Me21/12Me21.github.io
+ Code  Issues 0  Pull requests 0  Wiki  Pulse  Graphs  Settings
+Branch: master Find file Copy path12Me21.github.io/SmileBASIC.html
+ff951a4  a minute ago
+@12Me21 12Me21 update check
+1 contributor
+RawBlameHistory    86 lines (83 sloc)  2.26 KB
 <html>
 	<head>
 		<title>SmileMusic</title>
@@ -43,7 +59,7 @@
 			} else if (lastline.substr(0,7)=="BGMSTOP") {
 				//audio.stop(); :(
 				location.reload(true);
-			} else if (lastline.substr(0,6)="GOTO"){
+			} else if (lastline.substr(0,4)=="GOTO") {
 				var lbl = lastline.split("@")[lastline.split("@").length -1];
 				if (checkUrl(lbl)==true) {
 					window.location.href = lbl;
@@ -61,19 +77,16 @@
 			}
 			while (textarea.clientHeight != textarea.scrollHeight);
 		}
-			
-	function checkUrl(url)
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', url, false);
-    xhr.send();
-     
-    if (xhr.status == "404") {
-        return false;
-    } else {
-        return true;
-    }
-}
+		function checkUrl(url) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('HEAD', url, false);
+			xhr.send();
+			if (xhr.status != "200") { //don't be optimistic
+				return false;
+			} else {
+				return true;
+			}
+		}
 	</script>
 </head>
 <body style="background-color:#333">
@@ -83,3 +96,6 @@ Sound composed by JOEDOWN
 </textarea>
 </body>
 </html>
+Status API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Contact Help
+123
