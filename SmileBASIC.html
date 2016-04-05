@@ -24,7 +24,7 @@
 	<script>
 		function readLine() {
 			var textarea = document.getElementsByTagName("textarea")[0];
-			var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2];
+			var lastline = toUpperCase(textarea.value.split("\n")[textarea.value.split("\n").length - 2]);
 			if (lastline.substr(0,7)=="BGMPLAY"){
 				var command = parseInt(lastline.split(" ")[lastline.split(" ").length -1]);
 				var songnum=" ";
@@ -40,7 +40,7 @@
 				} else {
 					textarea.value+="Out of range(BGMPLAY:1)\n";
 				}
-			} else if (lastline.substr(0,7)=="BGMSTOP") {
+			} else if (lastline.substr(0,7)=="ACLS") {
 				//audio.stop(); :(
 				location.reload(true);
 			} else if (lastline.substr(0,4)=="GOTO") {
