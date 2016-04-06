@@ -18,10 +18,26 @@
 				overflow: hidden;  
 				resize: none;
 				outline: none;
-				/*pointer-events: none;*/
+				pointer-events: none;
 			}
 		</style>
 		<script>
+
+document.addEventListener('keydown', function(e){
+
+
+
+if(e.keyCode == 38 || e.keyCode == 40 || e.keyCode == 34 || e.keyCode == 33)
+ e.preventDefault();
+
+var textarea = document.getElementsByTagName("textarea")[0];
+if (textarea.selectionStart < textarea.value.lastIndexOf("\n",textarea.value.length)+2) {
+textarea.selectionStart=textarea.value.lastIndexOf("\n",textarea.value.length)+2;
+}
+
+
+});
+
 			document.addEventListener('DOMContentLoaded', function() {
 				var textarea = document.getElementsByTagName("textarea")[0];
 				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
