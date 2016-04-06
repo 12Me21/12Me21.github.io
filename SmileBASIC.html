@@ -15,40 +15,31 @@
 				background-color: #111;
 				color: #FFF;
 				font-family: "SmileBASIC", monospace;
-				overflow: hidden;  
+				overflow: hidden;
 				resize: none;
 				outline: none;
-				
 			}
 		</style>
 		<script>
-
-document.addEventListener('keydown', function(e){
-
-
-
-if(e.keyCode == 38 || e.keyCode == 40 || e.keyCode == 34 || e.keyCode == 33)
- e.preventDefault();
-
-var textarea = document.getElementsByTagName("textarea")[0];
-if (textarea.selectionStart < textarea.value.lastIndexOf("\n",textarea.value.length)+2) {
-textarea.selectionStart=textarea.value.lastIndexOf("\n",textarea.value.length)+2;
-}
-
-
-});
-
 			document.addEventListener('DOMContentLoaded', function() {
 				var textarea = document.getElementsByTagName("textarea")[0];
 				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
 				setCursor(textarea,textarea.value.length);
 			}, false);
 			
+			document.addEventListener('keydown', function(e){
+				var textarea = document.getElementsByTagName("textarea")[0];
+				if (textarea.selectionStart < textarea.value.lastIndexOf("\n",textarea.value.length)+2) {
+					textarea.selectionStart=textarea.value.lastIndexOf("\n",textarea.value.length)+2;
+				}
+			});
+			
 			function readLine() {
 				var textarea = document.getElementsByTagName("textarea")[0];
 				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2];
+				
 				if (checkCommand(lastline,"BGMPLAY")) {
-					var command = parseInt(lastline.split(" ")[lastline.split(" ").length -1]);
+					var command = parseInt(lastline.split(" ").slice(-1)[0]);
 					var songnum=" ";
 					if (command>=0 && command<=9) {
 						songnum=" "+command;
@@ -57,39 +48,54 @@ textarea.selectionStart=textarea.value.lastIndexOf("\n",textarea.value.length)+2
 					}
 					if (command>=0 && command <=42) {
 						var music = document.getElementById("music");
-						music.src = "http://12Me21.github.io/BGM/BGM"+songnum+".mp3"
-						music.play()
+						music.src = "http://12Me21.github.io/BGM/BGM"+songnum+".mp3";
+						music.play();
 					} else {
 						textarea.value+="Out of range(BGMPLAY:1)\n";
+						textarea.value+="Syntax error\n";
+						var beep = document.getElementById("error");
+						beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
+						beep.play();
 					}
-				} else if (checkCommand(lastline,"CLS")) {
+				
+				} else if (checkCommand(lastline,"CLS")||checkCommand(lastline,"ACLS")) {
 					textarea.value=""
+				
 				} else if (checkCommand(lastline,"GOTO")) {
-					var lbl = lastline.split("@")[lastline.split("@").length -1];
+					var lbl = lastline.split("@").slice(-1)[0];
 					if (checkUrl(lbl)==true) {
 						window.location.href = lbl;
-
-} else {
+					} else {
 						textarea.value+="Invalid label(GOTO:1)\n";
+						textarea.value+="Syntax error\n";
+						var beep = document.getElementById("error");
+						beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
+						beep.play();
 					}
+				
 				} else if (checkCommand(lastline,"BGMSTOP")) {
 					var music = document.getElementById("music");
 					music.src = ""
 					music.play()
-} else if (checkCommand(lastline,"BGSCREEN 0,888888,888888")) {					
-window.open('','_self').close();
-
-} else if (checkCommand(lastline,"PRINT")) {	
-
+				
+				} else if (checkCommand(lastline,"BEEP 2")) {
+					var beep = document.getElementById("error");
+					beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
+					beep.play();
+				} else if (checkCommand(lastline,"PRINT")||checkCommand(lastline,"?")) {
 					var parts = lastline.split('"');
-if (parts.length>1) {
- textarea.value+=parts[1];
-}
-textarea.value+="\n";
-
+					if (parts.length>1) {
+						textarea.value+=parts[1];
+					}
+					textarea.value+="\n";
+				
 				} else {	
 					textarea.value+="Syntax error\n";
+					var beep = document.getElementById("error");
+					beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
+					beep.play();
 				}
+				
 				textarea.value+="OK\n";
 				do{
 					if (textarea.clientHeight != textarea.scrollHeight){
@@ -98,23 +104,24 @@ textarea.value+="\n";
 				}
 				while (textarea.clientHeight != textarea.scrollHeight);
 			}
+			
+			function checkCommand(line,command) {
+				return (line.substr(0,command.length).toUpperCase()==command);
+			}
+			
 			function checkUrl(url) {
 				var xhr = new XMLHttpRequest();
 				xhr.open('HEAD', url, false);
 				xhr.send();
 				return (xhr.status == "200");
 			}
-		
-			function setCursor(input, location) {					
-				input.focus()
+			
+			function setCursor(input, location) {
+				input.focus();
 				var range = input.createTextRange();
 				range.moveEnd('character', location);
 				range.moveStart('character', location);
 				range.select();
-			}
-			
-			function checkCommand(line,command) {
-				return (line.substr(0,command.length).toUpperCase()==command)
 			}
 		</script>
 	</head>
@@ -122,5 +129,6 @@ textarea.value+="\n";
 		<textarea autofocus onkeyup="Javascript: if (event.keyCode==13) readLine();" spellcheck="false" autocorrect="false"></textarea>
 		<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>BGMSTOP<br>CLS<br>GOTO @page<br>PRINT "text"</p>
 		<audio id="music"></audio>
+		<audio id="error"></audio>
 	</body>
 </html>
