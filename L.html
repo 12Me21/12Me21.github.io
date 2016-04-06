@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<title>Lumage Reinstrumentations</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./resources/Lumageicon.png">
+    <link rel="stylesheet" type="text/css" href="http://12Me21.github.io/main.css"</link>
+		<style>
+			p {
+					font-variant: small-caps;
+font-size: 32px
+			}
+		</style>
+		<script>
+		  var song = 0;
+var songs = ["Bad_Sunflower!!", "DoYouThinkSunflowersCanBloomOnTheBattlefield", "Dullahan_Under_the_Sunflowers","Sacred_Sunflower","Sun_Dial","Sunflower_Formation","Sunflower_in_Bhava-agra","Sunflower_of_Reverie","Sunflower_Terror","Sunflowering_Night","The_Sunflower_Side_Of_Fate"];
+			
+			function readLine(key) {
+			var songdisplay = document.getElementsByTagName("p")[0];
+				
+
+
+				  if (key==40) {
+						var music = document.getElementById("music");
+						music.src = "http://12Me21.github.io/resources/"+songs[song]+".ogg";
+
+							music.play();
+				
+				} else if (key==37) {
+
+song-=(song>0);
+document.getElementById("songdisplay").innerHTML=addSpace(songs[song]);
+} else if (key==39) {
+
+song+=(song<songs.length-1);
+document.getElementById("songdisplay").innerHTML=addSpace(songs[song]);
+}
+			}
+			function addSpace(string){
+return string.replace(new RegExp("_", "g"), " ");
+}
+
+
+		</script>
+	</head>
+	<body onkeydown="Javascript: if (event.keyCode==40||event.keyCode==37||event.keyCode==39) readLine(event.keyCode);">
+		<p id="songdisplay"></p>
+		<audio id="music"></audio>
+	</body>
+</html>
