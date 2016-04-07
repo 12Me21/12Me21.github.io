@@ -68,7 +68,15 @@
 						beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
 						beep.play();
 					}
-				
+				} else if (checkCommand(lastline,"GOTO 1:")) {
+					var lbl = lastline.split("@").slice(-1)[0];
+					window.location.href = lbl;
+					textarea.value+="Invalid label(GOTO:1)\n";
+					textarea.value+="Syntax error\n";
+					var beep = document.getElementById("error");
+					beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
+					beep.play();
+					}
 				} else if (checkCommand(lastline,"BGMSTOP")) {
 					var music = document.getElementById("music");
 					music.src = ""
