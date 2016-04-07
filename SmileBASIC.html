@@ -21,13 +21,7 @@
 			}
 		</style>
 		<script>
-			function setUp() {
-				var textarea = document.getElementsByTagName("textarea")[0];
-				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
-				setCursor(textarea,textarea.value.length);
-				textarea.value+=decodeURIComponent(window.location.hash.slice(1))+"\n";
-				readLine();
-			}
+
 			
 			document.addEventListener('keydown', function(e){
 				var textarea = document.getElementsByTagName("textarea")[0];
@@ -125,6 +119,14 @@
 				range.moveStart('character', location);
 				range.select();
 			}
+			
+			function setUp() {
+				var textarea = document.getElementsByTagName("textarea")[0];
+				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
+				textarea.value+=decodeURIComponent(window.location.hash.slice(1))+"\n";
+				readLine();
+			}
+			
 			window.onload = setUp;
 		</script>
 	</head>
