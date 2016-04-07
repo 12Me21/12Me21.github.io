@@ -3,7 +3,7 @@
 		function go() {
 			var code=window.location.hash.slice(1);
 			if (code.length) {
-				window.location.assign(lengthen(code));
+				window.location.assign(lengthen(code.slice(0, -3)));
 			}
 		}
 		function goShorten() {
