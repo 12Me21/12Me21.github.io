@@ -31,7 +31,7 @@
 		function lengthen(url1) {
 			var url2="";
 
-			for (i=0; i < url1.length-1; i++) {
+			for (i=0; i < url1.length; i+=8) {
 var b=0;
 				for (j=0; j<8; j++) {
 b+=(url1.charAt(i*8+j)=="1")<<j;
