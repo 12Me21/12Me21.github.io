@@ -1,0 +1,46 @@
+<head>
+	<script>
+		function go() {
+			var code=window.location.hash.slice(1);
+			if (code.length) {
+				window.location.assign(lengthen(code));
+			}
+		}
+		function goShorten() {
+			document.write(shorten(document.getElementById("url1").value));
+		}
+		function goLengthen() {
+			document.write(lengthen(document.getElementById("url2").value));
+		}
+		
+		function shorten(url1) {
+			var url2="";
+			for (i=0; i < url1.length; i+=2) {
+				url2+=String.fromCharCode(url1.charCodeAt(i)+url1.charCodeAt(i+1)*256);
+			}
+			return url2;
+		}
+		function lengthen(url1) {
+			var url2="";
+			for (i=0; i < url1.length; i++) {
+				url2+=String.fromCharCode(url1.charCodeAt(i)%256)+String.fromCharCode(url1.charCodeAt(i)/256);
+				
+			}
+			return url2;
+		}
+	</script>
+</head>
+
+<body onload="go()">
+	<form>
+		URL: <input type="text" id="url1"><br>
+		<input type="button" value="Shorten" onclick="goShorten()" >
+	</form>
+	<form>
+		URL: <input type="text" id="url2"><br>
+		<input type="button" value="Lengthen" onclick="goLengthen()" >
+	</form>
+	<form>
+		<input type="button" value="go! :)" onclick="go()" >
+	</form>
+</body>
