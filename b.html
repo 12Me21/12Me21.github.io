@@ -15,7 +15,6 @@
 		
 		function shorten(url1) {
 			var url2=" ";
-			url1+="\0"*(url1.length % 8);
 			for (i=0; i < url1.length; i++) {
 				for (j=0; j<8; j++) {
 					if (url1.charCodeAt(i)&(1<<j)) {
@@ -34,7 +33,7 @@
 			for (i=0; i < url1.length; i+=8) {
 var b=0;
 				for (j=0; j<8; j++) {
-b+=(url1.charAt(i*8+j)=="1")<<j;
+b+=(url1.charAt(i+j)=="1")<<j;
 				}
 url2+=String.fromCharCode(b);
 			}
