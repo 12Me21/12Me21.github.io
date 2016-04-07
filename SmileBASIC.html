@@ -34,6 +34,7 @@
 				if (textarea.selectionStart < textarea.value.lastIndexOf("\n",textarea.value.length)+2) {
 					textarea.selectionStart=textarea.value.lastIndexOf("\n",textarea.value.length)+2;
 				}
+				textarea.value+=window.location.hash.slice(1)+"\n"
 			});
 			
 			function readLine() {
