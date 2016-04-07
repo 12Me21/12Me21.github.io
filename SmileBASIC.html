@@ -25,9 +25,9 @@
 				var textarea = document.getElementsByTagName("textarea")[0];
 				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
 				setCursor(textarea,textarea.value.length);
-				textarea.value+=window.location.hash.slice(1)+"\n"
-				readline()
-			}, false);
+				textarea.value+=window.location.hash.slice(1)+"\n";
+				readline();
+			}
 			
 			document.addEventListener('keydown', function(e){
 				var textarea = document.getElementsByTagName("textarea")[0];
