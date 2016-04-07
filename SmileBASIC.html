@@ -25,8 +25,8 @@
 				var textarea = document.getElementsByTagName("textarea")[0];
 				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
 				setCursor(textarea,textarea.value.length);
-				textarea.value+=window.location.hash.slice(1)+"\n";
-				readline();
+				textarea.value+=decodeURIComponent(window.location.hash.slice(1))+"\n";
+				readLine();
 			}
 			
 			document.addEventListener('keydown', function(e){
@@ -34,7 +34,6 @@
 				if (textarea.selectionStart < textarea.value.lastIndexOf("\n",textarea.value.length)+2) {
 					textarea.selectionStart=textarea.value.lastIndexOf("\n",textarea.value.length)+2;
 				}
-				textarea.value+=window.location.hash.slice(1)+"\n"
 			});
 			
 			function readLine() {
