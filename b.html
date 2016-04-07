@@ -1,0 +1,58 @@
+<head>
+	<script>
+		function go() {
+			var code=window.location.hash.slice(1);
+			if (code.length) {
+				window.location.assign(lengthen(code));
+			}
+		}
+		function goShorten() {
+			document.write("http://12Me21.github.io/b#"+shorten(document.getElementById("url1").value));
+		}
+		function goLengthen() {
+			document.write(lengthen(document.getElementById("url2").value));
+		}
+		
+		function shorten(url1) {
+			var url2="";
+			url1+="\0"*(url1.length % 8);
+			for (i=0; i < url1.length; i++) {
+				for (j=0; j<8; j++) {
+					if (url1.charCodeAt(i)&(1<<j)) {
+						url2+="1"//String.fromCharCode(173);
+					} else {
+						url2+="0"//String.fromCharCode(8203);
+					}
+				}
+			}
+			return url2;
+		}
+		function lengthen(url1) {
+			var url2="";
+
+			for (i=0; i < url1.length-1; i++) {
+var b=0;
+				for (j=0; j<8; j++) {
+b+=(url1.charAt(i*8+j)=="1")<<j;
+				}
+url2+=String.fromCharCode(b);
+				
+			}
+			return url2;
+		}
+	</script>
+</head>
+
+<body onload="go()">
+	<form>
+		URL: <input type="text" id="url1" value="http://">
+		<input type="button" value="Shorten" onclick="goShorten()" >
+	</form>
+	<form>
+		URL: <input type="text" id="url2">
+		<input type="button" value="Lengthen" onclick="goLengthen()" >
+	</form>
+	<!--<form>
+		<input type="button" value="" onclick="go()" >
+	</form>-->
+</body>
