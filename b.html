@@ -3,7 +3,7 @@
 		function go() {
 			var code=window.location.hash.slice(1);
 			if (code.length) {
-				window.location.href=lengthen(String(code));
+				window.location.href=lengthen(code);
 			}
 		}
 		function goShorten() {
@@ -35,14 +35,11 @@ var b=0;
 				for (j=0; j<8; j++) {
 b+=(url1.charAt(i*8+j)=="1")<<j;
 				}
-				if (isNaN(b)) {
-
-				}else{
+if (B>=0 && B<256){
 url2+=String.fromCharCode(b);
 }
-				
 			}
-			alert(String(url12));
+			alert(url12);
 			return url12;
 		}
 	</script>
