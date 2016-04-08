@@ -1,1 +1,27 @@
-<META http-equiv="refresh" content="0;URL=http://www.goo.gl/6MoKPh">
+<html>
+	<head>
+		<title>SmileBASIC</title>
+		<link rel="icon" type="image/png" sizes="16x16" href="./resources/SBicon.png">
+		<link rel="stylesheet" href="./main.css"</link>
+		<script>
+		
+			function setUp() {
+				var argument = decodeURIComponent(window.location.hash.slice(1));
+				var goto = "http://"
+				switch (argument) {
+					case "test":
+						goto += "purple.com"
+						break;
+					case "default":
+						goto += "12Me21.github.io/main"
+						break;
+				}
+			}
+			window.onload = setUp;
+			
+		</script>
+	</head>
+	<body style="background-color:#333">
+		<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>BGMSTOP<br>CLS<br>GOTO @page<br>PRINT "text"</p>
+	</body>
+</html>
