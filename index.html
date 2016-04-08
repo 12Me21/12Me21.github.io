@@ -6,17 +6,9 @@
 		<script>
 		
 			function redirect() {
-				var argument = decodeURIComponent(window.location.hash.slice(1));
-				var goto = "http://"
-				switch (argument) {
-					case "test":
-						goto += "purple.com"
-						break;
-					case "default":
-						goto += "12Me21.github.io/main"
-						break;
-				}
-				window.location.replace(goto);
+				var keys = ["purple"];
+				var prgs = ["http://www.purple.com"];
+				window.location.replace(prgs[keys.indexOf(decodeURIComponent(window.location.hash.slice(1)))]);
 			}
 			window.onload = redirect;
 			
