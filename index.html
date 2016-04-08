@@ -5,7 +5,7 @@
 		<link rel="stylesheet" href="./main.css"</link>
 		<script>
 		
-			function setUp() {
+			function redirect() {
 				var argument = decodeURIComponent(window.location.hash.slice(1));
 				var goto = "http://"
 				switch (argument) {
@@ -16,8 +16,9 @@
 						goto += "12Me21.github.io/main"
 						break;
 				}
+				window.location.replace(goto);
 			}
-			window.onload = setUp;
+			window.onload = redirect;
 			
 		</script>
 	</head>
