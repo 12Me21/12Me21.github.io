@@ -6,13 +6,11 @@
 		<script>
 		
 			function redirect() {
-				var keys = ["purple","chat","SB","list","mii"];
-				var prgs = ["http://www.purple.com","http://goo.gl/6MoKPh","SB","http://smilebasic.com/en/reference","https://miiverse.nintendo.net"];
-			
-				window.location.replace(prgs[keys.indexOf(decodeURIComponent(window.location.hash.slice(1)))]);//+window.location.hash[1]);
+				var keys = ["purple","chat","SB","list","mii","try"];
+				var prgs = ["http://www.purple.com","http://goo.gl/6MoKPh","SB","http://smilebasic.com/en/reference","https://miiverse.nintendo.net","http://www.w3schools.com/js/tryit.asp?filename=tryjs_default"];
+				window.location.replace(prgs[keys.indexOf(decodeURIComponent(window.location.hash.slice(1)))]);
 			}
 			window.onload = redirect;
-			//
 		</script>
 	</head>
 	<body style="background-color:#333">
