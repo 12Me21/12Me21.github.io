@@ -4,7 +4,7 @@
 		<script>
 			function redirect() {
 				var keys = ["purple","chat","SB","list","mii","try","math"];
-				var prgs = ["12Me21.github.io/main","www.purple.com","goo.gl/6MoKPh","SB","smilebasic.com/en/reference","miiverse.nintendo.net","www.w3schools.com/js/tryit.asp?filename=tryjs_default","https://www.youtube.com/watch?v=nxuna944dls"];
+				var prgs = ["12Me21.github.io/main","www.purple.com","goo.gl/6MoKPh","SB","smilebasic.com/en/reference","miiverse.nintendo.net","www.w3schools.com/js/tryit.asp?filename=tryjs_default","www.youtube.com/watch?v=nxuna944dls"];
 				window.location.replace("http://"+prgs[keys.indexOf(decodeURIComponent(window.location.hash.slice(1)))+1]);
 			}
 			window.onload = redirect;
