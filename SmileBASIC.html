@@ -58,7 +58,13 @@
 					textarea.value=""
 				} else if (checkCommand(lastline,"GOTO 1:")) {
 					var lbl = lastline.split("@").slice(-1)[0];
-					window.location.href = lbl;
+					window.location.href = "http://"+lbl;
+				} else if (checkCommand(lastline,"GOTO 2:")) {
+					var lbl = lastline.split("@").slice(-1)[0];
+					window.location.href = "http://smilebasicsource.com/"+lbl;
+				} else if (checkCommand(lastline,"GOTO 3:")) {
+					var lbl = lastline.split("@").slice(-1)[0];
+					window.location.href = lbl;	
 				} else if (checkCommand(lastline,"GOTO")) {
 					var lbl = lastline.split("@").slice(-1)[0];
 					if (checkUrl(lbl)==true) {
