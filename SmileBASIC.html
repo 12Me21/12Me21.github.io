@@ -21,7 +21,7 @@
 			}
 		</style>
 		<script>
-			ver="0.5.2"
+			ver="0.5.3"
 			
 			document.addEventListener('keydown', function(e){
 				var textarea = document.getElementsByTagName("textarea")[0];
@@ -32,7 +32,7 @@
 			
 			function readLine() {
 				var textarea = document.getElementsByTagName("textarea")[0];
-				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2]trim().split("'")[0].split("REM")[0];
+				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2].trim().split("'")[0].split("REM")[0];
 				
 				if (lastline.length) {
 					if (checkCommand(lastline,"BGMPLAY")) {
