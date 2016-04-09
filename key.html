@@ -2,15 +2,22 @@
 	<title>What's the key?</title>
 	<link rel="icon" type="image/png" href="./key plz be transparent.png">
 	<link rel="stylesheet" href="./main.css">
+	<script>
+		function generateKey() {
+			var key='';
+			for (var i=0;i<8;i++){
+				key+="0123456789ABCDEFHJIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*36)];
+			}
+			document.getElementById("key").innerHTML=key;
+		}
+	</script>
 </head>
 
-<body style="background-color:black;">
+<body style="background-color:black;" onLoad="generateKey()">
 	<div class="smilebasic">
 		<p class="smilebasic">
-		┏━━━━━━━┓<br>
-		<!--┃≠≠Key:≠≠│<br>
-		┠────────┨<br>-->
-		┃KXJJ333┃<br>
-		┗━━━━━━━┛<br></p>
+		┏━━━━━━━━┓<br>
+		<span class="smilebasic">┃</span><span class="smilebasic" id="key">loading.</span><span class="smilebasic">┃</span><br>
+		┗━━━━━━━━┛<br></p>
 	</div><br>
 </body>
