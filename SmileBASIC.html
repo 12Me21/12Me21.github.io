@@ -21,7 +21,7 @@
 			}
 		</style>
 		<script>
-			ver="0.5.0"
+			ver="0.5.1"
 			
 			document.addEventListener('keydown', function(e){
 				var textarea = document.getElementsByTagName("textarea")[0];
@@ -95,8 +95,8 @@
 						beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
 						beep.play();
 					}
-					textarea.value+="OK\n";
 				}
+				textarea.value+="OK\n";
 				do{
 					if (textarea.clientHeight != textarea.scrollHeight){
 						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
