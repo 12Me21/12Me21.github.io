@@ -21,7 +21,7 @@
 			}
 		</style>
 		<script>
-
+			ver="0.4.1"
 			
 			document.addEventListener('keydown', function(e){
 				var textarea = document.getElementsByTagName("textarea")[0];
@@ -125,7 +125,7 @@
 			
 			function setUp() {
 				var textarea = document.getElementsByTagName("textarea")[0];
-				textarea.value = "SMILEBASIC ver -0.3.2\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
+				textarea.value = "SMILEBASIC ver -"+ver+"\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
 				textarea.value+=decodeURIComponent(window.location.hash.slice(1))+"\n";
 				readLine();
 			}
