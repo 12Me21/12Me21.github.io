@@ -1,0 +1,24 @@
+<html>
+<head>
+	<title>Ｆｕｌｌｗｉｄｔｈ　Ｃｏｎｖｅｒｔｅｒ</title>
+	<script>
+		function goConvert() {
+			document.getElementById("output").innerHTML=(convert(document.getElementById("input").value));
+		}
+		
+		function convert(input) {
+			var output='';
+			for (var i=0;i<input.length;i++) {
+				var unicodeSucks = input.charCodeAt(i)==32;
+				output += String.fromCharCode((input.charCodeAt(i) + 0xFEE0) * !unicodeSucks + 0x3000 * unicodeSucks);
+			}
+			return output;
+		}
+	</script>
+</head>
+<body>
+	<input type="text" id="input" value="">
+	<input type="button" value="Convert to fullwidth" onclick="goConvert()" >
+	<p id="output"></p>
+</body>
+</html>
