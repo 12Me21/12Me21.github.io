@@ -1,0 +1,12 @@
+<head>
+  <link rel="icon" type="image/png" sizes="16x16" href="pixicon.png">
+	<title>Online Stuff</title>
+	<link rel="stylesheet" href="./main.css"</link>
+</head>
+<body>
+	<p class="welcome">12Me21's Not-Online Stuff</p><br>
+	<p class="llheader">SmileBASIC:</p><br>
+	<a href="./MCDS">MCDS April Fools</a><br>
+	<a href="./UTFS">Undertale File Select</a><br><br>
+	<a href="./main.html">Back</a>
+</body>
