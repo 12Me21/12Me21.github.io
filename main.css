@@ -48,6 +48,12 @@
 		text-decoration: none;
 		border-radius: 2px;
  	}
+ 	a.2:link {
+ 		color: #0DF;
+ 	}
+ 	a.2:visited {
+ 		color: #FDF;	
+ 	}
 	div.songtitle {	/* will fix for non-firefox later (probably not) */
 		display: inline-block;
 		vertical-align: bottom;
