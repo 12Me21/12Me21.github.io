@@ -1,0 +1,31 @@
+<html>
+<head>
+	<link rel="icon" type="image/png" sizes="16x16" href="./resources/CONVicon.png">
+	<title>Text 𝘊𝘰𝘯𝘃𝗲𝗿𝕥𝕖𝕣</title>
+	<script>
+		var inText ="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		
+		function goConvert(outText) {document.getElementById("output").innerHTML=(convert(document.getElementById("input").value,outText));}
+		
+		function convert(input,outText) {
+			var output='';
+			for (var i=0;i<input.length;i++) {
+				no = inText.indexOf(input.charAt(i));
+				if (no!=-1) {
+					output += outText.substr(no*2,2);
+				} else {
+					output += input.charAt(i);
+				}
+			}
+			return output;
+		}
+	</script>
+</head>
+<body>
+	<input type="text" id="input" value="">
+	<input type="button" value="Italic" onclick="goConvert('𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻')">
+	<input type="button" value="Bold" onclick="goConvert('𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇')">
+	<input type="button" value="Double" onclick="goConvert('𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝔸𝔹ℂ\0𝔻𝔼𝔽𝔾ℍ\0𝕀𝕁𝕂𝕃𝕄ℕ\0𝕆ℙ\0ℚ\0ℝ\0𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ\0𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫')">
+	<p id="output"></p>
+</body>
+</html> 
