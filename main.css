@@ -1,5 +1,9 @@
 <style>
 	.uselesss {}
+	html, body {
+		margin: 0;
+		padding: 0;
+	}
 	@font-face { font-family: Agency FB; src: url('./resources/Agency_FB.ttf'); } 
 	@font-face { font-family: Consolas; src: url('./resources/Consolas.ttf'); } 
  	@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }
