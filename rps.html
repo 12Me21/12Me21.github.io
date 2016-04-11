@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rock Paper Scissors</title>
+  <script>
+    var items=["Rock","Paper","Scissors"];
+    function pick(item) {
+      var enemy=Math.floor(Math.random()*3);
+      if (enemy==(item+1)%3) {
+        var res = "lose";
+      } else if (item==(enemy+1)%3) {
+        var res = "win";
+      } else {
+        var res = "draw";
+      }
+      document.getElementById("output").innerHTML = "You: "+items[item]+"<br>Enemy: "+items[enemy]+"<br>"+res;
+    }
+  </script>
+</head>
+<body>
+  <input type="button" value="Rock" onclick="pick(0)">
+  <input type="button" value="Paper" onclick="pick(1)">
+  <input type="button" value="Scissors" onclick="pick(2)">
+  <p id="output"></p>
+</body>
+</html> 
