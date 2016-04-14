@@ -33,28 +33,20 @@
 			document.cookie = "points="+points;
 		}
 		
-		
-		function readCookie {
-			alert(document.cookie);
-			
-			
-			
+		function getCookie(name) {
+			for (var i = 0; pair = document.cookie.split("; ")[i].split("="); i++) {
+				if (pair[0] == name) {return unescape(pair[1]);}
+			}
+			return 0;
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		function load() {
+			points = parseInt(getCookie("points"));
+			document.getElementById("points").innerHTML = "Points: "+points;
+		}
 	</script>
 </head>
 
-<body onload="readCookie()">
+<body onload="load()">
 	<table border="1">
 		<tr>
 			<th colspan="2"><input type="button" value="Rock"     onclick="pick(0)"></th>
@@ -67,7 +59,7 @@
 		</tr>
 		<tr>
 			<td colspan="2" id="win">-</td>
-			<td colspan="4" id="points">Points: 0</td>
+			<td colspan="4" id="points">Points: </td>
 		</tr>
 	</table>
 	<!--<br><br><br><br><br><br><br><br><br><br>-->
