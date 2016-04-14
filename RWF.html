@@ -10,6 +10,7 @@
 		var wins=["Lose","Draw","Win"];
 		var points=0;
 		
+		
 		function pick(item) {
 			var winner=0;
 			var enemy=Math.floor(Math.random()*3);
@@ -28,7 +29,16 @@
 			//document.getElementById("youCell").colSpan = 3+winner;
 			//document.getElementById("enemyCell").colSpan = 3-winner;
 			 document.getElementById("points").innerHTML = "Points: "+points;
+			 document.cookie="points="+points+";";
 		}
+		
+		//stolen
+		function getCookie() {
+			check = c.substring(7,c.length);
+			if (!isNaN(check)) {points=check;}
+		}
+		
+		window.onload = getCookie;
 	</script>
 </head>
 
