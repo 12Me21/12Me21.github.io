@@ -43,6 +43,11 @@
 			points = parseInt(getCookie("points"));
 			document.getElementById("points").innerHTML = "Points: "+points;
 		}
+		function eat() {
+			document.cookie = "points=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+			points=0
+			document.getElementById("points").innerHTML = "Points: "+points;
+		}
 	</script>
 </head>
 
@@ -62,6 +67,7 @@
 			<td colspan="4" id="points">Points: </td>
 		</tr>
 	</table>
+	<input type="button" value="Reset" onclick="eat()">
 	<!--<br><br><br><br><br><br><br><br><br><br>-->
 	<footer style="position: fixed; bottom: 0.5em;">&copy; Lumage 2016</footer>
 </body>
