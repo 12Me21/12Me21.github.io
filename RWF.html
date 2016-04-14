@@ -28,27 +28,33 @@
 			document.getElementById("win").style.color=colorss[winner+1];
 			//document.getElementById("youCell").colSpan = 3+winner;
 			//document.getElementById("enemyCell").colSpan = 3-winner;
-			 document.getElementById("points").innerHTML = "Points: "+points;
-			 document.cookie="points=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-			 document.cookie="points="+points+";";
+			document.getElementById("points").innerHTML = "Points: "+points;
+			document.cookie = "points=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+			document.cookie = "points="+points;
 		}
 		
-		//stolen
-		function getCookie() {
-			var name = 'points' + "=";
-			var ca = document.cookie.split(';');
-			for(var i=0; i<ca.length; i++) {
-				var c = ca[i];
-				while (c.charAt(0)==' ') c = c.substring(1);
-				if (c.indexOf(name) == 0) points=c.substring(name.length,c.length);
-			}
+		
+		function readCookie {
+			alert(document.cookie);
+			
+			
+			
 		}
 		
-		window.onload = getCookie;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	</script>
 </head>
 
-<body>
+<body onload="readCookie()">
 	<table border="1">
 		<tr>
 			<th colspan="2"><input type="button" value="Rock"     onclick="pick(0)"></th>
