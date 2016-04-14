@@ -7,6 +7,7 @@
 	@font-face { font-family: Agency FB; src: url('./resources/Agency_FB.ttf'); } 
 	@font-face { font-family: Consolas; src: url('./resources/Consolas.ttf'); } 
  	@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }
+ 	@font-face { font-family: Mario; src: url('./resources/maro.ttf'); }
  	p.welcome {
  		margin-bottom: 1px;
 		padding-bottom: 0px;
