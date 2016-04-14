@@ -1,9 +1,9 @@
 <style>
 	.uselesss {}
-	html, body {
+	/*html, body {
 		margin: 0;
 		padding: 0;
-	}
+	}THE WORLD IS NOT READY*/
 	@font-face { font-family: Agency FB; src: url('./resources/Agency_FB.ttf'); } 
 	@font-face { font-family: Consolas; src: url('./resources/Consolas.ttf'); } 
  	@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }
