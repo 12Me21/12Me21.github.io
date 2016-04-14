@@ -5,16 +5,19 @@
   <title>Rock Whatever F...</title>
   <script>
     var items=["Rock","Whatever","Fuck"];
+    var points=0;
     function pick(item) {
       var enemy=Math.floor(Math.random()*3);
       if (enemy==(item+1)%3) {
         var res = "lose";
+        points--
       } else if (item==(enemy+1)%3) {
         var res = "win";
+        points++
       } else {
         var res = "draw";
       }
-      document.getElementById("output").innerHTML = "You: "+items[item]+"<br>Enemy: "+items[enemy]+"<br>"+res;
+      document.getElementById("output").innerHTML = "You: "+items[item]+"<br>Enemy: "+items[enemy]+"<br>"+res+"<br>Points: "+points+"000000";
     }
   </script>
 </head>
@@ -22,7 +25,7 @@
   <input type="button" value="Rock" onclick="pick(0)">
   <input type="button" value="Whatever" onclick="pick(1)">
   <input type="button" value="Fuck" onclick="pick(2)">
-  <p id="output"></p>
+  <p id="output"><br><br><br>Points: 0</p>
   <footer>(c) Lumage 2016</footer>
 </body>
 </html> 
