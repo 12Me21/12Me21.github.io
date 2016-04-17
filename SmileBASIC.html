@@ -22,7 +22,7 @@
 		</style>
 		<script>
 			ver="0.5.3"
-			
+			beep = document.getElementById("error");
 			document.addEventListener('keydown', function(e){
 				var textarea = document.getElementsByTagName("textarea")[0];
 				if (textarea.selectionStart < textarea.value.lastIndexOf("\n",textarea.value.length)+2) {
@@ -50,8 +50,6 @@
 						} else {
 							textarea.value+="Out of range(BGMPLAY:1)\n";
 							textarea.value+="Syntax error\n";
-							var beep = document.getElementById("error");
-							beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
 							beep.play();
 						}	
 					} else if (checkCommand(lastline,"CLS")||checkCommand(lastline,"ACLS")) {
@@ -71,8 +69,6 @@
 							window.location.href = lbl;
 						} else {
 							textarea.value+="Invalid label(GOTO:1)\n";
-							var beep = document.getElementById("error");
-							beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
 							beep.play();
 						}
 					} else if (checkCommand(lastline,"BGMSTOP")) {
@@ -80,8 +76,6 @@
 						music.src = ""
 						music.play()
 					} else if (checkCommand(lastline,"BEEP 2")) {
-						var beep = document.getElementById("error");
-						beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
 						beep.play();
 					} else if (checkCommand(lastline,"PRINT")||checkCommand(lastline,"?")) {
 						var parts = lastline.split('"');
@@ -91,8 +85,6 @@
 						textarea.value+="\n";
 					} else {	
 						textarea.value+="Syntax error\n";
-						var beep = document.getElementById("error");
-						beep.src = "http://12Me21.github.io/BGM/ERROR.wav";
 						beep.play();
 					}
 				}
@@ -138,6 +130,6 @@
 		<textarea autofocus onkeyup="Javascript: if (event.keyCode==13) readLine();" spellcheck="false" autocorrect="false"></textarea>
 		<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>BGMSTOP<br>CLS<br>GOTO [mode:]@page<br>PRINT "text"</p>
 		<audio id="music"></audio>
-		<audio id="error"></audio>
+		<audio id="error" src="./BGM/ERROR.wav"></audio>
 	</body>
 </html>
