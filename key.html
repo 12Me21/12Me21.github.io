@@ -2,6 +2,17 @@
 	<title>What's the key?</title>
 	<link rel="icon" type="image/png" href="./key plz be transparent.png">
 	<link rel="stylesheet" href="./main.css">
+	<style>
+		body {
+			background-color: #000;
+			animation-name: fade;
+			animation-duration: 1.41s;
+		}
+		@keyframes fade {
+			1%  {background-color: #FFF;}
+			100% {background-color: #000;}
+		}
+	</style>
 	<script>
 		function generateKey() {
 			var key='';
@@ -10,11 +21,13 @@
 			}
 			document.getElementById("key").innerHTML=key;
 		}
+		
+
 	</script>
 </head>
 
-<body style="background-color:black;" onLoad="generateKey()">
-	<div class="smilebasic">
+<body onLoad="generateKey()">
+	<div class="smilebasic" style="position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);">
 		<p class="smilebasic">
 		┏━━━━━━━━┓<br>
 		<span class="smilebasic">┃</span><span class="smilebasic" id="key">loading.</span><span class="smilebasic">┃</span><br>
