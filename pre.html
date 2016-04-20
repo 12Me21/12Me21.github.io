@@ -1,0 +1,11 @@
+<html>
+	<head><script>
+		function goUpdate() {document.getElementById("-output").src=document.getElementById("-input").value;}
+		function readURL() {document.getElementById("-input").value=decodeURIComponent(window.location.hash.slice(1));goUpdate();}
+		window.onload = readURL;
+	</script></head>
+	<body>
+		<textarea id="-input"></textarea><input type="button" value="Update" onclick="goUpdate()"><hr>
+	</body>
+<iframe id="-output" width="100%"></iframe>
+</html>
