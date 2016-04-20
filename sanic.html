@@ -1,9 +1,31 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Gotta Go Fast</title>
+
+<base href="http://12Me21.github.io/" target="_blank">
+<title>Gotta Go Fast</title>
+	<style>
+		.sanic {
+			animation-name: fast;
+			animation-duration: .00001s;
+animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    position: absolute;
+    top:0;bottom:0;left:0;right:0;
+    margin: auto;
+}
+		@keyframes fast {
+			100%  {transform: rotate(0deg) scale(1);}
+50% {transform: rotate(0deg) scale(.5);}
+			0% {transform: rotate(360deg) scale(1);}
+}
+	</style>
 </head>
-<body background="./resources/cumonjpegitup.jpg">
+
+<body bgcolor="#00FF4B">
+<img src="./resources/sanic2.jpg" class="sanic" width="100%"></img>
   <audio autoplay>
     <source src="./resources/sanic.mp3" type="audio/mpeg">
 		Stop using Windows 98 please.
