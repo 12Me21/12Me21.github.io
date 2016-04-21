@@ -2,19 +2,21 @@
 <html>
 	<head>
 		<style>
-			div {border:2px ridge black;resize:both;overflow:hidden;height="30%"}</style>
+			*{margin:0px;padding:0px;border:0px;outline:none;}
+			div,textarea {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:100%;white-space: pre;overflow-x:scroll;}
+			input	{border:2px ridge orange;padding: 0 1em;}
+			input:active {border:2px ridge yellow;background-color:gray;color:yellow;}
+
+		</style>
 		<script>
 			function goUpdate() {document.getElementById("-output").srcdoc=document.getElementById("-input").value;}
 			function readURL() {document.getElementById("-input").value=decodeURIComponent(window.location.hash.slice(1));goUpdate();}
 			window.onload = readURL;
 		</script>
 	</head>
-	<body>
-		<div>
-			<textarea id="-input"width="100%"height="100%" onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"></textarea>
-			<input type="button"value="Update"onclick="goUpdate()">
-		</div>	<hr>
-		<div><iframe id="-output"width="100%"height="100%"frameborder="0"></div>
+	<body onkeydown="if(event.keyCode===18){goUpdate();}">
+		<textarea id="-input"onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0,s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"autocomplete="off"autocorrect="off"autocapitalize="off"spellcheck="false"></textarea>
+		<input type="button" value="~Update~" onclick="goUpdate();">
+		<div class="-dhlptx" ><iframe id="-output" frameborder="0"></div>
 	</body>
 </html>
-
