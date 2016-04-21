@@ -3,7 +3,7 @@
 	<head>
 		<style>
 			*{margin:0px;padding:0px;border:0px;outline:none;}
-			div {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:99%}
+			div {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:99%;}
 			textarea {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:99%;white-space: pre;overflow-x:scroll;}
 			input	{border:2px ridge orange;padding: 0 1em;}
 			input:active {border:2px ridge yellow;background-color:gray;color:yellow;}
@@ -18,6 +18,6 @@
 	<body onkeydown="if(event.keyCode===18){goUpdate();}">
 		<textarea id="-input"onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0,s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"autocomplete="off"autocorrect="off"autocapitalize="off"spellcheck="false"></textarea><br>
 		<input type="button" value="~Update~" onclick="goUpdate();"><br>
-		<div class="-dhlptx" ><iframe id="-output" frameborder="0"></div>
+		<div class="-dhlptx" ><iframe id="-output" frameborder="0" width="100%" height="100%"></iframe></div>
 	</body>
 </html>
