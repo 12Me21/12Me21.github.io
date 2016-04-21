@@ -3,8 +3,8 @@
 	<head>
 		<style>
 			*{margin:0px;padding:0px;border:0px;outline:none;}
-			div {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:calc(100%-4px);}
-			textarea {width=100%;border:2px ridge orange;resize:vertical;overflow:scroll;vertical-align:top;width:calc(100%-4px);white-space: pre;}
+			div.-dhlptx {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:calc(100% - 4px);}
+			textarea {border:2px ridge orange;resize:vertical;overflow:scroll;vertical-align:top;width:calc(100% - 4px);}
 			input {border:2px ridge orange;padding: 0 1em;}
 			input[type=text] {width:9ch;}
 			input[type=button]:active {background-color:gray;color:yellow;}
@@ -24,7 +24,7 @@
 		</script>
 	</head>
 	<body onkeydown="if(event.keyCode===key){goUpdate();}">
-		<textarea id="-input"onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0,s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"autocomplete="off"autocorrect="off"autocapitalize="off"spellcheck="false"></textarea><br>   
+		<textarea id="-input"onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0,s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"autocomplete="off"autocorrect="off"autocapitalize="off"spellcheck="false"></textarea><br>
 		&nbsp;<input type="button" value="~Update~" onclick="goUpdate();">
 		&nbsp;
 		<input type="text" placeholder="shortcut" id="-key" onkeydown="updateKey(event.keyCode);">
