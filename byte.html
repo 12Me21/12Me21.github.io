@@ -1,0 +1,47 @@
+<html>
+<head>
+<style>
+
+*{margin:0px;padding:0px;border:0px;outline:none;font-size:32px;}
+			div {border:2px ridge orange;display:inline-block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);}
+			textarea {border:2px ridge orange;resize:vertical;overflow:scroll;vertical-align:top;width:calc(100% - 4px);white-space:pre;word-wrap:break-word}
+			input,select {border:2px ridge orange;}
+			input {width:24ch;}
+			select {width:8ch;}
+			input:hover,select:hover {border:2px ridge yellow;}
+</style>
+	<script>
+function goConvert() {
+convert(document.getElementById("selectin").value)
+}
+		function convert(input) {
+			document.getElementById("output").value = document.getElementById("input").value*input/document.getElementById("selectout").value;
+		}
+	</script>
+</head>
+<body>
+	<div>
+	<input type="text" id="input" onkeyup="goConvert()">
+	<select onmouseup="goConvert()" id="selectin">
+		<option value=".0625">bits</option>
+		<option value="1">Bytes</option>
+		<option value="2">16bit</option>
+		<option value="1024">KB</option>
+		<option value="1048576">MB</option>
+		<option value="1073741824">GB</option>
+	</select>
+	<br>
+	<input type="text" id="output" disabled>
+	<select onmouseup="goConvert()" id="selectout">
+		<option value=".0625">bits</option>
+		<option value="1">Bytes</option>
+		<option value="2">16bit</option>
+		<option value="1024">KB</option>
+		<option value="1048576">MB</option>
+		<option value="1073741824">GB</option>
+	</select>
+	<br>
+<input type="text" style="width:calc(100% - 4px);"value=" Note: 1 KB = 1024 B. (1 kB = 1000 B)" disabled>
+</div>
+</body>
+</html>
