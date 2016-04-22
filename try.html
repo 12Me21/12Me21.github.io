@@ -24,6 +24,7 @@
 				document.getElementById("-input").style.color=document.getElementById("-color").value;
 				document.getElementById("-input").style.backgroundColor=document.getElementById("-bgcolor").value;
 				key=document.getElementById("-key").value;
+				document.getElementById("-input").style.tabSize=document.getElementById("-tab").value;
 			}
 			function updateKey(pressed) {key=pressed;document.getElementById("-key").value=key+" ";}
 			function updateWrap() {
@@ -50,6 +51,7 @@
 		<input type="text" placeholder="shortcut" id="-key" onkeydown="updateKey(event.keyCode);">
 		<input type="text" placeholder="text color" id="-color">
 		<input type="text" placeholder="BG color" id="-bgcolor">
+		<input type="text" placeholder="tab size" id="-tab">
 		<input type="button" value="Update Settings" onclick="updateSettings();">
 		<input type="button" value="Text Wrap: Off" id="-wrap" onclick="updateWrap();">
 		<!--<a href="./stuff1.html">Back</a>-->		
