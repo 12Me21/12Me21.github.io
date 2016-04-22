@@ -5,10 +5,12 @@
 			*{margin:0px;padding:0px;border:0px;outline:none;}
 			div.-dhlptx {border:2px ridge orange;resize:vertical;overflow:hidden;vertical-align:top;width:calc(100% - 4px);}
 			textarea {border:2px ridge orange;resize:vertical;overflow:scroll;vertical-align:top;width:calc(100% - 4px);white-space:pre;word-wrap:break-word}
-			input {border:2px ridge orange;padding: 0 1em;}
+			input,a {border:2px ridge orange;padding: 0 1em;text-decoration:none;color:black;font-family:sans-serif;font-size:14px;}
+			a {position: absolute;
+    right: .3em;}
 			input[type=text] {width:9ch;}
-			input[type=button]:active {background-color:gray;color:yellow;}
-			input:hover {border:2px ridge yellow;}
+			input[type=button]:active,a:active {background-color:gray;color:yellow;}
+			input:hover,a:hover {border:2px ridge yellow;}
 		</style>
 		<script>
 			var key=119;//F8
@@ -48,8 +50,7 @@
 		<input type="text" placeholder="BG color" id="-bgcolor">
 		<input type="button" value="Update Settings" onclick="updateSettings();">
 		<input type="button" value="Text Wrap: Off" id="-wrap" onclick="updateWrap();">
+		<a href="./stuff1.html">Back</a>		
 		<div class="-dhlptx" ><iframe id="-output" frameborder="0" width="100%" height="100%"></iframe></div>
 	</body>
 </html>
-
-
