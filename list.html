@@ -1,0 +1,112 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="./main.css">
+		<style>*{font-family:monospace;}</style>
+		<link rel="icon" type="image/png" sizes="16x16" href="./resources/fullwidthicon.png">
+		<title>WIP SB command list</title>
+		<script>
+			function checkSB(input) {
+				if (commands.has(input)) {return commands.get(input);}
+				return "0";
+			}
+			var commands = new Map();
+			function setUp() {
+				commands.set("CLEAR","CLEAR");
+				commands.set("NEW","NEW\nNEW slot%");
+				commands.set("LIST","LIST\nLIST line%\nLIST ERR");
+				commands.set("RUN","RUN\nRUN slot%");
+				commands.set("CONT","CONT");
+				commands.set("PROJECT","PROJECT name$\n\nname$ = PROJECT()\nPROJECT OUT name$");
+				commands.set("BACKTRACE","BACKTRACE");
+				commands.set("=","variable = expression");
+				commands.set("DIM","DIM array[elements%],...\nDIM array[length%,width%,...],...\nDIM variable,...\nDIM variable = expression,...");
+				commands.set("VAR","VAR array[elements%],...\nVAR array[length%,width%,...],...\nVAR variable,...\nVAR variable = expression,...\n\nvarref = VAR(variablename$)");
+				commands.set("SWAP","SWAP var1,var2");
+				commands.set("INC","INC number\nINC number,amount\nINC string$,add$");
+				commands.set("DEC","DEC number\nDEC number,amount");
+				commands.set("COPY","COPY destarray,sourcearray\nCOPY destarray,deststart%,sourcearray\nCOPY destarray,deststart%,sourcearray,sourcestart%\nCOPY destarray,sourcearray,sourcestart%,number%\nCOPY destarray,deststart%,sourcearray,sourcestart%,number%\n");
+				commands.set("SORT","SORT array\nSORT start%,number%,array\nSORT array1,array2,...\nSORT start%,number%,array1,array2,...");
+				commands.set("RSORT","RSORT array\nRSORT start%,number%,array\nRSORT array1,array2,...\nRSORT start%,number%,array1,array2,...");
+				commands.set("PUSH","PUSH array,expression\nPUSH string$,add$");
+				commands.set("POP","variable=POP(array)\nlast$=POP(string$)");
+				commands.set("UNSHIFT","UNSHIFT array,expression\nUNSHIFT string$,add$");
+				commands.set("SHIFT","variable=SHIFT(array)\nlast$=SHIFT(string$)");			
+				commands.set("FILL","FILL array,value\nFILL array,value,start%\nFILL array,value,start%,number%");
+				commands.set("@","@label");
+				commands.set("GOTO","GOTO @label\nGOTO labelstring$");
+				commands.set("GOSUB","GOSUB @label\nGOSUB labelstring$");
+				commands.set("RETURN","RETURN\nRETURN value");
+				commands.set("OUT","function OUT variable,...\nfunction arg,... OUT variable,...");
+				commands.set("ON","ON switch% GOTO @label0,...\nON switch% GOSUB @label0,...");
+				commands.set("IF","IF condition THEN code\nIF condition THEN code ELSE code\nIF condition THEN code ELSEIF code ... \nIF condition THEN code ELSEIF code ... ELSE code\nIF condition GOTO @label\nIF condition GOTO @label ELSE...\nIF condition GOTO label$\nIF condition GOTO label$ ELSE...");
+				commands.set("FOR","FOR variable=start TO end: code :NEXT\nFOR variable=start TO end STEP amount: code :NEXT");
+				commands.set("WHILE","WHILE condition: code :WEND");
+				commands.set("REPEAT","REPEAT: code :UNTIL condition");
+				commands.set("CONTINUE","CONTINUE");
+				commands.set("BREAK","BREAK");
+				commands.set("END","END");
+				commands.set("STOP","STOP");
+				commands.set("DEF","DEF function(): code : RETURN value :END\nDEF function(arg,...): code : RETURN value :END\nDEF function: code :END\nDEF function arg,...: code :END\nDEF function OUT variable,...: code : variable = value... :END\nDEF function arg,... OUT variable,...: code : variable = value... :END");
+				commands.set("COMMON","COMMON DEF function(): code : RETURN value :END\nCOMMON DEF function(arg,...): code : RETURN value :END\nCOMMON DEF function: code :END\nCOMMON DEF function arg,...: code :END\nCOMMON DEF function OUT variable,...: code : variable = value... :END\nCOMMON DEF function arg,... OUT variable,...: code : variable = value... :END");
+				commands.set("CALL","CALL function$\nCALL function$,arg,...\nCALL function$ OUT variable,...\nCALL function$,arg,... OUT variable,...\nvariable = CALL(function$)\nvariable = CALL(function$,arg,...)\nCALL SPRITE\nCALL BG");
+				commands.set("XON","XON MOTION\nXON EXPAD\nXON MIC");
+				commands.set("XOFF","XOFF MOTION\nXOFF EXPAD\nXOFF MIC");
+				commands.set("READ","READ variable,...");
+				commands.set("DATA","DATA value,...");
+				commands.set("RESTORE","RESTORE @label\nRESTORE label$");
+				commands.set("OPTION","OPTION STRICT\nOPTION DEFINT\nOPTION TOOL");
+				commands.set("WAIT","WAIT\nWAIT frames%");
+				commands.set("VSYNC","VSYNC\nVSYNC frame%");
+				commands.set("'","'comment");
+				commands.set("REM","REM comment");
+				commands.set("KEY","KEY number%,string$\nvariable$ = KEY(number%)\nKEY number% OUT var$");
+				commands.set("TMREAD","TMREAD timestring$ OUT hour%,minute%,second%\nTMREAD OUT hour%,minute%,second%");
+				commands.set("DTREAD","DTREAD timestring$ OUT year%,month%,day%\nDTREAD timestring$ OUT year%,month%,day%,weekday%\nDTREAD OUT year%,month%,day%\nDTREAD OUT year%,month%,day%,weekday%");
+				commands.set("CHKLABEL","variable% = CHKLABEL(labelname$)\nvariable% = CHKLABEL(labelname$,global%)");
+				commands.set("CHKCALL","variable% = CHKCALL(functionname$)");
+				commands.set("CHKVAR","variable% = CHKVAR(varname$)");
+				commands.set("DIALOG","DIALOG text$\nDIALOG text$,button%\nDIALOG text$,button%,caption$\nDIALOG text$,button%,caption$,timeout%\nvariable% = DIALOG(text$,button%)\nvariable% = DIALOG(text$,button%,caption$)\nvariable% = DIALOG(text$,button%,caption$,timeout%)\nstring$ = DIALOG(default$,caption$)\nstring$ = DIALOG(default$,caption$,maxlength%)");
+				commands.set("CLS","CLS");
+				commands.set("COLOR","COLOR text%\nCOLOR text%,background%");
+				commands.set("LOCATE","LOCATE x%,y%\nLOCATE x%,y%,z%");
+				commands.set("PRINT","PRINT expression,...\nPRINT expression;...");
+				commands.set("ATTR","ATTR orientation%");
+				commands.set("SCROLL","SCROLL x,y");
+				commands.set("CHKCHR","ascii%=CHKCHR(x%,y%)");
+				commands.set("INPUT","INPUT variable,...\nINPUT prompt$;variable,...");
+				commands.set("LINPUT","LINPUT variable$\nLINPUT prompt$;variable$");
+				commands.set("INKEY$","character$=INKEY$()");
+				commands.set("FONTDEF","FONTDEF\nFONTDEF ascii,definition$\nFONTDEF ascii,array%");
+				commands.set("WIDTH","WIDTH 8\nWIDTH 16\nvariable%=WIDTH()");
+				commands.set("BUTTON","variable%=BUTTON()\nvariable%=BUTTON(type%)\nvariable%=BUTTON(type%,system%)");
+				commands.set("BREPEAT","BREPEAT button%,start%,repeat%");
+				commands.set("STICK","STICK OUT x#,-y#\nSTICK system% OUT x#,-y#");
+				commands.set("STICKEX","STICKEX OUT x#,-y#\nSTICKEX system% OUT x#,-y#");
+				commands.set("ACCEL","ACCEL OUT x#,y#,z#");
+				commands.set("GYROV","GYROV OUT pitch#,roll#,yaw#");
+				commands.set("GYROA","GYROA OUT pitch#,roll#,yaw#");
+				commands.set("GYROSYNC","GYROSYNC");
+				commands.set("TOUCH","TOUCH OUT tchst%,tchx%,tchy%\nTOUCH system% OUT tchst%,tchx%,tchy%");
+				commands.set("MICSTART","MICSTART rate%,bits%,seconds%");
+				commands.set("MICSTOP","MICSTOP");
+				commands.set("MICDATA","variable%=MICDATA(position%)");
+				commands.set("MICSAVE","MICSAVE start%,number%,array%");
+				commands.set("FILES","FILES\nFILES type$\nFILES type$,array$");
+				commands.set("LOAD","LOAD prgfile$\nLOAD prgfile$,0\nLOAD textfile$ OUT text$\nLOAD textfile$,0 OUT text$\ntext$ = LOAD(textfile$)\ntext$ = LOAD(textfile$,0)\nLOAD grpfile$\nLOAD grpfile$,0\nLOAD datfile$,array\nLOAD datfile$,array,0");
+				commands.set("SAVE","SAVE prgfile$\nSAVE grpfile$\nSAVE textfile$,text$\nSAVE datfile$,array");
+				commands.set("RENAME","RENAME file$,name$");
+				commands.set("DELETE","DELETE file$");
+				commands.set("EXEC","EXEC file$\nEXEC slot%");
+				commands.set("USE","USE slot%");
+				commands.set("CHKFILE","CHKFILE file$");
+			}
+			window.onload = setUp;
+		</script>
+	</head>
+	<body>
+		<input type="text" id="input" value="" onkeyup="if (event.keyCode===13) document.getElementById('output').value = checkSB(document.getElementById('input').value);">
+		<br><textarea id="output" disabled rows="15" cols="100"></textarea>
+	</body>
+</html>
+
+				
