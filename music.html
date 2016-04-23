@@ -4,7 +4,7 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="./resources/musicicon.png">
 		<title>Music Player</title>
 		<script>
-			function readURL() {document.getElementById("audio").innerHTML="http://"+decodeURIComponent(window.location.hash.slice(1));}
+			function readURL() {document.getElementById("audio").src="http://"+decodeURIComponent(window.location.hash.slice(1));}
 			window.onload = readURL;
 		</script>
 	</head>
