@@ -39,7 +39,7 @@
 						music.src = "http://12Me21.github.io/resources/LOW60.WAV"; //low quality 60 sec.
 						music.play();
 					}
-					if (checkCommand(lastline,"BGMPLAY")) {
+					} else if (checkCommand(lastline,"BGMPLAY")) {
 						var command = parseInt(lastline.split(" ").slice(-1)[0]);
 						var songnum=" ";
 						if (command>=0 && command<=9) {
