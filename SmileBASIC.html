@@ -34,6 +34,11 @@
 				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2].trim().split("'")[0].split("REM")[0];
 				
 				if (lastline.length) {
+					if (checkCommand(lastline,'WAVBGM "RICKROLL.WAV"')) {
+						var music = document.getElementById("music");
+						music.src = "http://12Me21.github.io/resources/LOW60.WAV"; //low quality 60 sec.
+						music.play();
+					}
 					if (checkCommand(lastline,"BGMPLAY")) {
 						var command = parseInt(lastline.split(" ").slice(-1)[0]);
 						var songnum=" ";
