@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<audio autoplay loop><source src="http://lumage.smilebasicsource.com/special/waiting.mp3" type="audio/mpeg"></audio>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>pokemon-esque thing</title>
+		<script src="pkmnesque/socket.io/socket.io.js"></script>
+		<style>
+			body{
+				background-color:#080808;
+				color:#aaa;
+				font-family:sans-serif;
+			}
+			.hasmax{
+				width:100%;
+				max-width:700px;
+				display:block;
+				margin:auto;
+			}
+			.div{
+				padding:5px;
+				margin-bottom:5px;
+				background-color:#181818;
+			}
+			h2{
+				text-align:center;
+				margin:0px;
+			}
+			h3{
+				margin:0px;
+			}
+			h4{
+				text-align:center;
+				margin:0px;
+			}
+			ul{
+				list-style:none;
+				padding:0px;
+			}
+			li{
+				padding:5px;
+				background-color:#181818;
+			}
+			.leveltwo{
+				padding:5px;
+				margin-bottom:5px;
+				background-color:#222;
+			}
+			#headerdiv{
+				padding:5px;
+				background-color:#444;
+			}
+			#linkdiv{
+				text-align:center;
+			}
+			.button{
+				height:4em;
+				width:100%;
+				opacity:1;
+				transition:opacity 0.5s;
+			}
+			input[type=text]{
+				padding:5px;
+				box-sizing:border-box;
+				background-color:#282828;
+				color:#bbb;
+				border:none;
+			}
+			button,input[type=button]{
+				padding:5px;
+				box-sizing:border-box;
+				background-color:#282828;
+				color:#bbb;
+				border:none;
+			}
+			input[type=submit]{
+				padding:5px;
+				box-sizing:border-box;
+				background-color:#333;
+				color:#bbb;
+				border:none;
+			}
+			input[type=number]::-webkit-inner-spin-button,
+			input[type=number]::-webkit-outer-spin-button,
+			input[type=number]::inner-spin-button,
+			input[type=number]::outer-spin-button { 
+				-webkit-appearance: none; 
+				margin: 0; 
+			}
+			[id=otherturn]{
+				float:right;
+				width:0%;
+				opacity:0;
+				white-space:nowrap;
+				overflow:hidden;
+				transition:width 0.5s, opacity 0.5s;
+				-webkit-transition:width 0.5s, opacity 0.5s;
+			}
+			[id=yourturn]{
+				float:left;
+				width:0%;
+				opacity:0;
+				white-space:nowrap;
+				overflow:hidden;
+				transition:width 0.5s, opacity 0.5s;
+				-webkit-transition:width 0.5s, opacity 0.5s;
+			}
+			[id=p1bar],[id=p2bar]{
+				height:100%;
+				background-color:rgb(255,0,0);
+				box-sizing:border-box;
+				transition:width 0.5s, background-color 0.5s;
+				-webkit-transition:width 0.5s, background-color 0.5s;
+			}
+			#create,#wait,#otherturn,#yourturn{
+				text-align:center;
+			}
+			::-webkit-input-placeholder {
+				color:#666;
+			}
+			:-moz-placeholder { /* Firefox 18- */
+				color:#666;  
+			}
+			::-moz-placeholder {  /* Firefox 19+ */
+				color:#666;  
+			}
+			:-ms-input-placeholder {  
+				color:#666;  
+			}
+		</style>
+	</head>
+	<body>
+		<ul class="hasmax">
+			<li id="create" style="">
+					<input type="text" autocomplete="off" maxlength="64" placeholder="What's your name?" id="player1"><br><br>
+					<input type="button" value="Host" onclick="register('host');"><input type="button" value="Join" onclick="register('join');">
+				</form>
+			</li>
+			<li id="wait" style="display:none;">
+				
+			</li>
+			<li id="battle" style="display:none;">
+				<div style="width:-webkit-calc(50% - 2.5px);width:calc(50% - 2.5px);float:left;margin-bottom:5px;">
+					<div id="p1label" style="width:50%;float:left;text-align:left;">
+						
+					</div>
+					<div style="width:50%;float:right;text-align:right;">
+						<span id="p1currhp"></span>/<span id="p1totalhp"></span>
+					</div>
+					<div class="leveltwo" style="width:100%;height:1.5em;box-sizing:border-box;float:left;" align="right">
+						<div id="p1bar" style="width:0%;">
+							
+						</div>
+					</div>
+					<div style="width:100%;height:1.2em;float:left;" align="left">
+						<span id="par1" style="margin-right:5px;box-sizing:border-box;border-radius:2px;height:100%;background-color:#aa0;color:#222;"></span><span id="brn1" style="border-box;border-radius:2px;height:100%;background-color:#a00;"></span>
+					</div>
+				</div>
+				<div style="width:-webkit-calc(50% - 2.5px);width:calc(50% - 2.5px);float:right;margin-bottom:5px;">
+					<div style="width:50%;float:left;text-align:left;">
+						<span id="p2currhp"></span>/<span id="p2totalhp"></span>
+					</div>
+					<div id="p2label" style="width:50%;float:right;text-align:right;">
+						
+					</div>
+					<div class="leveltwo" style="width:100%;height:1.5em;box-sizing:border-box;float:right;" align="left">
+						<div id="p2bar" style="width:0%;">
+							
+						</div>
+					</div>
+					<div style="width:100%;height:1.2em;float:left;" align="right">
+						<span id="brn2" style="border-box;border-radius:2px;height:100%;background-color:#a00;"></span><span id="par2" style="margin-left:5px;border-box;border-radius:2px;height:100%;background-color:#aa0;color:#222;"></span>
+					</div>
+				</div>
+				<div id="logdiv" class="leveltwo" style="width:100%;box-sizing:border-box;height:10em;overflow:auto;">
+					<span id="logger"></span>
+					<b><div id="currlog"></div></b>
+				</div>
+				<div id="attacks" class="leveltwo" style="margin-bottom:0px;position:relative;">
+					<div id="otherturn" style="">Waiting for the other player...</div>
+					<div id="yourturn" style="">Your move</div>
+					<table width="100%">
+						<tr>
+							<td width="50%">
+								<input type="button" class="button" id="atk1" style="" onclick="" value="attack 1">
+							</td>
+							<td width="50%">
+								<input type="button" class="button" id="atk2" style="" onclick="" value="attack 2">
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<input type="button" class="button" id="atk3" style="" onclick="" value="attack 3">
+							</td>
+							<td width="50%">
+								<input type="button" class="button" id="atk4" style="" onclick="" value="attack 4">
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<input type="button" class="button" id="flail" style="" onclick="" value="flail">
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<form action="Javascript:chat();" autocomplete="off">
+									<input type="text" placeholder="Chat" id="chatbox" style="width:100%;margin-bottom:5px;background-color:#333;">
+									<input type="submit" style="width:100%;text-align:center;margin-bottom:5px;" value="Send">
+								</form>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</li>
+		</ul>
+		<style id="styler">
+			
+		</style>
+		<script>
+			//game vars
+			var p=[];//names
+			var currhp=[];//current health
+			var totalhp=[];//total health
+			var patks=[[],[]];//attacks
+			var atk=[];//attack stats
+			var hlg=[];//healing stats
+			var par=[];//paralysis counter
+			var brn=[];//burn counter
+			var turn=-1;//whose turn?
+			var atks=[//attack names
+				"attack",
+				"heal",
+				"max hp up heal",
+				"max hp down attack",
+				"paralyze",
+				"attack up attack",
+				"healing up heal",
+				"attack down attack",
+				"healing down",
+				"paralyzing attack",
+				"burn",
+				"burning attack",
+				"status heal",
+				"attack with recoil"];
+			var phys=[0,3,5,7,9,11,13];//which ones actually do damage
+			var win=1;
+			var numatks=0;
+			var interval;
+			var blur=0;
+			
+			//online vars
+			var socket=io.connect(":8089");
+			var room=-1;
+			var connected=0;
+			
+			socket.on("connected",function(data){
+				console.log("Connected to server");
+				connected=1;
+			});
+			
+			socket.on("disconnected",function(data){
+				console.log("Disconnected from server");
+				connected=0;
+			});
+			
+			socket.on("disconnect", function(){
+				alert("Lost connection to the server. Try refreshing?");
+			});
+			
+			socket.on("error", function(err){
+				if(!err instanceof Error){alert("Something bad happened, likely a desync. Please refresh.");return;}
+				alert("A fatal connection error has occurred.\n" + err.stack);
+			});
+			
+			socket.on("ping",function(data){
+				socket.emit("pingpong",{});
+			});
+			
+			socket.on("disc",function(data){
+				if(data["room"]==room && room!=-1){
+					log("A disconnect occurred.","#f44");
+					document.getElementById("create").setAttribute("style","");
+					document.getElementById("wait").setAttribute("style","display:none;");
+					document.getElementById("attacks").setAttribute("style","display:none;");
+					console.log("Either you or your partner disconnected. The room will be closed.");
+					room=-1;
+					numatks=0;
+				}
+			});
+			
+			window.addEventListener("blur",function(){blur=1;});
+			window.addEventListener("focus",function(){blur=0;document.title="pokemon-esque thing";});
+			
+			function rnd(num){return Math.floor(Math.random()*num*2+1)-num;}
+			
+			function log(str,col){
+				document.getElementById("logger").innerHTML+=document.getElementById("currlog").innerHTML;
+				if(document.getElementById("logger").innerHTML.length!=0){
+					document.getElementById("logger").innerHTML+="<br>";
+					document.getElementById("currlog").setAttribute("style","padding-top:5px;");
+				}else{
+					document.getElementById("currlog").setAttribute("style","");
+				}
+				document.getElementById("currlog").innerHTML="<span style='color:"+col+";'>"+str+"</span>";
+				document.getElementById("logdiv").scrollTop=document.getElementById("logdiv").scrollHeight;
+				if(blur==1){document.title=str;}
+			}
+			
+			function sublog(str){
+				document.getElementById("currlog").innerHTML=document.getElementById("currlog").innerHTML.replace("</span>","<br>")+str+"</span>";
+				document.getElementById("logdiv").scrollTop=document.getElementById("logdiv").scrollHeight;
+			}
+			
+			function clearlog(){document.getElementById("logger").innerHTML="";document.getElementById("currlog").innerHTML="";}
+			
+			function randomizeatks(){
+				for(j=0;j<2;j++){
+					physatks=Math.floor(Math.random()*3)+1;
+					physindx=Math.floor(Math.random()*(4-physatks));
+					for(i=0;i<4;i++){
+						do{
+							if(i>=physindx && i<physindx+physatks){
+								patks[j][i]=phys[Math.floor(Math.random()*phys.length)];
+							}else{
+								do{
+									patks[j][i]=Math.floor(Math.random()*atks.length);
+								}while(phys.indexOf(patks[j][i])>=0);
+							}
+							flag=0;
+							for(var l=0;l<i;l++){
+								if(patks[j][i]==patks[j][l]){flag=1;}
+							}
+						}while(flag==1);
+					}
+				}
+			}
+			
+			function setatks(){
+				for(var i=0;i<4;i++){
+					document.getElementById("atk"+(i+1)).value=atks[patks[0][i]];
+					document.getElementById("atk"+(i+1)).setAttribute("onclick",(player==turn?"sendatk("+patks[0][i]+");":""));
+					document.getElementById("atk"+(i+1)).setAttribute("style","background-color:"+(phys.indexOf(patks[0][i])>=0?"#482828":"#282838")+";opacity:"+(player==turn?1:0.5)+";");
+				}
+				document.getElementById("flail").setAttribute("onclick",(player==turn?"sendatk(-1);":""));
+				document.getElementById("flail").setAttribute("style","background-color:#482828;opacity:"+(player==turn?1:0.5)+";");
+				
+				pl=(player==turn?1:2);
+				document.getElementById("par"+pl).innerHTML=(par[pl-1]>1?"par":"");
+				document.getElementById("brn"+pl).innerHTML=(brn[pl-1]>0?"brn":"");
+				
+				document.getElementById("otherturn").setAttribute("style","width:"+(player==turn?"0%":"100%")+";opacity:"+(player==turn?0:1)+";");
+				document.getElementById("yourturn").setAttribute("style","width:"+(player==turn?"100%":"0%")+";opacity:"+(player==turn?1:0)+";");
+			}
+			
+			function refresh(){
+				for(var i=0;i<2;i++){
+					document.getElementById("p"+(i+1)+"currhp").innerHTML=currhp[i];
+					document.getElementById("p"+(i+1)+"totalhp").innerHTML=totalhp[i];
+					document.getElementById("p"+(i+1)+"bar").setAttribute("style","width:"+Math.floor(currhp[i]/totalhp[i]*100)+"%;background-color:hsl("+(Math.floor(120*currhp[i]/totalhp[i]))+",100%,25%);");
+				}
+			}
+			
+			function register(type){
+				if(connected==1){
+					p[0]=document.getElementById("player1").value;
+					if(p[0].replace(/ /g,"")==""){return;}
+					totalhp[0]=256+rnd(32);
+					currhp[0]=totalhp[0];
+					randomizeatks();
+					atk[0]=35+rnd(5);
+					hlg[0]=25+rnd(5);
+					par=[0,0];
+					brn=[0,0];
+					numatks=0;
+					socket.emit(type,type=="host"?{p:p[0],atk:atk[0],hlg:hlg[0],hp:totalhp[0]}:{});
+				}
+			}
+			
+			socket.on("joined",function(data){
+				if(data["hosting"]==true){
+					player=1;
+					room=data["room"];
+				}else{
+					player=2;
+				}
+				console.log("You will be player "+player);
+				document.getElementById("create").setAttribute("style","display:none;");
+				document.getElementById("wait").setAttribute("style","");
+				document.getElementById("battle").setAttribute("style","display:none;");
+				if(player==1){
+					document.getElementById("wait").innerHTML="<input type=\"button\" onclick=\"back();\" value=\"Back\" style=\"margin-right:10px;\">Waiting for opponent to connect...";
+				}else{
+					socket.emit("requestrooms",{});
+					interval=window.setInterval(function(){socket.emit("requestrooms",{});},1000);
+				}
+			});
+			
+			socket.on("roomlist",function(data){
+				wait=document.getElementById("wait");
+				wait.innerHTML="<input type=\"button\" onclick=\"back();\" value=\"Back\" style=\"margin-right:10px;\">Open rooms:<br>";
+				for(var i=0;i<data["listlength"];i++){
+					wait.innerHTML+="<button style='display:block;width:100%;margin-bottom:5px;' onclick='joinroom("+data["id"+i]+")'>"+data["name"+i]+"</button>";
+				}
+			});
+			
+			function back(){
+				if(player==1){socket.emit("close",{room:room});room=-1;}
+				document.getElementById("create").setAttribute("style","");
+				document.getElementById("wait").setAttribute("style","display:none;");
+				document.getElementById("battle").setAttribute("style","display:none;");
+				clearInterval(interval);
+			}
+			
+			function joinroom(id){
+				room=id;
+				socket.emit("joinroom",{room:room,p:p[0],atk:atk[0],hlg:hlg[0],hp:totalhp[0]});
+			}
+			
+			socket.on("information",function(data){
+				if(data["room"]==room && room!=-1){
+					clearInterval(interval);
+					win=0;
+					turn=data["turn"];
+					otherplayer=(-(player-3));
+					p[1]=data["p"+otherplayer];
+					atk[1]=data["atk"+otherplayer];
+					hlg[1]=data["hlg"+otherplayer];
+					totalhp[1]=data["hp"+otherplayer];
+					currhp[1]=totalhp[1];
+					
+					document.getElementById("wait").setAttribute("style","display:none;");
+					document.getElementById("battle").setAttribute("style","");
+					document.getElementById("p1label").innerHTML=p[0];
+					document.getElementById("p2label").innerHTML=p[1];
+					document.getElementById("par1").innerHTML="";
+					document.getElementById("brn1").innerHTML="";
+					document.getElementById("par2").innerHTML="";
+					document.getElementById("brn2").innerHTML="";
+					document.getElementById("attacks").setAttribute("style","margin-bottom:0px;");
+					refresh();
+					setatks();
+					clearlog();
+					log("The battle between "+p[0]+" and "+p[1]+" has started!","#aaa");
+					console.log("The battle in room "+room+" started.");
+					console.log("Player "+turn+" will go first.");
+				}
+			});
+			
+			function chat(){
+				if(document.getElementById("chatbox").value.replace(/ /g,"")!=""){
+					socket.emit("chatsend",{room:room,msg:p[0]+": "+document.getElementById("chatbox").value});
+					document.getElementById("chatbox").value="";
+				}
+			}
+			
+			socket.on("chat",function(data){
+				if(data["room"]==room && room!=-1){
+					log(data["msg"],"#484");
+				}
+			});
+			
+			function sendatk(atkId){
+				socket.emit("atk",{atkId:atkId,room:room,numatks:numatks});
+			}
+			
+			socket.on("attack",function(data){
+				if(data["room"]==room && room!=-1 && data["numatks"]==numatks){
+					attack(data["atkId"],data["randomness"]);
+				}
+			});
+			
+			function attack(atkId,randomness){
+				if(win==1){
+					console.log(win);
+					socket.emit("errored",{});
+					document.getElementById("attacks").setAttribute("style","display:none;");
+				}else{
+					numatks++;
+					atker=turn-1;
+					dfner=-(turn-2);
+					color="#aaa";
+					if(player==2){stor=atker;atker=dfner;dfner=stor;}
+					if(atker==0){color="#bbb";}
+					if(par[atker]>1 && (phys.indexOf(atkId)>=0 || atkId==-1)){
+						log(p[atker]+" is paralyzed!",color);
+						sublog("It can't use physical attacks!");
+					}else{
+						if(atkId!=-1){log(p[atker]+" used "+atks[atkId]+"!",color);}
+						switch(atkId){
+							case -1:
+								log(p[atker]+" flailed around wildly!",color);
+								prev=currhp[dfner];
+								currhp[dfner]-=atk[atker]+randomness+10;
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								prev=currhp[atker];
+								currhp[atker]-=atk[atker]-randomness;
+								sublog(p[atker]+" received "+(prev-currhp[atker])+" damage in recoil!");
+								break;
+							case 0:
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)*1);
+								if(currhp[dfner]<0){currhp[dfner]=0;}
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								break;
+							case 1:
+								prev=currhp[atker];
+								currhp[atker]+=Math.floor((hlg[atker]+randomness)*1);
+								if(currhp[atker]>totalhp[atker]){
+									currhp[atker]=totalhp[atker];
+								}
+								sublog(p[atker]+" gained "+(currhp[atker]-prev)+" hp!");
+								break;
+							case 2:
+								prev=totalhp[atker];
+								totalhp[atker]+=hlg[atker]+randomness;
+								sublog(p[atker]+"'s max hp increased by "+(totalhp[atker]-prev)+"!");
+								prev=currhp[atker];
+								currhp[atker]+=hlg[atker]+randomness;
+								if(currhp[atker]>totalhp[atker]){
+									currhp[atker]=totalhp[atker];
+								}
+								sublog(p[atker]+" gained "+(currhp[atker]-prev)+" hp!");
+								break;
+							case 3:
+								prev=totalhp[dfner];
+								totalhp[dfner]-=atk[atker]-10+randomness;
+								if(totalhp[dfner]<1){totalhp[dfner]=1;}
+								if(currhp[dfner]>totalhp[dfner]){currhp[dfner]=totalhp[dfner];}
+								sublog(p[dfner]+"'s max hp decreased by "+(prev-totalhp[dfner])+"!");
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)/2);
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								break;
+							case 4:
+								if(par[dfner]==0){
+									par[dfner]=3+Math.floor(randomness/4);
+									sublog(p[dfner]+" was paralyzed!");
+									sublog(p[dfner]+" won't be able to use physical attacks while it's paralyzed!");
+								}else{
+									sublog(p[dfner]+" is already paralyzed!");
+									sublog("It had no effect!");
+								}
+								break;
+							case 5:
+								prev=atk[atker];
+								atk[atker]+=Math.floor((70+randomness-atk[atker])/5);
+								if(atk[atker]<prev){atk[atker]=prev;}
+								sublog(p[atker]+"'s attack stat went up by "+(atk[atker]-prev)+"!");
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)/2);
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								break;
+							case 6:
+								prev=hlg[atker];
+								hlg[atker]+=Math.floor((60+randomness-hlg[atker])/4);
+								if(hlg[atker]<prev){hlg[atker]=prev;}
+								sublog(p[atker]+"'s healing stat went up by "+(hlg[atker]-prev)+"!");
+								prev=currhp[atker];
+								currhp[atker]+=Math.floor((hlg[atker]+randomness)/2);
+								if(currhp[atker]>totalhp[atker]){
+									currhp[atker]=totalhp[atker];
+								}
+								sublog(p[atker]+" gained "+(currhp[atker]-prev)+" hp!");
+								break;
+							case 7:
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)/2);
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								prev=atk[dfner];
+								atk[dfner]-=Math.floor((randomness+atk[dfner]-20)/4);
+								if(atk[dfner]>prev){atk[dfner]=prev;}
+								sublog(p[dfner]+"'s attack stat was reduced by "+(prev-atk[dfner])+"!");
+								break;
+							case 8:
+								prev=hlg[dfner];
+								hlg[dfner]-=Math.floor((randomness+hlg[dfner]-10)/3);
+								if(hlg[dfner]>prev){hlg[dfner]=prev;}
+								sublog(p[dfner]+"'s healing stat was reduced by "+(prev-hlg[dfner])+"!");
+								break;
+							case 9:
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)/3);
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								if(par[dfner]==0){
+									par[dfner]=2;
+									sublog(p[dfner]+" was paralyzed for 1 turn!");
+									sublog(p[dfner]+" won't be able to use physical attacks while it's paralyzed!");
+								}else{
+									sublog(p[dfner]+" is already paralyzed!");
+									sublog("It had no effect!");
+								}
+								break;
+							case 10:
+								if(brn[dfner]==0){
+									brn[dfner]=6+Math.floor(randomness/2);
+									sublog(p[dfner]+" was burned!");
+								}else{
+									sublog(p[dfner]+" is already burned!");
+									sublog("It had no effect!");
+								}
+								break;
+							case 11:
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)/2);
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								if(brn[dfner]==0){
+									brn[dfner]=2;
+									sublog(p[dfner]+" was burned for 2 turns!");
+								}else{
+									sublog(p[dfner]+" is already burned!");
+									sublog("It had no effect!");
+								}
+								break;
+							case 12:
+								par[atker]=0;
+								brn[atker]=0;
+								document.getElementById("par"+(atker+1)).innerHTML="";
+								document.getElementById("brn"+(atker+1)).innerHTML="";
+								sublog(p[atker]+" was healed of all status conditions!");
+								break;
+							case 13:
+								prev=currhp[dfner];
+								currhp[dfner]-=Math.floor((atk[atker]+randomness)*1.5);
+								if(currhp[dfner]<0){currhp[dfner]=0;}
+								sublog(p[dfner]+" received "+(prev-currhp[dfner])+" damage!");
+								prev=currhp[atker];
+								currhp[atker]-=Math.floor((atk[atker]+randomness)/1.5);
+								if(currhp[atker]<0){currhp[atker]=0;}
+								sublog(p[atker]+" received "+(prev-currhp[atker])+" damage in recoil!");
+								break;
+							
+							default:
+								sublog("Unrecognized attack, something bad happened");
+						}
+					}
+					if(par[atker]>0){par[atker]-=1;}
+					if(brn[atker]>0){
+						prev=currhp[atker];
+						currhp[atker]-=Math.floor((atk[dfner]+randomness)/4);
+						sublog(p[atker]+" received "+(prev-currhp[atker])+" damage from its burn!");
+						brn[atker]-=1;
+					}
+					var i=-1;
+					if(currhp[0]<=0){i=0;}else if(currhp[1]<=0){i=1;}
+					if(currhp[0]<=0 && currhp[1]<=0){i=2;}
+					if(i==-1){
+						refresh();
+						turn=-(turn-3);
+						setatks();
+					}else if(i==2){
+						currhp[0]=0;
+						currhp[1]=0;
+						sublog("It's a draw!");
+						document.getElementById("create").setAttribute("style","");
+						document.getElementById("attacks").setAttribute("style","display:none;");
+						turn=0;
+						refresh();
+						win=1;
+						socket.emit("won",{room:room});
+						room=-1;
+					}else{
+						currhp[i]=0;
+						sublog(p[i]+" has lost!");
+						document.getElementById("create").setAttribute("style","");
+						document.getElementById("attacks").setAttribute("style","display:none;");
+						turn=0;
+						refresh();
+						win=1;
+						socket.emit("won",{room:room});
+						room=-1;
+					}
+				}
+			}
+		</script>
+	</body>
+</html>
