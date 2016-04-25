@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			img {margin:0;}
+			@font-face {
+				font-family: "Roboto Condensed";
+				src: url(http://fonts.gstatic.com/s/robotocondensed/v13/b9QBgL0iMZfDSpmcXcE8nHm2hrkyco9jQ3NKMXpgOBg.woff2);
+			}
+			.row {
+				/*width: 150%;*/
+				display: flex;
+				align-items:center;
+				justify-content:center;
+				margin-bottom: -2px;
+				/*margin-left:-25%;*/
+			}
+			.line {
+				flex-grow: 1;
+				border-bottom: 2px solid black;
+			}
+			[class*="text"] {
+				border-top: 2px solid black;
+				border-bottom: 2px solid black;
+				padding: 0 .5ch;
+				font-family: "Roboto Condensed";
+			}
+			.text1 {font-size: 64px;}
+			.text2 {font-size: 32px;}
+			.text3 {font-size: 24px;color:#333;}
+			table,td,th {
+				margin: .5ch 0;
+				border: 2px solid gray;
+				border-collapse:collapse;
+			}
+			td {padding: 0 .5ch;}
+		</style>
+	</head>
+	<body>
+
+		<div class="row">
+			<span class="line"></span><span class="text1">WAV Player</span>
+			<span class="line"></span><span class="text2">JKNXD3QV</span>
+			<span class="line"></span>
+		</div><br>
+		
+		<div class="row">
+			<span class="line"></span><span class="text3">LOAD "PRG1:WAVBGM.LIB",0:USE 1</span>
+			<span class="line"></span>
+		</div>
+		<div class="row">
+			<span class="line"></span><span class="text3">WAVBGM file$,rate,loop,autoplay</span>
+			<span class="line"></span>
+		</div><br>
+		
+		<div class="row">
+			<span class="line"></span><span class="text3"><table>
+				<tr><th>RATE</th><th>MIC equiv.</th><th>Hz</th><th>Max. Len.</th><th>Quality</th></tr>
+				<tr><td>3</td><td>0</td><td>8180</td><td>64 sec.</td><td>Low</td></tr>
+				<tr><td>4</td><td>2</td><td>16360</td><td>32 sec.</td><td>Medium</td></tr>
+				<tr><td>5</td><td>3</td><td>32720</td><td>16 sec.</td><td>High</td></tr>
+			</table></span>
+			<span class="line"></span>
+				<span class="text3" style="color:#422;">Sample of lowest quality level:<br><audio controls src="LOW60.WAV"></audio><br>
+				<span style="color:#232;">Sample of highest quality level:</span><br><audio controls src="HIGH15.WAV"></audio><br></span>
+			<span class="line"></span>
+		</div>
+
+		<br><br> <!--==DHLPTX==-->
+
+		<div class="row">
+			<span class="line"></span><span class="text1">Memory Editor</span>
+			<span class="line"></span><span class="text2">DHLPTX</span>
+			<span class="line"></span>
+		</div><br>
+		
+		<div class="row">
+			<span class="line"></span><span class="text3">Secret Project</span>
+			<span class="line"></span>
+		</div>
+		<div class="row">
+			<span class="line"></span><span class="text3">Shhhhhhhhh</span>
+			<span class="line"></span>
+		</div><br>
+		
+		<div class="row">
+			<span class="line"></span><span class="text3">Hex viewer:<br><img src="resources/DHLPTXpic.png"></span>
+			<span class="line"></span><span class="text3">Tile Editor:<br><img src="resources/DHLPTXpic2.png"></span>
+			<span class="line"></span>
+		</div>
+		
+	</body>
+</html>
