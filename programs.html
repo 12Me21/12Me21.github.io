@@ -17,7 +17,7 @@
 			}
 			.line {
 				flex-grow: 1;
-				border-bottom: 2px solid black;
+				border-bottom: 2px solid gray;
 			}
 			[class*="text"] {
 				border-top: 2px solid black;
@@ -49,24 +49,25 @@
 			<span class="line"></span>
 		</div>
 		<div class="row">
-			<span class="line"></span><span class="text3">WAVBGM file$,rate,loop,autoplay</span>
+			<span class="line"></span><span class="text3">WAVBGM file$,samplerate,loop,autoplay</span>
 			<span class="line"></span>
 		</div><br>
 		
 		<div class="row">
 			<span class="line"></span><span class="text3"><table>
-				<tr><th>RATE</th><th>MIC equiv.</th><th>Hz</th><th>Max. Len.</th><th>Quality</th></tr>
-				<tr><td>3</td><td>0</td><td>8180</td><td>64 sec.</td><td>Low</td></tr>
-				<tr><td>4</td><td>2</td><td>16360</td><td>32 sec.</td><td>Medium</td></tr>
-				<tr><td>5</td><td>3</td><td>32720</td><td>16 sec.</td><td>High</td></tr>
+				<tr><th>Sample<br>Rate (Hz)</th><th>MIC<br>equiv.</th><th>Max.<br>Length</th><th>Quality</th></tr>
+				<tr><td>8180</td><td>0</td><td>64 sec.</td><td>Low</td></tr>
+				<tr><td>16360</td><td>2</td><td>32 sec.</td><td>Medium</td></tr>
+				<tr><td>32720</td><td>3</td><td>16 sec.</td><td>High</td></tr>
+				<tr><td>n</td><td>-</td><td>524288/n</td><td>-</td></tr>
 			</table></span>
 			<span class="line"></span>
-				<span class="text3" style="color:#422;">Sample of lowest quality level:<br><audio controls src="LOW60.WAV"></audio><br>
-				<span style="color:#232;">Sample of highest quality level:</span><br><audio controls src="HIGH15.WAV"></audio><br></span>
+				<span class="text3"><span style="color:#422;">Low quality sample: (8180 Hz)</span><br><audio controls src="LOW60.WAV"></audio><br>
+				<span style="color:#232;">High quality sample: (32720)</span><br><audio controls src="HIGH15.WAV"></audio><br>(Actual samples used in SB!)</span>
 			<span class="line"></span>
 		</div>
 
-		<br><br> <!--==DHLPTX==-->
+		<br><br><br><br><br><br> <!--==DHLPTX==-->
 
 		<div class="row">
 			<span class="line"></span><span class="text1">Memory Editor</span>
