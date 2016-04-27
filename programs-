@@ -27,7 +27,7 @@
 			}
 			.text1 {font-size: 64px;}
 			.text2 {font-size: 32px;}
-			.text3 {font-size: 24px;color:#333;}
+			.text3 {font-size: 24px;color:#333;} 
 			table,td,th {
 				margin: .5ch 0;
 				border: 2px solid gray;
