@@ -1,26 +1,109 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Rock Paper Scissors</title>
-  <script>
-    var items=["Rock","Paper","Scissors"];
-    function pick(item) {
-      var enemy=Math.floor(Math.random()*3);
-      if (enemy==(item+1)%3) {
-        var res = "lose";
-      } else if (item==(enemy+1)%3) {
-        var res = "win";
-      } else {
-        var res = "draw";
-      }
-      document.getElementById("output").innerHTML = "You: "+items[item]+"<br>Enemy: "+items[enemy]+"<br>"+res;
-    }
-  </script>
+	<link rel="icon" sizes="16x16" href="./resources/rock.jpg">
+	<title>Rock Whatever F...</title>
+	<link rel="stylesheet" href="./main.css">
+	<style>
+		* {
+			font-family:monospace;
+			font-size:32px;
+			border-collapse:collapse;
+		}
+		button {
+			width:5em;
+			border:0;
+			margin:0px;
+			outline:none;
+			padding:.6em 0;
+		}
+		button:hover {background-color:darkgray;padding:.5em 0;margin:.1em 0;}
+		button:active {background-color:gray;padding:.3em 0;margin:.3em 0;}
+		.centered {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
+	<script>
+		var items=["Rock","Paper","Scissors"];
+		var colors=["#F99","#99F","#9F9"];
+		var colorss=["#900","#009","#090"];
+		var wins=["Lose","Draw","Win"];
+		var points=0;
+		var winner=0;
+		var enemy=0;
+		
+		function pick(item) {
+			enemy-=(winner>=0||Math.random()>.7);
+			if (enemy==-1) {enemy=2;}
+			winner=0;
+			if (enemy==(item+1)%3) {winner=-1;}
+				else if (item==(enemy+1)%3) {winner=1;}
+			if (Math.random()>0.99) {winner=-winner;}
+			
+			points+=winner;
+			document.getElementById("you"  ).innerHTML=items[item];
+			document.getElementById("you"  ).style.backgroundColor=colors[winner+1];
+			document.getElementById("enemy").innerHTML=items[enemy];
+			document.getElementById("enemy").style.backgroundColor=colors[-winner+1];
+			document.getElementById("win").innerHTML = wins[winner+1];
+			document.getElementById("win").style.color=colorss[winner+1];
+			updateScore();
+			document.cookie = "points=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+			document.cookie = "points="+points;
+		}
+		
+		function getCookie(name) {
+			for (var i = 0; pair = document.cookie.split("; ")[i].split("="); i++) {
+				if (pair[0] == name) {return unescape(pair[1]);}
+			}
+			return 0;
+		}
+		function load() {
+			points = parseInt(getCookie("points"));
+			updateScore();
+		}
+		function eat() {
+			document.cookie = "points=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+			points=0;
+			updateScore();
+			document.getElementById("win").innerHTML = wins[winner+1];
+			document.getElementById("win").style.color=colorss[winner+1];
+		}
+		function updateScore() {
+			var space=" ";
+			if (points<0) {space="";}
+			var enemyspace=" ";
+			if (points>0) {enemyspace="";}
+			document.getElementById("points").innerHTML = "Score:"+space+points;
+			document.getElementById("points").style.color = colorss[Math.sign(points)+1];
+			document.getElementById("enemypoints").innerHTML = "Enemy:"+enemyspace+-points;
+			document.getElementById("enemypoints").style.color = colorss[Math.sign(-points)+1];
+		}
+	</script>
 </head>
-<body>
-  <input type="button" value="Rock" onclick="pick(0)">
-  <input type="button" value="Paper" onclick="pick(1)">
-  <input type="button" value="Scissors" onclick="pick(2)">
-  <p id="output"></p>
+
+<body onload="load()" style="font-family: 'Noto Sans';" background="resources/a1.gif">
+	<audio autoplay loop><source src="resources/waiting2.ogg" type="audio/mpeg"></audio>
+	<table border="1" class="centered">
+		<tr>
+			<th colspan="4"><button onclick="pick(0)">    Rock</button></th>
+			<th colspan="4"><button onclick="pick(1)">   Paper</button></th>
+			<th colspan="4"><button onclick="pick(2)">Scissors</button></th>
+		</tr>
+		<tr>
+			<td colspan="6" align="center" id="youCell"  ><b>You:  </b><div id="you"  >-</div></td>
+			<td colspan="6" align="center" id="enemyCell"><b>Enemy:</b><div id="enemy">-</div></td>
+		</tr>
+		<tr>
+			<td colspan="5" id="points">Score: </td>			
+			<td colspan="2" align="center" id="win">-</td>
+			<td colspan="5" id="enemypoints">Enemy: </td>
+		</tr>
+	</table>
+	<input type="button" value="Reset" onclick="eat()">
 </body>
-</html> 
+</html>
