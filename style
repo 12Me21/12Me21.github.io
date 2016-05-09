@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" type="image/png" sizes="16x16" href="./resources/CONVicon.png">
+	<title>Text 𝘊𝘰𝘯𝘃𝗲𝗿𝕥𝕖𝕣</title>
+	<style>
+		* {margin:0;border:0;padding:0;font-family:Roboto,sans-serif;}
+		body {overflow:hidden;}
+		textarea {resize:none;width:calc(100% - 2px - 2ch);height:calc(100% - 2ch);border:1px solid black;padding:1ch;}
+		div {width:calc(100%);height:calc(100vh/3);
+	</style>
+	<script>
+		function goConvert() {
+			document.getElementById("italic").value=(convert(document.getElementById("input").value,"𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻"));
+			document.getElementById("bolded").value=(convert(document.getElementById("input").value,"𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇"));
+		}
+		
+		function convert(input,outText) {
+			var output='';
+			for (var i=0;i<input.length;i++) {
+				var no = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(input.charAt(i));
+				if (no!=-1) {output += outText.substr(no*2,2);} else {output += input.charAt(i);}
+			}
+			return output;
+		}
+
+	</script>
+</head>
+<body>
+	<div><textarea id="input" onkeyup="goConvert()"></textarea></div>
+	<div><textarea readonly id="italic">𝘪𝘵𝘢𝘭𝘪𝘤</textarea></div>
+	<div><textarea readonly id="bolded">𝗯𝗼𝗹𝗱</textarea></div></body>
+</html>
