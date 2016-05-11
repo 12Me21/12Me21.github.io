@@ -1,0 +1,11 @@
+<script>
+	function redirect() {
+		var choices = ["https://www.youtube.com/watch?v=iIRo5iUArXQ","http://seeburg1000.com/player/"];
+		window.location.replace(choices[Math.floor(Math.random()*2)]);
+	}
+	window.onload = redirect;
+</script>
+<body>
+	<img src="http://smilebasicsource.com/static_images/emotes/dizzy.gif" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);" alt="loading...">
+	<p style="position:fixed;top:50%;left:50%;transform:translate(-50%,calc(-50% + 16px));">Loading...</p>
+</body>
