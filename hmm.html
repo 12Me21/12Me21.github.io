@@ -8,11 +8,13 @@
 		var hmmm=["4e","5d","9a","9b","25","32","57","89","a7","be","d1","f2"];
 		function hmm(){
 			var hm=Math.random()*hmmm.length|0;
-			document.getElementById("hmm").src=".resources/"+hmmm[hm]+".ogg";
+			Hmm=document.getElementById("hmm");
+			Hmm.src=".resources/"+hmmm[hm]+".ogg";
+			Hmm.play();
 		}
 	</script>
 </head>
 <body onload="hmm();">
-	<audio type="audio/mpeg" id="hmm"></audio>
+	<audio id="hmm"></audio>
 </body>
 </html>
