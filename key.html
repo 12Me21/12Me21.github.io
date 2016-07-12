@@ -17,10 +17,10 @@
 	<script>
 		function generateKey() {
 			var key='';
-			//for (var i=0;i<8;i++){
-			//	key+="0123456789ABCDEFHJIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*36)];
-			//}
-			document.getElementById("key").innerHTML="D3AKQ54F";
+			for (var i=0;i<8;i++){
+				key+="0123456789ABCDEFHJIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*36)];
+			}
+			document.getElementById("key").innerHTML=key;
 		}
 		
 
