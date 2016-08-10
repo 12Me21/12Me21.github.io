@@ -1,4 +1,15 @@
-<style>@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }</style>
+<style>
+	@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }
+	#screen {
+		width: 800px;
+		image-rendering: optimizeSpeed;             /* Older versions of FF          */
+		image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+		image-rendering: -webkit-optimize-contrast; /* Safari                        */
+		image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+		image-rendering: pixelated;                 /* Awesome future-browsers       */
+		-ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+	}
+</style>
 <canvas width="400" height="240" id="screen" style="background-color:rgb(0,0,0);"></canvas>
 <hr>
 <input id="eval">
