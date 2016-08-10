@@ -22,6 +22,10 @@
 	var CSRX=0,CSRY=0,CSRC=15;
 	var input="";
 	c2d.font="8px SmileBASIC";
+	PRINT("SMILEBASIC for Nintendo 3DS ver 3.3.1\n");
+	PRINT("(C)2011-2016 SmileBoom Co.Ltd.\n");
+	PRINT("8314880 bytes free\n");
+	PRINT("\nOK\n");
 	function updateText(){
 		c2d.clearRect(0,0,canvas.width,canvas.height);
 		for (var i=0;i<30;i++) 
@@ -66,6 +70,7 @@
 	function rgbi2rgb(rgbi){return[0,0,0].map((_,s)=>(rgbi>>s+1&1)*(((rgbi&1)+1)*127.5|0))}
 	function rgbToHex(channels){return"#"+((1<<24)+(channels[0]<<16)+(channels[1]<<8)+channels[2]).toString(16).slice(1);}
 	function key(event){
+		event.preventDefault();
 		var which=event.which;
 		if (which==13) {
 			PRINT("\n");
