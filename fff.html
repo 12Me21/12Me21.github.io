@@ -12,8 +12,10 @@
 </style>
 <canvas width="400" height="240" id="screen" style="background-color:rgb(0,0,0);"></canvas>
 <hr>
-<input id="eval">
-<input onclick="eval(document.getElementById('eval').value)" value="runjs" type="button">
+<form onsubmit="eval(document.getElementById('eval').value)">
+	<input id="eval">
+	<input value="runjs" type="submit">
+</form>
 <script>
 	var canvas = document.getElementById("screen");
 	var c2d = canvas.getContext("2d");
