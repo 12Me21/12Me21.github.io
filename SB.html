@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<style>
+			@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }
+			#screen {
+				width: 800px;
+				image-rendering: optimizeSpeed;             /* Older versions of FF          */
+				image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+				image-rendering: -webkit-optimize-contrast; /* Safari                        */
+				image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+				image-rendering: pixelated;                 /* Awesome future-browsers       */
+				ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+			}
+		</style>
+		<script>
+			var canvas = document.getElementById("screen");
+			var c2d = canvas.getContext("2d");
+			var text=new Array(30).fill().map(()=>new Array(50).fill(" "));
+			var color=new Array(30).fill().map(()=>new Array(50).fill(-1));
+			var CSRX=0,CSRY=0,CSRC=15;
+			var input="";
+			c2d.font="8px SmileBASIC";
+			function updateText(){
+				c2d.clearRect(0,0,canvas.width,canvas.height);
+				for (var i=0;i<30;i++) 
+				for (var j=0;j<50;j++){
+					c2d.fillStyle=rgbToHex(rgbi2rgb(color[i][j]));
+					c2d.fillText(text[i][j],j*8,i*8+7);
+				}
+			}
+			function PRINT(string){
+				for (var i=0;i<string.length;i++){
+					if (string[i]=="\n")
+						newLine();
+					else {
+						text[CSRY][CSRX]=string[i];
+						color[CSRY][CSRX]=CSRC;
+						CSRX++;
+						if (CSRX>=50) newLine();
+					}
+				}
+				updateText();
+				function newLine(){
+					CSRX=0;
+					CSRY++;
+					if (CSRY>=30){
+						CSRY--;
+						text.shift();
+						text.push(new Array(50).fill(" "));
+						color.shift();
+						color.push(new Array(50).fill(-1));
+					}
+				}
+			}
+			function CLS() {
+				c2d.clearRect(0,0,canvas.width,canvas.height);
+				CSRX=CSRY=0;
+				COLOR(15);
+				text=new Array(30).fill().map(()=>new Array(50).fill(" "));
+				color=new Array(30).fill().map(()=>new Array(50).fill(-1));
+			}
+			function LOCATE(x,y){CSRX=x;CSRY=y;}
+			function COLOR(col){CSRC=col;}
+			function rgbi2rgb(rgbi){return[0,0,0].map((_,s)=>(rgbi>>s+1&1)*(((rgbi&1)+1)*127.5|0))}
+			function rgbToHex(channels){return"#"+((1<<24)+(channels[0]<<16)+(channels[1]<<8)+channels[2]).toString(16).slice(1);}
+			function key(event){
+				var which=event.which;
+				if (which==13) {
+					runCommand(input);
+					input="";
+				} else if (which==8) {
+					if (input.length) {
+						input=input.slice(0,-1);
+						CSRX--;
+						if (CSRX<0){
+							CSRX=49;
+							CSRY--;
+						}
+						PRINT(" ");
+						CSRX--;
+						if (CSRX<0){
+							CSRX=49;
+							CSRY--;
+						}
+					}
+				} else {
+					input+=String.fromCharCode(which)
+					PRINT(String.fromCharCode(which));
+				}
+			}
+			function runCommand(input){
+				PRINT("\n");
+				PRINT("Syntax error\n");
+				PRINT("OK\n");
+			}
+		</script>
+	</head>
+	<body onkeypress="key(event);">
+		<canvas width="400" height="240" id="screen" style="background-color:rgb(0,0,0);"></canvas>
+	</body>
+</html>
