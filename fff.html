@@ -1,19 +1,26 @@
 <style>@font-face { font-family: SmileBASIC; src: url('./resources/SMILEBASIC.ttf'); }</style>
 <canvas width="400" height="240" id="screen" style="background-color:rgb(0,0,0);"></canvas>
+<input id="eval">
+<input onclick="eval(document.getElementById('eval').value)" value="runjs" type="button">
 <script>
 	var canvas = document.getElementById("screen");
 	var c2d = canvas.getContext("2d");
 	var text=new Array(30).fill().map(()=>new Array(50).fill(" "));
-	var CSRX=0,CSRY=0;
+	var color=new Array(30).fill().map(()=>new Array(50).fill(-1));
+	var CSRX=0,CSRY=0,CSRC=15;
 	c2d.font="8px SmileBASIC";
-	COLOR(15);
 	function updateText(){
 		c2d.clearRect(0,0,canvas.width,canvas.height);
-		for (var i=0;i<30;i++) c2d.fillText(text[i].join(""),0,i*8+8);
+		for (var i=0;i<30;i++) 
+			for (var j=0;j<50;j++){
+				COLOR(color[i][j]);
+				c2d.fillText(text[i][j],j*8,i*8+7);
+			}
 	}
 	function PRINT(string){
 		for (var i=0;i<string.length;i++){
 			text[CSRY][CSRX]=string[i];
+			color[CSRY][CSRX]=CSRC;
 			CSRX++;
 			if (CSRX>=50) newLine();
 		}
@@ -26,6 +33,8 @@
 				CSRY--;
 				text.shift();
 				text.push(new Array(50).fill(" "));
+				color.shift();
+				color.push(new Array(50).fill(-1));
 			}
 		}
 	}
@@ -34,9 +43,10 @@
 		CSRX=CSRY=0;
 		COLOR(15);
 		text=new Array(30).fill().map(()=>new Array(50).fill(" "));
+		color=new Array(30).fill().map(()=>new Array(50).fill(-1));
 	}
 	function LOCATE(x,y){CSRX=x;CSRY=y;}
-	function COLOR(col){c2d.fillStyle=rgbToHex(rgbi2rgb(col));}
+	function COLOR(col){CSRC=col;c2d.fillStyle=rgbToHex(rgbi2rgb(col));}
 	function rgbi2rgb(rgbi){return[0,0,0].map((_,s)=>(rgbi>>s+1&1)*(((rgbi&1)+1)*127.5|0))}
 	function rgbToHex(channels){return"#"+((1<<24)+(channels[0]<<16)+(channels[1]<<8)+channels[2]).toString(16).slice(1);}
 </script>
