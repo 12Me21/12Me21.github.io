@@ -2,20 +2,20 @@
 <html>
   <head>
     <script>
-     window.onload=function(){
+      window.onload=function(){
+      var z; //best variable name (c) Trinitro 2016
+      var dark=document.getElementById("dark");
       var fileBrowse=document.getElementById("imageUpload");
       fileBrowse.onchange=function(){
         var reader=new FileReader();
-        reader.readAsDataURL(this.files[0]);
         reader.onload=function(){loadImage(this.result)};
+		  reader.readAsDataURL(this.files[0]);
       };
       var canvas=document.getElementById("canvas");
       var c2d=canvas.getContext("2d");
-      var dark=document.getElementById("dark");
       
       function loadImage(source) {
         z=new Image();
-        z.crossOrigin="Anonymous";
         z.onload=function(){
           canvas.width=z.width;
           canvas.height=z.height;
@@ -26,13 +26,18 @@
       }
       
       function convertImage() {
-        var bg=dark.checked?51:211;
-        var data=c2d.getImageData(0,0,canvas.width,canvas.height);var d=data.data;
+        canvas.hidden=true;
+		  var bg=dark.checked?51:211;
+        var data=c2d.getImageData(0,0,canvas.width,canvas.height);
+		  var d=data.data;
         for (var x=0;x<d.length;x+=4) {
           sum=d[x]*.3+d[x+1]*.6+d[x+2]*.1;
-          for(var i=0;i<3;i++)d[x+i]=sum*0.4+bg*0.6;
+          for(var i=0;i<3;i++)d[x+i]=sum;
         }
         c2d.putImageData(data,0,0);
+        c2d.fillStyle="rgba("+bg+","+bg+","+bg+",0.6)";
+        c2d.fillRect(0,0,canvas.width,canvas.height);
+        canvas.hidden=false;
       }
      }
     </script>
