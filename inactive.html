@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var fileBrowse=document.getElementById("imageUpload");
+      fileBrowse.onchange=function(){
+        var reader=new FileReader();
+        reader.readAsDataURL(this.files[0]);
+        reader.onload=function(){loadImage(this.result)};
+      };
+      var canvas=document.getElementById("canvas");
+      var c2d=canvas.getContext("2d");
+      var dark=document.getElementById("dark");
+      
+      function loadImage(source) {
+        z=new Image();
+        z.crossOrigin="Anonymous";
+        z.onload=function(){
+          canvas.width=z.width;
+          canvas.height=z.height;
+          c2d.drawImage(z,0,0);
+          convertImage();
+        };
+        z.src=source;
+      }
+      
+      function convertImage() {
+        var bg=dark.checked?51:211;
+        var data=c2d.getImageData(0,0,canvas.width,canvas.height);var d=data.data;
+        for (var x=0;x<d.length;x+=4) {
+          sum=d[x]*.3+d[x+1]*.6+d[x+2]*.1;
+          for(var i=0;i<3;i++)d[x+i]=sum*0.4+bg*0.6;
+        }
+        c2d.putImageData(data,0,0);
+      }
+    </script>
+  </head>
+  <body>
+    <input type="checkbox" id="dark">dark theme
+    <input type="file" id="imageUpload">
+    <canvas id="canvas"></canvas>
+  <body>
+</html>
