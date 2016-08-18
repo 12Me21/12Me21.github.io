@@ -2,6 +2,7 @@
 <html>
   <head>
     <script>
+     window.onload=function(){
       var fileBrowse=document.getElementById("imageUpload");
       fileBrowse.onchange=function(){
         var reader=new FileReader();
@@ -33,11 +34,12 @@
         }
         c2d.putImageData(data,0,0);
       }
+     }
     </script>
   </head>
   <body>
     <input type="checkbox" id="dark">dark theme
     <input type="file" id="imageUpload">
     <canvas id="canvas"></canvas>
-  <body>
+  </body>
 </html>
