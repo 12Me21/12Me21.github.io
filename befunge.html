@@ -1,0 +1,163 @@
+<head>
+<script>
+function setup(){
+var code=[];
+for(var bs=0;bs<80;bs++)code.push(new Array(25));
+var x,y,vx,vy,stack=[],arg1,arg2,arg3,sm=0;
+
+var table=document.getElementById("codetable");
+var input=document.getElementById("codeinput");
+var modebox=document.getElementById("mode");
+var output=document.getElementById("console");
+
+for(var y=0;y<80;y++){
+	var row=document.createElement("tr");
+	table.appendChild(row);
+	for(var x=0;x<80;x++) 
+		row.appendChild(document.createElement("td"));
+}
+var rows=table.rows;
+
+modebox.onchange=function(){
+	if(modebox.checked){
+		input.style.display = "none"
+		var lines=input.value.split("\n");
+		for(var y=0;y<25;y++){
+			for(var x=0;x<80;x++){
+				if(y<lines.length&&x<lines[y].length){
+					set(x,y,lines[y].charCodeAt(x));
+				}else{
+					set(x,y,32);
+				}
+				rows[y].cells[x].style.backgroundColor="white";
+			}
+		}
+		table.style.display = "table";
+		output.value="";
+		x=0;y=0;vx=1;vy=0;stack=[];sm=0;
+		rows[y].cells[x].style.backgroundColor="cyan";
+		run=window.setInterval(function(){
+			var char=code[x][y];
+			rows[y].cells[x].style.backgroundColor="white";
+			if (char==34) sm=!sm; else if (sm) push(char); else {
+				switch (char) {
+					case 48:case 49:case 50:case 51:case 52:case 53:case 54:case 55:case 56:case 57:// 0-9
+						push(char-48);
+					break;case 43:// +
+						arg2=pop();arg1=pop()
+						push(arg1+arg2);
+					break;case 45:// -
+						arg2=pop();arg1=pop()
+						push(arg1-arg2);
+					break;case 47:// / integer divide
+						arg2=pop();arg1=pop()
+						push(arg1/arg2|0);
+					break;case 42:// *
+						arg2=pop();arg1=pop()
+						push(arg1*arg2);
+					break;case 37:// %
+						arg2=pop();arg1=pop()
+						push(arg1%arg2);
+					break;case 33:// !
+						push(!pop());
+					break;case 96:// `
+						arg2=pop();arg1=pop()
+						push(!!(arg1>arg2));
+					break;case 94:// ^
+						vx= 0;vy=-1;
+					break;case 118:// v
+						vx= 0;vy= 1;
+					break;case 60:// <
+						vx=-1;vy= 0;
+					break;case 62:// >
+						vx= 1;vy= 0;
+					break;case 95:// _
+						arg1=pop()
+						vx=arg1?-1:1
+						vy=0;
+					break;case 124:// |
+						arg1=pop()
+						vx=0;
+						vy=arg1?-1:1
+					break;case 35:// #
+						x+=vx;y+=vy;
+					break;case 46:// . 
+						arg1=pop();
+						output.value+=arg1+" ";
+					break;case 44:// ,
+						arg1=pop();
+						output.value+=String.fromCharCode(arg1);
+					break;case 58:// :
+						arg1=pop();
+						push(arg1);
+						push(arg1);
+					break;case 36:// $
+						arg1=pop();
+					break;case 92:// \ 
+						arg2=pop();arg1=pop();
+						push(arg2);
+						push(arg1);
+					break;case 103:
+						arg2=pop();arg1=pop();
+						push(code[arg1][arg2]);
+					break;case 112:
+						arg3=pop();arg2=pop();arg1=pop();
+						set(arg1,arg2,arg3);
+					break;case 64:
+						modebox.click();
+				}
+			}
+			console.log(stack);
+			x=loop(x+vx,80);y=loop(y+vy,25);
+			rows[y].cells[x].style.backgroundColor="cyan";	
+		},10)
+	}else{
+		window.clearInterval(run);
+		input.style.display="block"
+		table.style.display="none"
+	}
+}
+
+function set(x,y,value){
+	code[x][y]=value;
+	rows[y].cells[x].innerHTML=String.fromCharCode(value);
+}
+function loop(value,width){
+	if (value<0) value+=width;
+	if (value>=width) value-=width;
+	return value;
+}
+function pop(){
+	if (!stack.length) return 0;
+	return stack.pop();
+}
+function push(value){
+	stack.push(value);
+}
+}
+</script>
+<style>
+table,
+tr,
+td {
+   border: 1px solid black;
+   border-collapse: collapse;
+   padding: 0px;
+	font-family: monospace;
+}
+
+td {
+   min-width: 1em;
+   min-height: 1em;
+	width: 1em;
+	height: 1em;
+}
+</style>
+</head>
+<body onload="setup()">
+<input type="checkbox" id="mode">
+<br>
+<textarea id="codeinput" rows="25" cols="80"></textarea>
+<table id="codetable" style="display:none;"></table>
+<textarea id="console" cols="80" readonly></textarea>
+</body>
