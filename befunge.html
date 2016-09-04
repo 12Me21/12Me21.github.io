@@ -99,10 +99,10 @@ modebox.onchange=function(){
 						push(arg1);
 					break;case 103:
 						arg2=pop();arg1=pop();
-						push(code[arg1][arg2]);
+						push(code[arg2][arg1]);
 					break;case 112:
 						arg3=pop();arg2=pop();arg1=pop();
-						set(arg1,arg2,arg3);
+						set(arg2,arg3,arg1);
 					break;case 64:
 						modebox.click();
 				}
