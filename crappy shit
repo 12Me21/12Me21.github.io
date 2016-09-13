@@ -1,0 +1,342 @@
+<script>
+//Carlos Sanchez - 2016
+//randomouscrap98@aol.com
+//-The simplest chat connector ever
+
+//Run anonymous so our functions are local to the page and don't interfere
+//with anything. You don't HAVE to do this.
+
+   var Socket;
+   window.addEventListener("load", onLoad);
+
+   //When the page finally loads, this is run. We wait until the page is loaded
+   //so that all the elements are on the page and can be manipulated
+   function onLoad(){
+      //Set up the event listener for the sendmessage box so that you can press
+      //enter to send messages. Check out the function onKeyDown() to see.
+      document.getElementById("sendmessage").addEventListener("keydown", onKeyDown);
+
+      //Only perform the websocket setup if websockets are supported.
+      if('WebSocket' in window){
+         //Generate the address. It'll differ depending on whether or not
+         //we're on the development site or not. 
+         var address = websocketConnectionString();
+         console.log("Using address: " + address);
+
+         //Set up all the events for the websocket connection. Creating the
+         //webscket object apparently opens it too, so this is all we need to do
+         Socket = new WebSocket(address);
+         Socket.onopen = function(event) { onOpen(event); };
+         Socket.onclose = function(event) { onClose(event); };
+         Socket.onerror = function(error) { onError(event); };
+         Socket.onmessage = function(event) { onMessage(event); };
+      }else{
+         //If it doesn't support websocket, tell the user and don't open the socket.
+         displayMessage({type:"warning", message:"Your browser doesn't appear to support WebSockets. This chat " +
+            "requires a websocket connection. Please consider getting a newer browser; " + 
+         "preferably a new version of Chrome or Firefox"});
+      }
+   }
+
+   //Get the chat authorization key from the page
+   function getChatAuth(){
+      try{
+         return document.querySelector("[data-chatauth]").dataset.chatauth;
+      }catch(ex){
+         console.log("Cannot retrieve the chat auth code!");
+         return "nothing";
+      }
+   }
+
+   //Get the desired room tag from the tag input
+   function getTag(){
+      try{
+         return document.getElementById("tag").value;
+      }catch(ex){
+         console.log("Cannot retrieve the user's desired chat tag!");
+         return "nothing";
+      }
+   }
+
+   //Get the user's UID from the page
+   function getUID(){
+      try{
+         return Number(document.querySelector("[data-uid]").dataset.uid);
+      }catch(ex){
+         console.log("Cannot retrieve the user's UID!");
+         return 0;
+      }
+   }
+
+   //Occurs when keys on the textarea are pressed.
+   function onKeyDown(event){
+      if(event.keyCode === 13){
+         event.preventDefault();
+         sendMessage(event.target.value);
+         event.target.value = "";
+      }
+   }
+
+   //Sends a message out on the websocket
+   function sendMessage(message){
+      if(message.trim().length === 0)
+         return;
+
+      var json = {
+         'type': 'message',
+         'text': message,
+         'key': getChatAuth(),
+         'tag': getTag() 
+      };
+
+      Socket.send(JSON.stringify(json));
+   }
+
+   //Display the given message to the messagelist
+   function displayMessage(messageObject){
+      var message = document.createElement("li");
+      var messageType = document.createElement("message-type");
+      var messageContent = document.createElement("message-content");
+
+      messageType.innerHTML = messageObject.type;
+      messageContent.innerHTML = messageObject.message;
+      message.setAttribute("data-tag", messageObject.tag);
+
+      if(messageObject.username)
+         messageType.innerHTML = messageObject.username;
+
+      message.appendChild(messageType);
+      message.appendChild(messageContent);
+
+      var messageList = document.getElementById("messagelist");
+var REAL=messageList.parentNode;
+      messageList.appendChild(message, messageList.childNodes[0]);
+		
+REAL.scrollTop = REAL.scrollHeight;
+   }
+   
+   //Reset the userlist element using the given list of users. There's a LOT of
+   //data in userList, but we're only using the username.
+   function refreshUserList(userList){
+      var userlistElement = document.getElementById("userlist");
+      userlistElement.innerHTML = "";
+
+      for(var i = 0; i < userList.length; i++){
+         var li = document.createElement('li');
+         li.innerHTML = userList[i].username;
+         userlistElement.appendChild(li);
+      }
+   }
+
+   //Static variable for old messages.
+   onMessage.oldMessages = [];
+
+   //Occurs when we receive a message on the websocket. It could be a userlist,
+   //messages, system messages, etc.
+   function onMessage(event){
+      var text = '', i = 0, user = "";
+      var msg = JSON.parse(event.data);
+
+      switch(msg.type){
+         //Now reformat the user list
+         case 'userList':
+            refreshUserList(msg.users);
+            break;
+
+         case 'messageList':
+
+            //Print messages
+            for(i = 0; i < msg.messages.length; i++){
+               var msgobject = msg.messages[i];
+
+               //Only print messages if we have not printed them yet. We know the
+               //avatar is ready at this point because we did the prescan
+               if(onMessage.oldMessages.indexOf(msgobject.id) === -1){
+                  onMessage.oldMessages.push(msgobject.id);
+                  displayMessage(msgobject);
+               }
+            }
+            break;
+
+         case "response":
+            if(msg.from === "bind"){
+               if(msg.result !== true){
+                  displayMessage({type:"warning",message:"You could not be authenticated"});
+                  Socket.close();
+               }else{
+                  Socket.send(JSON.stringify({type:"request",request:"messageList"}));
+               }
+            }else{
+               //How to display responses that are errors
+               if(msg.result === false){
+                  for(var error in msg.errors)
+                     if(msg.errors.hasOwnProperty(error))
+                        displayMessage({type:"warning",message:msg.errors[error]});
+               }
+            }
+            break;
+
+         case "system":
+         case "warning":
+         case "module":
+            displayMessage(msg);
+            break;
+
+         default:
+            console.log('RECEIVED UNKNOWN:' + JSON.stringify(msg));
+            break;
+      }
+   }
+
+   //What happens when the websocket connection gets established.
+   function onOpen(event){
+      console.log('Server connection established.');
+
+      //You must first try to bind.
+      var connect = {
+         'type': 'bind',
+         'uid': getUID(),
+         'key': getChatAuth()
+      };
+
+      Socket.send(JSON.stringify(connect));
+   }
+
+   //What happens when the websocket connection closes before the page does.
+   function onClose(event){
+      console.log('Server connection terminated/rejected: ' + event.code);
+      displayMessage({type:"warning",message:'You were disconnected. <a href="">Reconnect?</a>'});
+   }
+
+   //Retrieve a websocket address string. If we're in debug mode (development
+   //mode), use a different port.
+   function websocketConnectionString(){
+      var address = 'chat.smilebasicsource.com';
+      var port = 45695;
+
+      if(document.querySelector("[data-debug]").dataset.debug)
+         port = 45697;
+
+      return 'ws://' + address + ':' + port + '/chatserver';
+   }
+   
+   //Sends the "I'm still here" ping for proper active/inactive status. Is not
+   //used in this version
+   function activePing(){
+      var json = {
+         'type': 'ping',
+         'active': document.hasFocus()
+      };
+      Socket.send(JSON.stringify(json));
+   }
+
+
+
+function refreshRoomList(rooms)
+{
+   var currentRoom = "";
+   var notifications = [];
+
+   var sendLeaveRoomMessage = function(room)
+   {
+      Socket.send(JSON.stringify({
+         'type': 'message',
+         'text': "/pmleaveroom",
+         'key': auth,
+         'tag': room 
+      }));
+      
+      return false;
+   };
+
+   //Remove everything from the room list, BUT save the room they're chatting in
+   while(roomList.hasChildNodes())
+   {
+      if(roomList.firstChild.tagName === "INPUT" &&
+         roomList.firstChild.type === "radio")
+      {
+         if(roomList.firstChild.checked)
+            currentRoom = roomList.firstChild.value;//getAttribute("title");
+         if(roomList.firstChild.getAttribute("data-notification") === "true")
+            notifications.push(roomList.firstChild.value);
+      }
+      roomList.removeChild(roomList.firstChild);
+   }
+
+   for(var i = 0; i < rooms.length; i++)
+   {
+      //set up the outer room radio
+      var roomRadio = document.createElement("input");
+      roomRadio.setAttribute("type", "radio");
+      roomRadio.setAttribute("title", rooms[i].name);
+      roomRadio.setAttribute("id", "roomID_" + rooms[i].name);
+      roomRadio.setAttribute("name", "filtertab");
+      roomRadio.setAttribute("value", rooms[i].name);
+
+      if(rooms[i].name === currentRoom)
+         roomRadio.checked = true;
+      if(notifications.indexOf(rooms[i].name) >= 0)
+         roomRadio.setAttribute("data-notification", true);
+      
+      //Set up the label which will wrap the room contents
+      var roomLabel = document.createElement("label");
+      roomLabel.setAttribute("for", "roomID_" + rooms[i].name);
+
+      //Div in a label just in case the user room needs something else 
+      var roomUsers = document.createElement("div");
+      roomUsers.setAttribute("class", "roomuserlist");
+
+      //Fill div with users
+      for(var j = 0; j < rooms[i].users.length; j++)
+      {
+         var roomUser = document.createElement("img");
+         roomUser.setAttribute("title", rooms[i].users[j].username);
+         roomUser.setAttribute("src", rooms[i].users[j].avatar);
+         roomUser.setAttribute("data-active", rooms[i].users[j].active);
+         roomUsers.appendChild(roomUser);
+      }
+
+      //Create the "get out" button
+      var leaveRoom = document.createElement("leave-room");
+      leaveRoom.innerHTML = "✖";
+      leaveRoom.addEventListener("click", sendLeaveRoomMessage.callBind(rooms[i].name));
+      roomUsers.appendChild(leaveRoom);
+
+      roomLabel.appendChild(roomUsers);
+
+      roomList.appendChild(roomRadio);
+      roomList.appendChild(roomLabel);
+   }
+
+   refreshFilterListeners();
+
+   if(!currentTabTag())
+   {
+      console.log("Forcing room switch to " + previousRoom);
+      setTabTag(previousRoom);      
+   }
+}
+
+
+
+</script>
+
+<body data-chatauth="D4B8C18782391109" data-debug="1" data-uid="93">
+      <h3>The super simple chat</h3>
+ 
+      <ol id="userlist">
+      </ol>
+      <div style="height:50vh;border:1px solid black;overflow:scroll;">
+		<ol id="messagelist">
+      </ol>
+		</div>
+
+     <input-area>
+			<select id="tag">
+				<option value="offtopic">Off-Topic</option>
+				<option value="general">SmileBASIC</option>
+				<option value="staff">Staff</option>
+			</select>
+         <textarea id="sendmessage"></textarea>
+      </input-area>
+   </body>
