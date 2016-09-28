@@ -113,7 +113,7 @@
 	//ugh.
 	function newElement(tag,text){
 		var newNode=document.createElement(tag);
-		newNode.textContent=text;
+		newNode.innerHTML=text; //textContent 
 		return newNode;
 	}
 	
