@@ -11,10 +11,6 @@
 	var dev=false;//connect to dev chat
 	
 	var roomNames={}//roomNames[InternalName]=DisplayName
-	roomNames.getName=function(name){ //return "" if name doesn't exist, instead of "undefined".
-		if (roomNames.hasOwnProperty(name)) return roomNames[name];
-		return "";
-	}
 	roomNames.normalRooms=0;	
 
 	//stuff to do when page FINALLY loads
@@ -64,7 +60,7 @@
 		
 		var row=document.createElement("tr");
 		
-		row.appendChild(newElement("td","["+roomNames.getName(messageObject.tag)+"]"));//room
+		row.appendChild(newElement("td",roomNames.hasOwnProperty(messageObject.tag)?"["+roomNames[messageObject.tag]+"]":""));//room
 		
 		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
 		
