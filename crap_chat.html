@@ -65,22 +65,22 @@
 		
 		//room
 		cell=newElement("td","["+roomNames.getName(messageObject.tag)+"]");//[room]
-		cell.class="room";
+		cell.setAttribute("class","room");
 		row.appendChild(cell);
 		
 		//username or message type
 		if (messageObject.username){
 			cell=newElement("td",messageObject.username+": ");//bold name:
-			cell.class="name";
+			cell.setAttribute("class","name");
 		} else {
 			cell=newElement("td",messageObject.type+": ");//italic type:
-			cell.class="type";
+			cell.setAttribute("class","type");
 		}
 		row.appendChild(cell);
 		
 		//message
 		cell=newElement("td",messageObject.message)
-		cell.class="message";
+		cell.setAttribute("class","message");
 		if (messageObject.message.substr(0,4)==="&gt;") cell.setAttribute("greeb","");// detect messages starting with >
 		row.appendChild(cell);
 		
