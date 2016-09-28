@@ -61,26 +61,14 @@
 	function displayMessage(messageObject){
 		if (messageObject.encoding=="draw") messageObject.message=="[drawing]"//don't display drawings
 		
-		var row=document.createElement("tr"),cell;
+		var row=document.createElement("tr");
 		
-		//room
-		cell=newElement("td","["+roomNames.getName(messageObject.tag)+"]");//[room]
-		cell.setAttribute("class","room");
-		row.appendChild(cell);
+		row.appendChild(newElement("td","["+roomNames.getName(messageObject.tag)+"]"));//room
 		
-		//username or message type
-		if (messageObject.username){
-			cell=newElement("td",messageObject.username+": ");//bold name:
-			cell.setAttribute("class","name");
-		} else {
-			cell=newElement("td",messageObject.type+": ");//italic type:
-			cell.setAttribute("class","type");
-		}
-		row.appendChild(cell);
+		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
 		
 		//message
-		cell=newElement("td",messageObject.message)
-		cell.setAttribute("class","message");
+		var cell=newElement("td",messageObject.message)
 		if (messageObject.message.substr(0,4)==="&gt;") cell.setAttribute("greeb","");// detect messages starting with >
 		row.appendChild(cell);
 		
@@ -175,19 +163,16 @@
 	*{font-family:"Noto Sans",sans-serif;overflow-x:hidden;}/*all*/
 	tr{vertical-align:top;}/*row*/
 	
-	td.name,td.type{text-align:right;}/*name,type*/
-	td.room{text-align:center;}/*room*/
-	td.message {white-space:pre-wrap;}/*messages*/
-	td.name {font-weight:bold;}/*username*/
-	td.type {font-style:italic;}/*message type*/
+	th{text-align:right;}
+	td{white-space:pre-wrap;}/*messages*/
 	
 	td[greeb]{color:#799A20;}/* > */
 	/*tab coloring*/
-	tr{color:#666;}/*default is gray (kept for system messages)*/
+	tr{color:#666;}/*default is gray (kept for system messages etc.)*/
 	tr[room=offtopic]{color:darkred;}
 	tr[room=general]{color:darkblue;}
 	tr[room=admin]{color:darkgreen;}
-	tr[room^=room_]{color:black;}/*pm rooms*/
+	tr[room^=room_]{color:#333;}/*pm rooms*/
 </style>
 </head>
 <body>
