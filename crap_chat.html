@@ -32,7 +32,7 @@
 		addRoom("admin","Staff");
 
 		document.getElementById("input").onkeydown=function(event){
-			if(event.keyCode!=13) return;
+			if(event.keyCode!=13||event.shiftKey) return;
 			event.preventDefault();
 			sendMessage(event.target.value);
 			event.target.value="";
@@ -91,7 +91,7 @@
 	//get name of pm rooms (like "12Me21,12Me23" instead of "room_1337")
 	function pmRoomName(room){
 		var name=[];
-		for (var i in room.users) if (room.users[i].username!=username) name.push(room.users[i].username.substr(0,6));//don't make names too long! (6 letters works well for some reason)
+		for (var i in room.users) name.push(room.users[i].username==username?"me":room.users[i].username.substr(0,6));//don't make names too long! (6 letters works well for some reason)
 		return name.join();//default to commas
 	}
 	
@@ -106,7 +106,7 @@
 	function updateUserList(list){
 		var user=[];
 		for(var i in list) user.push(list[i].username);
-		userList.innerHTML=user.join("   ");//2 spaces
+		userList.innerHTML=user.join("  ");//1 spaces
 	}
 	
 	//getting something from the server
@@ -158,6 +158,8 @@
 
 <style>
 	*{font-family:"Noto Sans",sans-serif;overflow-x:hidden;}/*all*/
+	#input{width:25%;}
+	
 	tr{vertical-align:top;}/*row*/
 	
 	th{text-align:right;}
@@ -174,7 +176,7 @@
 </head>
 <body>
 	<select id="room"></select>
-	<input id="input">
+	<textarea id="input"></textarea>
 	<span id="userlist"></span>
 	<hr>
 	<table id="messages"></table>
