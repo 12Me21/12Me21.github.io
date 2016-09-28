@@ -69,6 +69,7 @@
 		row.appendChild(newElement("td","["+roomnumbers.getName(messageObject.tag)+"]"));//room
 		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
 		var message=newElement("td",messageObject.encoding!="draw"?messageObject.message:"[drawing]")
+		console.log(messageObject.message);
 		if (messageObject.message[0]==">") message.setAttribute("greeb","");
 		row.appendChild(message);//message (replace drawings with [drawing])
 		
