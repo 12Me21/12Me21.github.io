@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<script>
+	var roomnumbers={}
+	roomnumbers.getName=function(name){
+		if (roomnumbers.hasOwnProperty(name)) return roomnumbers[name];
+		return "";
+	}
+	roomnumbers.normalRooms=0;	
+
+
+	var Socket;
+	var room="offtopic";
+	var userList,table,roomList;
+	var auth="",uid=-1;
+	var dev=0;
+	var base
+	
+	//stuff to do when page FINALLY loads
+	window.onload=function(){
+		table=document.getElementById("messages");
+		userList=document.getElementById("userlist");
+		roomList=document.getElementById("room")
+
+		function addRoom(id,name){
+			roomnumbers[id]=name;
+			var option=newElement("option",name);
+			option.value=id;
+			roomList.appendChild(option);
+			roomnumbers.normalRooms++
+		}
+		addRoom("offtopic","Off-Topic")
+		addRoom("general","SmileBASIC")
+		addRoom("admin","Staff")
+
+		roomList.onchange=function(){room=this.value};
+		document.getElementById("input").onkeydown=function(event){
+			if(event.keyCode!=13) return;
+			event.preventDefault();
+			sendMessage(event.target.value);
+			event.target.value = "";
+		}
+		
+    uid==prompt("uid?")
+    
+		auth=prompt("auth?");//not getting auth automatically yet
+		
+		var address="ws://chat.smilebasicsource.com:"+(dev?45697:45695)+"/chatserver"
+
+		Socket=new WebSocket(address);
+		Socket.onopen=function(event){Socket.send(JSON.stringify({"type":"bind","uid":uid,"key":auth}))};//UID is hardcoded for now
+		Socket.onclose=function(event){displayMessage({type:"warning",message:"You were disconnected. <a href=''>Reconnect?</a>"});}
+		Socket.onmessage=function(event){onMessage(event);};
+	}
+	
+	//sending a message
+	function sendMessage(message){
+		if(message.trim().length==0) return;
+		Socket.send(JSON.stringify({"type":"message","text":message,"key":auth,"tag":room}));
+		//displayMessage(JSON.stringify({"type":"message","text":message,"key":auth,"tag":room,  "username":"12Me21","message":message}));
+	}
+
+	//displaying a message
+	function displayMessage(messageObject){
+		var row=document.createElement("tr");
+		
+		row.appendChild(newElement("td","["+roomnumbers.getName(messageObject.tag)+"]"));//room
+		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
+		row.appendChild(newElement("td",messageObject.encoding!="draw"?messageObject.message:"[drawing]"));//message (replace drawings with [drawing])
+		
+		row.setAttribute("room",messageObject.tag);//used for room color in css
+		
+		table.insertBefore(row,table.firstChild);
+		
+		function appendNew(tag,text){
+			var newNode=document.createElement(tag);
+			newNode.innerHTML=text;
+			row.appendChild(newNode);
+		}
+	}
+
+	function updateRoomList(rooms){
+		var i;
+		while (roomList.children[roomnumbers.normalRooms]) roomList.removeChild(roomList.lastChild); //remove old rooms except the first couple (which are the normal rooms)
+		for(i in rooms){
+			var name=pmRoomName(rooms[i])//name is a list of users
+			roomnumbers[rooms[i].name]=name//save the name
+			//add options to room select
+			var option=newElement("option",name)
+			option.value=rooms[i].name;
+			roomList.appendChild(option);
+		}
+	}
+	
+	function pmRoomName(list){//get room name (like "12Me21,12Me23" instead of "room_1337")
+		var name=[];
+		for (var i in list.users) name.push(list.users[i].username.substr(0,6));//don't make names too long!
+		return name.join()
+	}
+	
+	function newElement(tag,text){
+		var newNode=document.createElement(tag);
+		newNode.innerHTML=text;
+		return newNode;
+	}
+	
+	function updateUserList(list){
+		var user=[];
+		for(i in list) user.push(list[i].username)
+		userList.innerHTML=user.join("  ");
+	}
+	
+	//getting something from the server
+	onMessage.oldMessages=[];//old message IDs so messages aren't repeated
+	function onMessage(event){
+		var i=0,user=[];
+		var msg=JSON.parse(event.data);
+		
+		switch(msg.type){
+			//user/room list update
+			case "userList":
+				updateUserList(msg.users);
+				updateRoomList(msg.rooms);
+				break;
+			//messages
+			case "messageList":
+				for(i=0;i<msg.messages.length;i++) {
+					var msgobject=msg.messages[i];
+					if(onMessage.oldMessages.indexOf(msgobject.id)==-1){
+						onMessage.oldMessages.push(msgobject.id);
+						displayMessage(msgobject);
+					}
+				}
+				break;
+			//response
+			case "response":
+				if(msg.from==="bind"){
+					if(msg.result) {
+						Socket.send(JSON.stringify({type:"request",request:"messageList"})); //get messages when joining
+					} else {
+						displayMessage({type:"warning",message:"You could not be authenticated"});
+						Socket.close();
+					}
+				} else if(msg.result==false) { //IDK if this will work...
+					for(i in msg.errors) displayMessage({type:"warning",message:msg.errors[i]});
+				}
+				break;
+			//system messages
+			case "system":
+			case "warning":
+			case "module":
+				displayMessage(msg);
+				break;
+
+			default:
+				console.log('RECEIVED UNKNOWN:' + JSON.stringify(msg));
+				break;
+		}
+	}
+</script>
+
+<style>
+	*{font-family:"Noto Sans",sans-serif;overflow-x:hidden;}/*all*/
+	tr{vertical-align:top;}/*row*/
+	td{white-space:pre-wrap;}/*messages*/
+	th{text-align:right;}/*username*/
+	/*tab coloring*/
+	tr[room=offtopic]{color:darkred;}
+	tr[room=general]{color:darkblue;}
+	tr[room=admin]{color:darkgreen;}
+	tr[room^=room_]{color:gray;}
+</style>
+</head>
+<body>
+	<select id="room"></select>
+	<input id="input"></input>	
+	<span id="userlist"></span>
+	<hr>
+	<table id="messages"></table>
+</body>
+</html>
