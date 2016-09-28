@@ -43,7 +43,7 @@
 			event.target.value = "";
 		}
 		
-    uid/*=*/=prompt("uid?")
+    		uid=prompt("uid?")
     
 		auth=prompt("auth?");//not getting auth automatically yet
 		
@@ -68,7 +68,10 @@
 		
 		row.appendChild(newElement("td","["+roomnumbers.getName(messageObject.tag)+"]"));//room
 		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
-		row.appendChild(newElement("td",messageObject.encoding!="draw"?messageObject.message:"[drawing]"));//message (replace drawings with [drawing])
+		var message=newElement("td",messageObject.encoding!="draw"?messageObject.message:"[drawing]")
+		if (messageObject.message[0]==">") message.setAttribute("greeb","");
+		row.appendChild(message);//message (replace drawings with [drawing])
+		
 		
 		row.setAttribute("room",messageObject.tag);//used for room color in css
 		
@@ -171,6 +174,7 @@
 	tr[room=general]{color:darkblue;}
 	tr[room=admin]{color:darkgreen;}
 	tr[room^=room_]{color:gray;}
+	td[greeb]{color:#799A20;}/* > */
 </style>
 </head>
 <body>
