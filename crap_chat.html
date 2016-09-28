@@ -76,7 +76,7 @@
 	
 	//update room list <select>
 	function updateRoomList(rooms){
-		while (roomList.children[roomnumbers.normalRooms]){
+		while (roomList.children[roomNames.normalRooms]){
 			roomList.removeChild(roomList.lastChild); //remove old rooms except the first couple (which are the normal rooms)
 		}
 		for(var i in rooms){
