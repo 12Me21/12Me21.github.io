@@ -59,15 +59,30 @@
 
 	//displaying a message
 	function displayMessage(messageObject){
-		var row=document.createElement("tr");
+		if (messageObject.encoding=="draw") messageObject.message=="[drawing]"//don't display drawings
 		
-		row.appendChild(newElement("td","["+roomNames.getName(messageObject.tag)+"]"));//room
-		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
+		var row=document.createElement("tr"),cell;
 		
-		//message 
-		var message=newElement("td",messageObject.encoding!="draw"?messageObject.message:"[drawing]")//replace drawings with [drawing]
-		if (messageObject.message.substr(0,4)=="&gt;") message.setAttribute("greeb","");// detect messages starting with >
-		row.appendChild(message);
+		//room
+		cell=newElement("td","["+roomNames.getName(messageObject.tag)+"]");//[room]
+		cell.class="room";
+		row.appendChild(cell);
+		
+		//username or message type
+		if (messageObject.username){
+			cell=newElement("td",messageObject.username+": ");//bold name:
+			cell.class="name";
+		} else {
+			cell=newElement("td",messageObject.type+": ");//italic type:
+			cell.class="type";
+		}
+		row.appendChild(cell);
+		
+		//message
+		cell=newElement("td",messageObject.message)
+		cell.class="message";
+		if (messageObject.message.substr(0,4)==="&gt;") cell.setAttribute("greeb","");// detect messages starting with >
+		row.appendChild(cell);
 		
 		row.setAttribute("room",messageObject.tag);//used for room color in css
 		
@@ -98,7 +113,7 @@
 	//ugh.
 	function newElement(tag,text){
 		var newNode=document.createElement(tag);
-		newNode.innerHTML=text;
+		newNode.textContent=text;
 		return newNode;
 	}
 	
@@ -159,8 +174,12 @@
 <style>
 	*{font-family:"Noto Sans",sans-serif;overflow-x:hidden;}/*all*/
 	tr{vertical-align:top;}/*row*/
-	td{white-space:pre-wrap;}/*messages*/
-	th{text-align:right;}/*username*/
+	
+	td.name td.type td.room{text-align:right;}/*name,type,room*/
+	td.message{white-space:pre-wrap;}/*messages*/
+	td.name{font-weight:bold;}/*username*/
+	td.type{font-style:italic;}/*message type*/
+	
 	td[greeb]{color:#799A20;}/* > */
 	/*tab coloring*/
 	tr{color:#666;}/*default is gray (kept for system messages)*/
