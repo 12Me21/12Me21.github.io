@@ -56,13 +56,14 @@
 
 	//displaying a message
 	function displayMessage(messageObject){
+		console.log(messageObject);
 		if (messageObject.encoding=="draw") messageObject.message=="[drawing]"//don't display drawings
 		
 		var row=document.createElement("tr");
 		
 		row.appendChild(newElement("td",roomNames.hasOwnProperty(messageObject.tag)?"["+roomNames[messageObject.tag]+"]":""));//room
 		
-		row.appendChild(newElement("th",(messageObject.username?messageObject.username:messageObject.type)+": "));//username or message type
+		row.appendChild(newElement("th",(messageObject.username?messageObject.username/*+brackets(messageObject.stars.substr(0,5))*/:messageObject.type)+": "));//username or message type
 		
 		//message
 		var cell=newElement("td",messageObject.message)
@@ -109,6 +110,10 @@
 		userList.innerHTML=user.join("  ");//1 spaces
 	}
 	
+	function brackets(string){
+		return string.length?"["+string+"]":""
+	}
+
 	//getting something from the server
 	onMessage.oldMessages=[];//keep track of old message IDs so you don't display messages more than once
 	function onMessage(event){
