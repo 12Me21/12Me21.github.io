@@ -1,0 +1,76 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:400,700';
+
+#userlist{background-color:#F7F7F7;}
+
+#inputbox{
+	border-radius: 2px;
+	border: 2px solid #00C8B4;
+	font-size: 0.8rem;
+	background-color: white;
+	color: #222;
+}
+
+#main{border-right: 1px solid #BBB;}
+
+#messages{
+	background-color: white;
+	color: black;
+	font-size: 0.9rem;
+	font-family: 'Roboto',sans-serif;
+	padding: 0;
+	border-bottom: 2px solid #BBB;
+}
+
+#messages li{padding: 0.4em 0.5rem;	}
+
+#messages li.message{
+	border-left: 0.5rem solid rgb(255,153,153);
+	padding-left: 1rem;
+}
+
+.ownmessage{
+	background-color: rgba(255,153,153,0.2);
+}
+
+.modulemessage{
+	border-left: 0.5rem solid rgb(187,187,187);
+}
+
+.greentext{color: #799A20 !important;}
+a:link, a:visited{color: #3077ae;}
+a:hover{color: #2f89cf;}
+
+#messages li:last-child{
+	margin-bottom: 1rem;
+}
+
+.sender{
+	font-weight: bold;
+	color: black !important;
+}
+
+
+.modulemessagetext{
+	color: #666;
+	font-weight: bold;
+}
+
+.systemmessagetext{
+	font-weight: bold;
+	text-align:center;
+	color:#666
+}
+
+.messagetext{
+	padding: 0;
+	margin: .2em;
+}
+
+/*AMAZING HACK YES!!!!!!!*/
+#messages > li.enter :before{content:"Welcome to the SmileBASIC Source chat, ";}
+#messages > li.enter :after{content:"";}
+
+#messages > li.enter ~ li.enter :before{content:"";}
+#messages > li.enter ~ li.enter :after{content:" has entered the chat.";}
+
+.leavetext:after{content:" has left the chat.";}
