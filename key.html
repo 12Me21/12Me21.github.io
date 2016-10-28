@@ -18,7 +18,7 @@
 		function generateKey() {
 			var key='';
 			for (var i=0;i<8;i++){
-				key+="0123456789ABCDEFHJIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*36)];
+				key+="123456789ABCDEFHJJKLMNPQRSTVWXYZ"[Math.floor(Math.random()*32)];
 			}
 			document.getElementById("key").innerHTML=key;
 		}
