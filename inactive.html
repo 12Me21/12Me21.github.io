@@ -19,6 +19,7 @@
 				};
 				var canvas=document.getElementById("canvas");
 				var c2d=canvas.getContext("2d");
+				var output=document.getElementById("output");
 				
 				function loadImage(source) {
 					z=new Image();
@@ -26,13 +27,12 @@
 						canvas.width=z.width;
 						canvas.height=z.height;
 						
-						convertImage();
+						output.src=convertImage();
 					};
 					z.src=source;
 				}
 				
 				function convertImage() {
-					canvas.hidden=true;
 					c2d.drawImage(z,0,0);
 					var bg=dark.checked?51:211;
 					var data=c2d.getImageData(0,0,canvas.width,canvas.height);
@@ -44,7 +44,7 @@
 					c2d.putImageData(data,0,0);
 					c2d.fillStyle="rgba("+bg+","+bg+","+bg+",0.6)";
 					c2d.fillRect(0,0,canvas.width,canvas.height);
-					canvas.hidden=false;
+					return canvas.toDataURL()
 				}
 			}
 		</script>
@@ -53,6 +53,7 @@
 		<input type="checkbox" id="dark" />dark theme
 		<input type="file" id="imageUpload" />
 		<hr />
-		<canvas id="canvas" style="max-width:50%;max:height:50%;"></canvas>
+		<canvas id="canvas" hidden="hidden"></canvas>
+		<img id="output" style="max-width:50%;max:height:50%;" />
 	</body>
 </html>
