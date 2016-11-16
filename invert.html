@@ -1,0 +1,49 @@
+<!DOCTYPE> 
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Image inverter</title>
+		<link rel="icon" type="image/png" sizes="16x16" href="./resources/inactive.png" />
+		<script>
+			window.onload=function(){
+				var z; //best variable name (c) Trinitro 2016
+				var fileBrowse=document.getElementById("imageUpload");
+				fileBrowse.onchange=function(){
+					var reader=new FileReader();
+					reader.onload=function(){
+						loadImage(this.result)
+					};
+					reader.readAsDataURL(this.files[0]);
+				};
+				var canvas=document.getElementById("canvas");
+				var c2d=canvas.getContext("2d");
+				
+				function loadImage(source) {
+					z=new Image();
+					z.onload=function(){
+						canvas.width=z.width;
+						canvas.height=z.height;
+						
+						convertImage();
+					};
+					z.src=source;
+				}
+				
+				function convertImage() {
+					canvas.hidden=true;
+					c2d.drawImage(z,0,0);
+					var data=c2d.getImageData(0,0,canvas.width,canvas.height);
+          data.data=data.data.map(x=>255-x)
+					c2d.putImageData(data,0,0);
+					c2d.fillRect(0,0,canvas.width,canvas.height);
+					canvas.hidden=false;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<input type="file" id="imageUpload" />
+		<hr />
+		<canvas id="canvas" style="max-width:50%;max:height:50%;"></canvas>
+	</body>
+</html>
