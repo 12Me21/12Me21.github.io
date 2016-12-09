@@ -1,29 +1,17 @@
 <style>
 @font-face { font-family: SmileBASIC; src: url('//12Me21.github.io/resources/SMILEBASIC.ttf'); }
-.keyword {
-	color:#6BBDF5;
-}
-.number {
-	color:#F67BD5;
-}
-.function {
-	color:#7A7CF7;
-}
-.label {
-	color:#F7A600;
-}
-.string {
-	color:#F6E652;
-}
-.comment {
-	color:#10B630;
-}
-
+.keyword {color:#6BBDF5;}
+.number {color:#F67BD5;}
+.function {color:#7A7CF7;}
+.label {color:#F7A600;}
+.string {color:#F6E652;}
+.comment {color:#10B630;}
 pre {
 	color: white;
-    background-color:black;
+    background-color: black;
     font-family: SmileBASIC;
-    font-size: 16;
+    font-size: 16px;
+	word-wrap: break-word;
 }
 </style>
 <script>
@@ -62,10 +50,9 @@ function getWords(){
     document.getElementById("out").innerHTML=output;
 }
 
-
-
-
 </script>
-<pre id="out">w</pre>
 <textarea id="codes"></textarea>
 <button onclick="getWords()">conv</button>
+<hr>
+<pre id="out"></pre>
+
