@@ -1,0 +1,71 @@
+<style>
+@font-face { font-family: SmileBASIC; src: url('//12Me21.github.io/resources/SMILEBASIC.ttf'); }
+.keyword {
+	color:#6BBDF5;
+}
+.number {
+	color:#F67BD5;
+}
+.function {
+	color:#7A7CF7;
+}
+.label {
+	color:#F7A600;
+}
+.string {
+	color:#F6E652;
+}
+.comment {
+	color:#10B630;
+}
+
+pre {
+	color: white;
+    background-color:black;
+    font-family: SmileBASIC;
+    font-size: 16;
+}
+</style>
+<script>
+var text
+function repl(regex,classname){
+	var list=[];
+	while (m=regex.exec("\0"+text)) {
+        list.push([m.index+m[1].length-1,m[2].length,classname]);
+	}
+	return list;
+}
+
+function getWords(){
+	var list=[];
+	text=document.getElementById('codes').value;
+	list=list.concat(repl(/()(\".*?(?:\"|$))/mgi,"string"));
+	list=list.concat(repl(/(^|[^A-Z@_])(AND|BREAK|CALL|COMMON|CONTINUE|DATA|DEC|DEF|DIM|DIV|ELSE|ELSEIF|END|ENDIF|EXEC|FALSE|FOR|GOSUB|GOTO|IF|INC|INPUT|LINPUT|MOD|NEXT|NOT|ON|OUT|OR|PRINT|READ|REPEAT|RESTORE|RETURN|STEP|STOP|SWAP|THEN|TO|TRUE|UNTIL|USE|VAR|WEND|WHILE|XOR)(?![0-9A-Z_$#%])/mgi,'keyword'));
+	list=list.concat(repl(/(^|[^A-Z@_])(BEEP|BACKTRACE|BGMPRG|BGMPRGA)(?![0-9A-Z_$#%])/mgi,'function'));
+	list=list.concat(repl(/(^|[^A-Z])((?:-?(?:(?:\d*\.(?:\d+(?:E-?\d+)?)?)|(?:\d+(?:E-?\d+)?))#?|&H[\dA-F]+|&B[01]+|#[A-Z\d]+))(?!E)/mgi,'number'));
+	list=list.concat(repl(/()(@[0-9A-Z_]*)/mgi,'label'));
+	list=list.concat(repl(/()('.*$)/mgi,"comment"));
+	list=list.sort((a,b)=>a[0]>b[0]?1:-1)
+    var pos=0,output=""
+    for(var i=0;i<list.length;i++){
+    	if (list[i][0]>=pos) {
+        	start=list[i][0]
+        	end=start+list[i][1]-1
+    		output+=text.substring(pos,start)+
+            "<span class='"+list[i][2]+"'>"+
+            text.substring(start,end+1)+
+            "</span>"
+        	pos=end+1
+		}
+    }
+    output+=text.substring(pos)
+    document.getElementById("out").innerHTML=output;
+}
+
+
+
+
+</script>
+<pre id="out">w</pre>
+<textarea id="codes"></textarea>
+<button onclick="getWords()">conv</button>
