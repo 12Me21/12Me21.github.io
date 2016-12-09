@@ -30,7 +30,7 @@ function getWords(){
 	list=list.concat(repl(/()(\".*?(?:\"|$))/mgi,"string"));
 	list=list.concat(repl(/(^|[^A-Z@_])(AND|BREAK|CALL|COMMON|CONTINUE|DATA|DEC|DEF|DIM|DIV|ELSE|ELSEIF|END|ENDIF|EXEC|FALSE|FOR|GOSUB|GOTO|IF|INC|INPUT|LINPUT|MOD|NEXT|NOT|ON|OUT|OR|PRINT|READ|REPEAT|RESTORE|RETURN|STEP|STOP|SWAP|THEN|TO|TRUE|UNTIL|USE|VAR|WEND|WHILE|XOR)(?![0-9A-Z_$#%])/mgi,'keyword'));
 	list=list.concat(repl(/(^|[^A-Z@_])(BEEP|BACKTRACE|BGMPRG|BGMPRGA)(?![0-9A-Z_$#%])/mgi,'function'));
-	list=list.concat(repl(/(^|[^A-Z])((?:-?(?:(?:\d*\.(?:\d+(?:E-?\d+)?)?)|(?:\d+(?:E-?\d+)?))#?|&H[\dA-F]+|&B[01]+|#[A-Z\d]+))(?!E)/mgi,'number'));
+	list=list.concat(repl(/(^|[^A-Z0-9])((?:-?(?:(?:\d*\.(?:\d+(?:E-?\d+)?)?)|(?:\d+(?:E-?\d+)?))#?|&H[\dA-F]+|&B[01]+|#[A-Z\d]+))(?!E)/mgi,'number'));
 	list=list.concat(repl(/()(@[0-9A-Z_]*)/mgi,'label'));
 	list=list.concat(repl(/()('.*$)/mgi,"comment"));
 	list=list.sort((a,b)=>a[0]>b[0]?1:-1)
