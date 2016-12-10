@@ -69,7 +69,7 @@ function applySyntaxHighlighting(codeElement)
 </script>
 
 <textarea id="codes"></textarea>
-<button onclick="document.getElementById('out').innerHTML=document.getElementById('codes').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
+<button onclick="document.getElementById('out').textContent=document.getElementById('codes').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
 <hr>
 <pre id="out"></pre>
 
