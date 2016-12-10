@@ -1,58 +1,75 @@
 <style>
-@font-face { font-family: SmileBASIC; src: url('//12Me21.github.io/resources/SMILEBASIC.ttf'); }
-.keyword {color:#6BBDF5;}
-.number {color:#F67BD5;}
-.function {color:#7A7CF7;}
-.label {color:#F7A600;}
-.string {color:#F6E652;}
-.comment {color:#10B630;}
-pre {
-	color: white;
-    background-color: black;
-    font-family: SmileBASIC;
-    font-size: 16px;
-	word-wrap: break-word;
-}
-</style>
-<script>
-var text
-function repl(regex,classname){
-	var list=[];
-	while (m=regex.exec("\0"+text)) {
-        list.push([m.index+m[1].length-1,m[2].length,classname]);
-	}
-	return list;
-}
-
-function getWords(){
-	var list=[];
-	text=document.getElementById('codes').value;
-	list=list.concat(repl(/()(\".*?(?:\"|$))/mgi,"string"));
-	list=list.concat(repl(/(^|[^A-Z@_])(AND|BREAK|CALL|COMMON|CONTINUE|DATA|DEC|DEF|DIM|DIV|ELSE|ELSEIF|END|ENDIF|EXEC|FALSE|FOR|GOSUB|GOTO|IF|INC|INPUT|LINPUT|MOD|NEXT|NOT|ON|OUT|OR|PRINT|READ|REPEAT|RESTORE|RETURN|STEP|STOP|SWAP|THEN|TO|TRUE|UNTIL|USE|VAR|WEND|WHILE|XOR)(?![0-9A-Z_$#%])/mgi,'keyword'));
-	list=list.concat(repl(/(^|[^A-Z@_])(BEEP|BACKTRACE|BGMPRG|BGMPRGA)(?![0-9A-Z_$#%])/mgi,'function'));
-	list=list.concat(repl(/(^|[^A-Z0-9])((?:-?(?:(?:\d*\.(?:\d+(?:E-?\d+)?)?)|(?:\d+(?:E-?\d+)?))#?|&H[\dA-F]+|&B[01]+|#[A-Z\d]+))(?!E)/mgi,'number'));
-	list=list.concat(repl(/()(@[0-9A-Z_]*)/mgi,'label'));
-	list=list.concat(repl(/()('.*$)/mgi,"comment"));
-	list=list.sort((a,b)=>a[0]>b[0]?1:-1)
-    var pos=0,output=""
-    for(var i=0;i<list.length;i++){
-    	if (list[i][0]>=pos) {
-        	start=list[i][0]
-        	end=start+list[i][1]-1
-    		output+=text.substring(pos,start)+
-            "<span class='"+list[i][2]+"'>"+
-            text.substring(start,end+1)+
-            "</span>"
-        	pos=end+1
-		}
+	body{
+    	background-color: #FAFAFA;
     }
-    output+=text.substring(pos)
-    document.getElementById("out").innerHTML=output;
-}
+	@font-face {
+		font-family: SmileBASIC;
+		src: url('//12Me21.github.io/resources/SMILEBASIC.ttf');
+	}
+	pre {
+    	font-family: SmileBASIC,monospace;
+		font-size: .8rem;
+        line-height: 0.9rem;
+        padding: 0.5rem;
+		border: .18rem inset #AAA;
+    
+		color: white;
+		background-color: black;
+	}
+	
+    /* not the default colors, sorry */
+	.keyword {color:#6BBDF5;}
+	.number  {color:#F67BD5;}
+	.function{color:#7A7CF7;}
+	.label   {color:#F7A600;}
+	.string  {color:#F6E652;}
+	.comment {color:#10B630;}
+</style>
 
+<script>
+function applySyntaxHighlighting(codeElement)
+{
+	var text=codeElement.textContent;
+	
+	var list=[]; // each highlightable word is stored as [start_pos,length,classname]
+	//add 2nd capture group of matches to list
+	function repl(regex,classname)
+	{
+		while (m=regex.exec(text))
+			list.push([m.index+m[1].length,m[2].length,classname]);
+	}
+	
+	//find keywords
+	repl(/()(\".*?(?:\"|$))/mgi,"string");
+	repl(/(^|[^A-Z@_])(AND|BREAK|CALL|COMMON|CONTINUE|DATA|DEC|DEF|DIM|DIV|ELSE|ELSEIF|END|ENDIF|EXEC|FALSE|FOR|GOSUB|GOTO|IF|INC|INPUT|LINPUT|MOD|NEXT|NOT|ON|OUT|OR|PRINT|READ|REPEAT|RESTORE|RETURN|STEP|STOP|SWAP|THEN|TO|TRUE|UNTIL|USE|VAR|WEND|WHILE|XOR)(?![0-9A-Z_$#%])/mgi,"keyword");
+	repl(/(^|[^A-Z@_])(ABS|ACCEL|ACLS|ACOS|ARYOP|ASC|ASIN|ATAN|ATTR|BACKCOLOR|BACKTRACE|BEEP|BGANIM|BGCHK|BGCLIP|BGCLR|BGCOLOR|BGCOORD|BGCOPY|BGFILL|BGFUNC|BGGET|BGHIDE|BGHOME|BGLOAD|BGMCHK|BGMCLEAR|BGMCONT|BGMPAUSE|BGMPLAY|BGMPRG|BGMPRGA|BGMSET|BGMSETD|BGMSTOP|BGMVAR|BGMVOL|BGOFS|BGPAGE|BGPUT|BGROT|BGSAVE|BGSCALE|BGSCREEN|BGSHOW|BGSTART|BGSTOP|BGVAR|BIN$|BIQUAD|BREPEAT|BQPARAM|BUTTON|CALLIDX|CEIL|CHKCALL|CHKCHR|CHKFILE|CHKLABEL|CHKVAR|CHK$|CLASSIFY|CLIPBOARD|CLS|COLOR|COPY|COS|COSH|CSRX|CSRY|CSRZ|DATE$|DEG|DELETE|DIALOG|DISPLAY|DLCOPEN|DTREAD|EFCOFF|EFCON|EFCSET|EFCWET|ERRNUM|ERRLINE|ERRPRG|EXP|EXTFEATURE|FADE|FADECHK|FFT|FFTWFN|FILL|FILES|FLOOR|FONTDEF|FORMAT$|FREEMEM|GBOX|GCIRCLE|GCLIP|GCLS|GCOLOR|GCOPY|GFILL|GLINE|GLOAD|GOFS|GPAGE|GPAINT|GPRIO|GPSET|GPUTCHR|GSAVE|GSPOIT|GTRI|GYROA|GYROV|GYROSYNC|HARDWARE|HEX$|IFFT|INKEY$|INSTR|KEY|LEFT$|LEN|LOAD|LOCATE|LOG|MAINCNT|MAX|MICDATA|MICPOS|MICSAVE|MICSIZE|MICSTART|MICSTOP|MID$|MILLISEC|MIN|MPCOUNT|MPEND|MPGET|MPHOST|MPLOCAL|MPNAME$|MPRECV|MPSEND|MPSET|MPSTART|MPSTAT|OPTION|PCMCONT|PCMPOS|PCMSTOP|PCMSTREAM|PCMVOL|POW|POP|PRGDEL|PRGEDIT|PRGGET$|PRGINS|PRGNAME$|PRGSET|PRGSIZE|PRGSLOT|PROJECT|PUSH|RAD|RANDOMIZE|RENAME|RESULT|RGB|RGBREAD|RIGHT$|RINGCOPY|RND|RNDF|ROUND|RSORT|SAVE|SCROLL|SGN|SHIFT|SIN|SINH|SNDSTOP|SORT|SPANIM|SPCHK|SPCHR|SPCLIP|SPCLR|SPCOL|SPCOLOR|SPCOLVEC|SPDEF|SPFUNC|SPHIDE|SPHITINFO|SPHITRC|SPHITSP|SPHOME|SPLINK|SPOFS|SPPAGE|SPROT|SPSCALE|SPSET|SPSHOW|SPSTART|SPSTOP|SPUSED|SPUNLINK|SPVAR|SQR|STICK|STICKEX|STR$|SUBST$|SYSBEEP|TABSTEP|TALK|TALKCHK|TALKSTOP|TAN|TANH|TIME$|TMREAD|TOUCH|UNSHIFT|VAL|VERSON|VISIBLE|VSYNC|WAIT|WAVSET|WAVSETA|WIDTH|XOFF|XON|XSCREEN)(?![0-9A-Z_$#%])/mgi,"function");
+	repl(/(^|[^A-Z0-9])((?:-?(?:(?:\d*\.(?:\d+(?:E-?\d+)?)?)|(?:\d+(?:E-?\d+)?))#?|&H[\dA-F]+|&B[01]+|#[A-Z\d]+))(?!E)/mgi,"number");
+	repl(/()(@[0-9A-Z_]*)/mgi,"label");
+	repl(/()('.*$)/mgi,"comment");
+
+	list=list.sort((a,b)=>a[0]>b[0]?1:-1); //sort list by start positions	
+	var pos=0,output="";
+	for(var i=0;i<list.length;i++)
+	{
+		if (list[i][0]>=pos) //only highlight if it's past the end of the previous keyword
+		{ 
+			start=list[i][0];
+			end=start+list[i][1]-1;
+			output+=text.substring(pos,start)+ //text before keyword
+			"<span class='"+list[i][2]+"'>"+ //tag
+			text.substring(start,end+1)+ //keyword
+			"</span>"; //closing tag
+			pos=end+1;
+		}
+	}
+	output+=text.substring(pos); //text after last keyword
+	
+	codeElement.innerHTML=output;
+}
 </script>
+
 <textarea id="codes"></textarea>
-<button onclick="getWords()">conv</button>
+<button onclick="document.getElementById('out').innerHTML=document.getElementById('codes').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
 <hr>
 <pre id="out"></pre>
 
