@@ -1,0 +1,54 @@
+<head>
+	<meta charset="utf-8">
+	<title>Screenshot->text converter</title>
+	<link rel="icon" type="image/png" sizes="16x16" href="./resources/inactive.png">
+	<script>
+		window.onload=function(){
+			var fileBrowse=document.getElementById("imageUpload");
+			fileBrowse.onchange=function(){
+				var reader=new FileReader();
+				reader.onload=function(){
+					loadImage(this.result)
+				};
+				reader.readAsDataURL(this.files[0]);
+			};
+			var canvas=document.getElementById("canvas");
+			var c2d=canvas.getContext("2d");
+			var output=document.getElementById("output");
+			
+			function loadImage(source) {
+				var img=new Image();
+				img.onload=function(){
+					c2d.drawImage(img,0,0);
+					output.textContent=img2txt(c2d.getImageData(0,0,400,240).data);
+				};
+				img.src=source;
+			}
+			
+			function img2txt(data) {
+				var text="";
+				for(var byte=0;char!=0;byte++) {
+                   	var char=0;
+					for (var nib=0;nib<2;nib++) {
+						var col=(data[(byte*2+nib)*4])>>4;
+						char|=col<<nib*4;
+					}
+					if (char) text+=String.fromCharCode(char);
+				}
+				return text;
+			}
+		}
+	</script>
+	<style>
+		textarea#output {
+			width:90%;
+			height:90%;
+		}
+	</style>
+</head>
+<body>
+	<input type="file" id="imageUpload">
+	<hr>
+	<canvas id="canvas" width="400" height="240" hidden=true></canvas>
+	<textarea id="output"></textarea>
+</body>
