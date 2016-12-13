@@ -26,9 +26,9 @@
 			}
 			
 			function img2txt(data) {
-				var text="";
+				var char,text="";
 				for(var byte=0;char!=0;byte++) {
-                   	var char=0;
+					char=0;
 					for (var nib=0;nib<2;nib++) {
 						var col=(data[(byte*2+nib)*4])>>4;
 						char|=col<<nib*4;
