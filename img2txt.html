@@ -29,15 +29,12 @@
 				var char,text="";
 				for(var byte=0;char!=0;byte++) {
 					char=0;
-					for (var nib=0;nib<2;nib++) {
-						var pixel=(byte*2+nib)*4
-                        var col=Math.round((data[pixel]+data[pixel+1]+data[pixel+2])/3/16);
-						char|=col<<nib*4;
+					for (var bit=0;bit<8;bit++) {
+						if (data[(byte*8+bit)*4]>128) char|=1<<bit
 					}
 					text+=String.fromCharCode(char);
-                   if (String.fromCharCode(char)=="`") console.log(col)
 				}
-				return text;
+				return decodeURIComponent(escape(text));
 			}
 		}
 	</script>
