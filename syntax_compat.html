@@ -58,7 +58,7 @@ var applySyntaxHighlighting = (function()
 		find(false     ,/(?:\d*\.)?\d+(?=E)/igm,text,list); //fix stuff like "1END", "1.1END", and ".1END"
 		find("number"  ,/-?(?:(?:\d*\.(?:\d+(?:E-?\d+)?)?)|(?:\d+(?:E-?\d+)?))#?|(?:&amp;|&)H[\dA-F]+|(?:&amp;|&)B[01]+|#[A-Z\d]+/igm,text,list);
 		find("label"   ,/@[0-9A-Z_]*/igm,text,list);
-		find("comment" ,/'.*$/igm,text,list);
+		find("comment" ,/'[^'\n\r]*/igm,text,list); // /'[^']*/
 		
 		list=list.sort(listCompare); 
 		var pos=0,output="";
@@ -92,4 +92,3 @@ var applySyntaxHighlighting = (function()
 <button onclick="document.getElementById('out').textContent=document.getElementById('codes').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
 <hr>
 <pre id="out"></pre>
-
