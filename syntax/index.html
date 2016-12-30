@@ -1,22 +1,14 @@
 <style>
-	body{
-		background-color: #FAFAFA;
-	}
 	@font-face {
 		font-family: SmileBASIC;
-		src: url('//12Me21.github.io/resources/SMILEBASIC.ttf');
+		src: url("//12Me21.github.io/resources/SMILEBASIC.ttf");
 	}
-	pre {
+	code {
+		white-space: pre;
 		font-family: SmileBASIC,monospace;
-		font-size: .8rem;
-		line-height: 0.9rem;
-		padding: 0.5rem;
-		border: .18rem inset #AAA;
-		
 		color: white;
 		background-color: black;
 	}
-	
 	.keyword {color:#6BBDF5;}
 	.number  {color:#F67BD5;}
 	.function{color:#7A7CF7;}
@@ -30,4 +22,4 @@
 <textarea id="in"></textarea>
 <button onclick="document.getElementById('out').textContent=document.getElementById('in').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
 <hr>
-<pre id="out"></pre>
+<code id="out"></code>
