@@ -12,6 +12,7 @@
 		color: white;
 		background-color: black;
 		padding: 2px;
+		display: block;
 	}
 	.keyword {color:#6BBDF5;}
 	.number  {color:#F67BD5;}
@@ -19,9 +20,13 @@
 	.label   {color:#F7A600;}
 	.string  {color:#F6E652;}
 	.comment {color:#10B630;}
+	newline::after {
+		content:"\E20D";
+		color: rgb(0,184,248);
+	}
 </style>
 
-<script src="script.js"></script>
+<script src="script2.js"></script>
 
 <textarea id="in"></textarea>
 <button onclick="document.getElementById('out').textContent=document.getElementById('in').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
