@@ -32,6 +32,12 @@
 </style>
 
 <script src="script2.js"></script>
+<script>
+window.onload = function(){
+	document.getElementById('out').textContent=location.hash.substr(1);
+    applySyntaxHighlighting(document.getElementById('out'))
+}
+</script>
 
 <textarea id="in"></textarea>
 <button onclick="document.getElementById('out').textContent=document.getElementById('in').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
