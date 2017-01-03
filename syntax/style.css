@@ -36,6 +36,7 @@
 		background-color:#e9e9e6;
 		border: 0.2em solid #737372;
 		color: #222;
+		cursor: pointer;
 	}
 	textarea {
 		font-family: 'Roboto', sans-serif;
@@ -47,4 +48,6 @@
 		font-size: 0.8rem;
 		background-color: white;
 		color: #222;
+		min-width: 50%;
+		padding: 0.1rem;
 	}
