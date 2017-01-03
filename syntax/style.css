@@ -3,8 +3,6 @@
 		src: url("//12Me21.github.io/resources/SMILEBASIC.ttf");
 	}
 	code {
-		color: white;
-		background-color: black;
 		margin: 0.2rem 0;
 		border: 1px solid rgba(24,24,24,.25);
 		box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
@@ -15,17 +13,7 @@
 		font-size: 0.8rem;
 		white-space: pre;
 		line-height: 0.9rem;
-
-	}
-	.keyword {color:#6BBDF5;}
-	.number  {color:#F67BD5;}
-	.function{color:#7A7CF7;}
-	.label   {color:#F7A600;}
-	.string  {color:#F6E652;}
-	.comment {color:#10B630;}
-	newline::after {
-		content:"\E20D";
-		color: rgb(0,184,248);
+		max-width: 50%;
 	}
 	button {
 		font-family: 'Roboto', sans-serif;
@@ -50,4 +38,19 @@
 		color: #222;
 		min-width: 50%;
 		padding: 0.1rem;
+	}
+	/* actual highligher things */
+	code{
+		color: white;
+		background-color: black;
+	}
+	.keyword {color:#6BBDF5;}
+	.number  {color:#F67BD5;}
+	.function{color:#7A7CF7;}
+	.label   {color:#F7A600;}
+	.string  {color:#F6E652;}
+	.comment {color:#10B630;}
+	newline::after {
+		content:"\E20D";
+		color: rgb(0,184,248);
 	}
