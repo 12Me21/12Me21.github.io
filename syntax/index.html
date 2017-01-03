@@ -5,19 +5,11 @@
 	}
 	code {
 		font-family: SmileBASIC,monospace;
-		font-size: 16px;
-		line-height: 16px;
 		white-space: pre;
 		
 		color: white;
 		background-color: black;
 		padding: 2px;
-		display: block;
-		
-		width: calc(16px * (50 - 4));
-		word-break: break-all;
-		word-wrap: break-word;
-		white-space: pre-wrap;
 	}
 	.keyword {color:#6BBDF5;}
 	.number  {color:#F67BD5;}
@@ -29,17 +21,23 @@
 		content:"\E20D";
 		color: rgb(0,184,248);
 	}
+	
 </style>
 
-<script src="script2.js"></script>
+<script src="script.js"></script>
 <script>
 window.onload = function(){
-	document.getElementById('out').textContent=decodeURIComponent(location.hash.substr(1));
-	applySyntaxHighlighting(document.getElementById('out'))
+	document.getElementById('in').textContent=decodeURIComponent(location.hash.substr(1));
+	conv();
+}
+
+function conv(){
+	document.getElementById('out').textContent=document.getElementById('in').value;
+	applySyntaxHighlighting(document.getElementById('out'));
 }
 </script>
 
 <textarea id="in"></textarea>
-<button onclick="document.getElementById('out').textContent=document.getElementById('in').value;applySyntaxHighlighting(document.getElementById('out'))">conv</button>
+<button onclick="conv();">Preview</button>
 <hr>
 <code id="out"></code>
