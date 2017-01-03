@@ -1,0 +1,50 @@
+	@font-face {
+		font-family: SmileBASIC;
+		src: url("//12Me21.github.io/resources/SMILEBASIC.ttf");
+	}
+	code {
+		color: white;
+		background-color: black;
+		margin: 0.2rem 0;
+		border: 1px solid rgba(24,24,24,.25);
+		box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+		display:block;
+		overflow:auto;
+		padding: .5rem;
+		font-family: SmileBASIC, monospace;
+		font-size: 0.8rem;
+		white-space: pre;
+		line-height: 0.9rem;
+
+	}
+	.keyword {color:#6BBDF5;}
+	.number  {color:#F67BD5;}
+	.function{color:#7A7CF7;}
+	.label   {color:#F7A600;}
+	.string  {color:#F6E652;}
+	.comment {color:#10B630;}
+	newline::after {
+		content:"\E20D";
+		color: rgb(0,184,248);
+	}
+	button {
+		margin: 0.1rem;
+		font-size: 0.8rem;
+		padding: 0.2em 0.4em;
+		border-radius: 0.3em;
+		background-color:#e9e9e6;
+		border: 0.2em solid #737372;
+		color: #222;
+		font-weight: bold;
+	}
+	textarea {
+		margin: 0;
+		resize: vertical;
+		border-radius: 2px;
+		border: 2px solid #00C8B4;
+		box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+		font-size: 0.8rem;
+		background-color: white;
+		color: #222;
+		font-weight: bold;
+	}
