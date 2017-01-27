@@ -1,0 +1,9 @@
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="script.js"></script>
+<script>
+window.onload = function(){
+	  document.getElementById('out').textContent=decodeURIComponent(location.hash.substr(1));
+	  applySyntaxHighlighting(document.getElementById('out'));
+}
+</script>
+<code id="out"></code>
