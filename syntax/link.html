@@ -1,9 +1,47 @@
-<link rel="stylesheet" type="text/css" href="style.css">
-<script src="script.js"></script>
-<script>
-window.onload = function(){
-	  document.getElementById('out').textContent=decodeURIComponent(location.hash.substr(1));
-	  applySyntaxHighlighting(document.getElementById('out'));
-}
-</script>
-<code id="out" style="font-size:16px;line-height:16px;"></code>
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		@font-face {
+			font-family: SmileBASIC;
+			src: url("//12Me21.github.io/resources/SMILEBASIC.ttf");
+		}
+		code {
+			margin: 0.2rem 0;
+			display:block;
+			padding: 3px;
+			font-family: SmileBASIC, monospace;
+			font-size: 16px;
+			line-height: 16px;
+			width: calc(16px * 46);
+		   white-space: pre-wrap;
+		   word-break: break-all;
+		}
+		/* actual highligher things */
+		code{
+			color: white;
+			background-color: black;
+		}
+		.keyword {color:#6BBDF5;}
+		.number  {color:#F67BD5;}
+		.function{color:#7A7CF7;}
+		.label   {color:#F7A600;}
+		.string  {color:#F6E652;}
+		.comment {color:#10B630;}
+		newline::after {
+			content:"\E20D";
+			color: rgb(0,184,248);
+		}
+	</style>
+	<script src="script2.js"></script>
+	<script>
+		window.onload = function(){
+			document.getElementById('out').textContent=decodeURIComponent(location.hash.substr(1));
+			applySyntaxHighlighting(document.getElementById('out'));
+		}
+	</script>
+</head>
+<body>
+	<code id="out"></code>
+</body>
+</html>
