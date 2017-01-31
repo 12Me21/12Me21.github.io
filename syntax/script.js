@@ -11,7 +11,7 @@ var applySyntaxHighlighting = (function()
 				classname: classname,
 				index: index++
 			});
-		console.log(match)
+		/////////////////////////////////////console.log(match)
 		}
 	}
 	
