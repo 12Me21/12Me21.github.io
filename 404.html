@@ -1,1 +1,19 @@
-is "404.html" the 404 page, or does it not exist?
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+window.onload=function(){
+	document.getElementById("p").textContent=window.location.href;
+};
+setTimeout(function(){
+	window.location.href=
+		window.location.href+
+		(window.location.href[window.location.href.length-1]=="/"?"":"/")+
+		"tn21";
+},1000);
+		</script>
+	</head>
+	<body>
+		<p id="p"></p>
+	</body>
+</html>
