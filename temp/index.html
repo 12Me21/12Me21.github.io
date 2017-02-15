@@ -17,7 +17,7 @@ img[i].x=x*400
 img[i].y=y*240
  
 img[i].onload=function(){
- console.log(this)
+ console.log(this.x,this.y)
  c2d.drawImage(this,this.x,this.y)
 }
 
