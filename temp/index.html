@@ -4,8 +4,8 @@
 window.onload=function(){
 var canvas=document.getElementsByTagName("canvas")[0]
 var c2d=canvas.getContext("2d")
-for(var x;x<2;x++){
-for(var y;y<3;y++){
+for(var x=0;x<2;x++){
+for(var y=0;y<3;y++){
 var img=new Image()
 img.src="./"+x+","+y
 alert(img.src)
