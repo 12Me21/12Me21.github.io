@@ -4,17 +4,19 @@
 window.onload=function(){
 var canvas=document.getElementsByTagName("canvas")[0]
 var c2d=canvas.getContext("2d")
+var img=new Array(6)
+var i=0
 for(var x=0;x<2;x++){
 for(var y=0;y<3;y++){
-var img=new Image()
-img.src="./"+x+","+y
-alert(img.src)
-img.onload=function(){
-c2d.drawImage(img,x*400,y*240)
+
+  var img[i]=new Image()
+img[i].src="./"+x+","+y
+
+img[i].onload=function(){
+ console.log(img[i].src)
+ c2d.drawImage(img[i],x*400,y*240)
 }
-alert()
-
-
+i++
 }
 }
 
