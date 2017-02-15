@@ -13,8 +13,8 @@ img[i]=new Image()
 img[i].src="./"+x+","+y
 
 img[i].onload=function(){
- console.log(img[i].src)
- c2d.drawImage(img[i],x*400,y*240)
+ console.log(this)
+ c2d.drawImage(this,x*400,y*240)
 }
 i++
 }
