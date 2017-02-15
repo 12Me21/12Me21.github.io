@@ -13,10 +13,12 @@ for(var y=0;y<3;y++){
 
 img[i]=new Image()
 img[i].src="./"+x+","+y+".jpeg"
+img[i].x=x*400
+img[i].y=y*240
  
 img[i].onload=function(){
  console.log(this)
- c2d.drawImage(this,0*400,0*240)
+ c2d.drawImage(this,this.x,this.y)
 }
 
 i++
