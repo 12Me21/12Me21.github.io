@@ -6,17 +6,23 @@ var canvas=document.getElementsByTagName("canvas")[0]
 var c2d=canvas.getContext("2d")
 var img=new Array(6)
 var i=0
+var g=1
 for(var x=0;x<2;x++){
 for(var y=0;y<3;y++){
+while(g==0){}
 
 img[i]=new Image()
+g=0
 img[i].src="./"+x+","+y+".jpeg"
 
 img[i].onload=function(){
+ g=1
  console.log(this)
  c2d.drawImage(this,x*400,y*240)
 }
 i++
+
+ 
 }
 }
 
