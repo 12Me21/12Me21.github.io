@@ -7,6 +7,8 @@ var c2d=canvas.getContext("2d")
 for(var x;x<2;x++){
 for(var y;y<3;y++){
 var img=new Image()
+img.src="./"+x+","+y
+alert(img.src)
 img.onload=function(){
 c2d.drawImage(img,x*400,y*240)
 }
