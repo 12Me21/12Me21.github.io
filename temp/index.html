@@ -12,15 +12,15 @@ for(var y=0;y<3;y++){
 
 
 img[i]=new Image()
-img[i].x=x*400
-img[i].y=y*240
- console.log(img[i].x,img[i].y)
+img[i].px=x*400
+img[i].py=y*240
+ console.log(img[i].px,img[i].py)
 img[i].src="./"+x+","+y+".jpeg"
 
  
 img[i].onload=function(){
- console.log(this.x,this.y)
- c2d.drawImage(this,this.x,this.y)
+ console.log("BEEP 70")
+ c2d.drawImage(this,this.px,this.py)
 }
 
 i++
