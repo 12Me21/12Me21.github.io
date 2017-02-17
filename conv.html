@@ -3,29 +3,31 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="./resources/CONVicon.png">
 	<title>Text 𝘊𝘰𝘯𝘃𝗲𝗿𝕥𝕖𝕣</title>
 	<script>
-		var inText ="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		var inText ="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 		
-		function goConvert(outText) {document.getElementById("output").innerHTML=(convert(document.getElementById("input").value,outText));}
+		function goConvert(outText) {
+			document.getElementById("output").innerHTML=convert(document.getElementById("input").value,outText)
+		}
 		
 		function convert(input,outText) {
-			var output='';
+			var output=""
 			for (var i=0;i<input.length;i++) {
-				no = inText.indexOf(input.charAt(i));
+				no = inText.indexOf(input.charAt(i))
 				if (no!=-1) {
-					output += outText.substr(no*2,2);
+					output += outText.substr(no*2,2)
 				} else {
-					output += input.charAt(i);
+					output += input.charAt(i)
 				}
 			}
-			return output;
+			return output
 		}
 	</script>
 </head>
 <body>
 	<input type="text" id="input" value="">
-	<input type="button" value="Italic" onclick="goConvert('𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻')">
-	<input type="button" value="Bold" onclick="goConvert('𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇')">
-	<input type="button" value="Double" onclick="goConvert('𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝔸𝔹ℂ\0𝔻𝔼𝔽𝔾ℍ\0𝕀𝕁𝕂𝕃𝕄ℕ\0𝕆ℙ\0ℚ\0ℝ\0𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ\0𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫')">
+	<input type="button" value="Italic" onclick="goConvert('\uD835\uDFE2\uD835\uDFE3\uD835\uDFE4\uD835\uDFE5\uD835\uDFE6\uD835\uDFE7\uD835\uDFE8\uD835\uDFE9\uD835\uDFEA\uD835\uDFEB\uD835\uDE08\uD835\uDE09\uD835\uDE0A\uD835\uDE0B\uD835\uDE0C\uD835\uDE0D\uD835\uDE0E\uD835\uDE0F\uD835\uDE10\uD835\uDE11\uD835\uDE12\uD835\uDE13\uD835\uDE14\uD835\uDE15\uD835\uDE16\uD835\uDE17\uD835\uDE18\uD835\uDE19\uD835\uDE1A\uD835\uDE1B\uD835\uDE1C\uD835\uDE1D\uD835\uDE1E\uD835\uDE1F\uD835\uDE20\uD835\uDE21\uD835\uDE22\uD835\uDE23\uD835\uDE24\uD835\uDE25\uD835\uDE26\uD835\uDE27\uD835\uDE28\uD835\uDE29\uD835\uDE2A\uD835\uDE2B\uD835\uDE2C\uD835\uDE2D\uD835\uDE2E\uD835\uDE2F\uD835\uDE30\uD835\uDE31\uD835\uDE32\uD835\uDE33\uD835\uDE34\uD835\uDE35\uD835\uDE36\uD835\uDE37\uD835\uDE38\uD835\uDE39\uD835\uDE3A\uD835\uDE3B\')">
+	<input type="button" value="Bold" onclick="goConvert('\uD835\uDFEC\uD835\uDFED\uD835\uDFEE\uD835\uDFEF\uD835\uDFF0\uD835\uDFF1\uD835\uDFF2\uD835\uDFF3\uD835\uDFF4\uD835\uDFF5\uD835\uDDD4\uD835\uDDD5\uD835\uDDD6\uD835\uDDD7\uD835\uDDD8\uD835\uDDD9\uD835\uDDDA\uD835\uDDDB\uD835\uDDDC\uD835\uDDDD\uD835\uDDDE\uD835\uDDDF\uD835\uDDE0\uD835\uDDE1\uD835\uDDE2\uD835\uDDE3\uD835\uDDE4\uD835\uDDE5\uD835\uDDE6\uD835\uDDE7\uD835\uDDE8\uD835\uDDE9\uD835\uDDEA\uD835\uDDEB\uD835\uDDEC\uD835\uDDED\uD835\uDDEE\uD835\uDDEF\uD835\uDDF0\uD835\uDDF1\uD835\uDDF2\uD835\uDDF3\uD835\uDDF4\uD835\uDDF5\uD835\uDDF6\uD835\uDDF7\uD835\uDDF8\uD835\uDDF9\uD835\uDDFA\uD835\uDDFB\uD835\uDDFC\uD835\uDDFD\uD835\uDDFE\uD835\uDDFF\uD835\uDE00\uD835\uDE01\uD835\uDE02\uD835\uDE03\uD835\uDE04\uD835\uDE05\uD835\uDE06\uD835\uDE07')">
+	<input type="button" value="Double" onclick="goConvert('\uD835\uDFD8\uD835\uDFD9\uD835\uDFDA\uD835\uDFDB\uD835\uDFDC\uD835\uDFDD\uD835\uDFDE\uD835\uDFDF\uD835\uDFE0\uD835\uDFE1\uD835\uDD38\uD835\uDD39\u2102\x00\uD835\uDD3B\uD835\uDD3C\uD835\uDD3D\uD835\uDD3E\u210D\x00\uD835\uDD40\uD835\uDD41\uD835\uDD42\uD835\uDD43\uD835\uDD44\u2115\x00\uD835\uDD46\u2119\x00\u211A\x00\u211D\x00\uD835\uDD4A\uD835\uDD4B\uD835\uDD4C\uD835\uDD4D\uD835\uDD4E\uD835\uDD4F\uD835\uDD50\u2124\x00\uD835\uDD52\uD835\uDD53\uD835\uDD54\uD835\uDD55\uD835\uDD56\uD835\uDD57\uD835\uDD58\uD835\uDD59\uD835\uDD5A\uD835\uDD5B\uD835\uDD5C\uD835\uDD5D\uD835\uDD5E\uD835\uDD5F\uD835\uDD60\uD835\uDD61\uD835\uDD62\uD835\uDD63\uD835\uDD64\uD835\uDD65\uD835\uDD66\uD835\uDD67\uD835\uDD68\uD835\uDD69\uD835\uDD6A\uD835\uDD6B')">
 	<p id="output"></p>
 </body>
 </html> 
