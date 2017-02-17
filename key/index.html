@@ -13,25 +13,30 @@
 			10%  {color: #000;}
 			100% {color: #FFF;}
 		}
+		div.smilebasic {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
 	</style>
 	<script>
 		function generateKey() {
-			var key='';
+			var key=""
 			for (var i=0;i<8;i++){
-				key+="123456789ABCDEFHJJKLMNPQRSTVWXYZ"[Math.floor(Math.random()*32)];
+				key+="123456789ABCDEFHJJKLMNPQRSTVWXYZ"[Math.random()*32|0]
 			}
-			document.getElementById("key").innerHTML=key;
+			document.getElementById("key").innerHTML=key
 		}
-		
 
 	</script>
 </head>
 
 <body onLoad="generateKey()" bgcolor="0">
-	<div class="smilebasic" style="position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);">
+	<div class="smilebasic">
 		<p>
 		┏━━━━━━━━┓<br>
 		<span>┃</span><span id="key">loading.</span><span>┃</span><br>
 		┗━━━━━━━━┛<br></p>
-	</div><br>
+	</div>
 </body>
