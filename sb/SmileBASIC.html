@@ -2,6 +2,7 @@
 	<head>
 		<title>SmileBASIC</title>
 		<link rel="icon" type="image/png" sizes="16x16" href="./SBicon.png">
+		<link rel="stylesheet" type="text/css" href="./font.css">
 		<style>
 			textarea {
 				margin: 0;
@@ -17,111 +18,110 @@
 				overflow: hidden;
 				resize: none;
 				outline: none;
-				user-select: none;    -moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;
+				user-select: none;
+				-moz-user-select:none;
+				-webkit-user-select:none;
+				-ms-user-select:none;
 			}
 		</style>
 		<script>
 			ver="0.5.5"
 
 			function readLine() {
-				var textarea = document.getElementsByTagName("textarea")[0];
-				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2].trim().split("'")[0].split("REM")[0];
+				var textarea = document.getElementsByTagName("textarea")[0]
+				var lastline = textarea.value.split("\n")[textarea.value.split("\n").length - 2].trim().split("'")[0].split("REM")[0]
 				
 				if (lastline.length) {
-					if (checkCommand(lastline,'WAVBGM "RICKROLL.WAV",3,0,1')) {
-						var music = document.getElementById("music");
-						music.src = "./bgm/LOW60.WAV"; //low quality 60 sec.
-						music.play();
-					} else if (checkCommand(lastline,"BGMPLAY")) {
-						var command = parseInt(lastline.split(" ").slice(-1)[0]);
+					if (checkCommand(lastline,"BGMPLAY")) {
+						var command = parseInt(lastline.split(" ").slice(-1)[0])
 						var songnum=" ";
 						if (command>=0 && command<=9) {
-							songnum=" "+command;
+							songnum=" "+command
 						} else {
-							songnum=command;
+							songnum=command
 						}
 						if (command>=0 && command <=42) {
-							var music = document.getElementById("music");
-							music.src = "./bgm/BGM"+songnum+".mp3";
-							music.play();
+							var music = document.getElementById("music")
+							music.src = "./bgm/BGM"+songnum+".mp3"
+							music.play()
 						} else {
-							textarea.value+="Out of range(BGMPLAY:1)\n";
-							textarea.value+="Syntax error\n";
-							var beep = document.getElementById("error");
-							beep.play();
+							textarea.value+="Out of range(BGMPLAY:1)\n"
+							textarea.value+="Syntax error\n"
+							var beep = document.getElementById("error")
+							beep.play()
 						}	
 					} else if (checkCommand(lastline,"CLS")||checkCommand(lastline,"ACLS")) {
 							textarea.value=""
 					} else if (checkCommand(lastline,"GOTO 1:")) {
-						var lbl = lastline.split("@").slice(-1)[0];
-						window.location.href = "http://"+lbl;
+						var lbl = lastline.split("@").slice(-1)[0]
+						window.location.href = "http://"+lbl
 					} else if (checkCommand(lastline,"GOTO 2:")) {
-						var lbl = lastline.split("@").slice(-1)[0];
-						window.location.href = "http://smilebasicsource.com/"+lbl;
+						var lbl = lastline.split("@").slice(-1)[0]
+						window.location.href = "http://smilebasicsource.com/"+lbl
 					} else if (checkCommand(lastline,"GOTO 3:")) {
-						var lbl = lastline.split("@").slice(-1)[0];
-						window.location.href = lbl;	
+						var lbl = lastline.split("@").slice(-1)[0]
+						window.location.href = lbl
 					} else if (checkCommand(lastline,"GOTO")) {
-						var lbl = lastline.split("@").slice(-1)[0];
+						var lbl = lastline.split("@").slice(-1)[0]
 						if (checkUrl(lbl)==true) {
-							window.location.href = lbl;
+							window.location.href = lbl
 						} else {
-							textarea.value+="Invalid label(GOTO:1)\n";
-							var beep = document.getElementById("error");
-							beep.play();
+							textarea.value+="Invalid label(GOTO:1)\n"
+							var beep = document.getElementById("error")
+							beep.play()
 						}
 					} else if (checkCommand(lastline,"BGMSTOP")) {
-						var music = document.getElementById("music");
+						var music = document.getElementById("music")
 						music.src = ""
 						music.play()
 					} else if (checkCommand(lastline,"BEEP")) {
-						beep.play();
+						beep.play()
 					} else if (checkCommand(lastline,"PRINT")||checkCommand(lastline,"?")) {
-						var parts = lastline.split('"');
+						var parts = lastline.split('"')
 						if (parts.length>1) {
-							textarea.value+=parts[1];
+							textarea.value+=parts[1]
 						}
-						textarea.value+="\n";
+						textarea.value+="\n"
 					} else {	
-						textarea.value+="Syntax error\n";
-						var beep = document.getElementById("error");
-						beep.play();
+						textarea.value+="Syntax error\n"
+						var beep = document.getElementById("error")
+						beep.play()
 					}
 				}
-				textarea.value+="OK\n";
+				textarea.value+="OK\n"
 				do{
 					if (textarea.clientHeight != textarea.scrollHeight){
-						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1);
+						textarea.value = textarea.value.substring(textarea.value.indexOf("\n") + 1)
 					}
 				}
-				while (textarea.clientHeight != textarea.scrollHeight);
+				while (textarea.clientHeight != textarea.scrollHeight)
 			}
 			
 			function checkCommand(line,command) {
-				return (line.substr(0,command.length).toUpperCase()==command);
+				return (line.substr(0,command.length).toUpperCase()==command)
 			}
 			
 			function checkUrl(url) {
-				var xhr = new XMLHttpRequest();
-				xhr.open('HEAD', url, false);
-				xhr.send();
-				return (xhr.status == "200");
+				var xhr = new XMLHttpRequest()
+				xhr.open('HEAD', url, false)
+				xhr.send()
+				return (xhr.status == "200")
 			}
 			
 			function setUp() {
-				var textarea = document.getElementsByTagName("textarea")[0];
-				textarea.value = "SMILEBASIC ver -"+ver+"\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n";
-				textarea.value+=decodeURIComponent(window.location.hash.slice(1))+"\n";
-				readLine();
+				var textarea = document.getElementsByTagName("textarea")[0]
+				textarea.value = "SMILEBASIC ver -"+ver+"\n(C)2011-2015 SmileBoom Co.Ltd.\n9150922752 bytes free\n"
+				textarea.value+=decodeURIComponent(window.location.hash.slice(1))+"\n"
+				readLine()
 			}
 			
-			window.onload = setUp;
+			window.onload = setUp
 		</script>
 	</head>
 	<body style="background-color:#333">
-		<textarea autofocus onkeyup="if(event.keyCode==13){readLine();}" spellcheck="false" autocorrect="false"></textarea>
+		<textarea autofocus onkeyup="if(event.keyCode==13){readLine()}" spellcheck="false" autocorrect="false"></textarea>
 		<p class="SmileBASIC">Commands:<br>BGMPLAY song<br>BGMSTOP<br>CLS<br>GOTO [mode:]@page<br>PRINT "text"</p>
-		<audio id="music">
-		<audio id="error" src="./ERROR.wav">
+		<audio id="music"></audio>
+		<audio id="error" src="./ERROR.wav"></audio>
 	</body>
 </html>
