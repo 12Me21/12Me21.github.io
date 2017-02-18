@@ -1,1 +1,7 @@
-@font-face { font-family: SmileBASIC; src: url('../resources/SMILEBASIC.ttf'); }
+@font-face {
+	font-family: "SmileBASIC";
+	src: url('../resources/SMILEBASIC.ttf');
+}
+.smilebasic {
+	font-family: "SmileBASIC", monospace;
+}
