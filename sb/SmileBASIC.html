@@ -30,7 +30,7 @@
 				if (lastline.length) {
 					if (checkCommand(lastline,'WAVBGM "RICKROLL.WAV",3,0,1')) {
 						var music = document.getElementById("music");
-						music.src = "http://12Me21.github.io/resources/LOW60.WAV"; //low quality 60 sec.
+						music.src = "./bgm/LOW60.WAV"; //low quality 60 sec.
 						music.play();
 					} else if (checkCommand(lastline,"BGMPLAY")) {
 						var command = parseInt(lastline.split(" ").slice(-1)[0]);
@@ -42,7 +42,7 @@
 						}
 						if (command>=0 && command <=42) {
 							var music = document.getElementById("music");
-							music.src = "http://12Me21.github.io/BGM/BGM"+songnum+".mp3";
+							music.src = "./bgm/BGM"+songnum+".mp3";
 							music.play();
 						} else {
 							textarea.value+="Out of range(BGMPLAY:1)\n";
