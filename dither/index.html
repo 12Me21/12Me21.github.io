@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>16 bit image ditherer</title>
+		<link rel="icon" type="image/png" sizes="16x16" href="./icon.png">
+		<script>
+			window.onload=function() {
+				var fileBrowse=document.getElementById("imageUpload")
+				fileBrowse.onchange=function() {
+					var reader=new FileReader()
+					reader.onload=function() {
+						var z=new Image()
+						z.onload=function() {
+							canvas.width=z.width 
+							canvas.height=z.height
+							c2d.drawImage(z,0,0)
+							convertImage()
+							alert("finished")
+						}//END
+						z.src=this.result
+					}//END
+					reader.readAsDataURL(this.files[0])
+				}//END
+				var canvas=document.getElementById("canvas")
+				var c2d=canvas.getContext("2d")
+				
+				function convertImage() {
+					var data=c2d.getImageData(0,0,canvas.width,canvas.height)
+					var width=canvas.width*4;
+					//Floyd–Steinberg dithering is pretty popular, so it's probably good.
+					for (var pix=0;pix<data.data.length;pix+=4) {
+						for (var col=0;col<3;col++) {
+							var err=(data.data[pix+col]&0b00000111)/16
+							data.data[pix+        col]&=0b11111000 //this pixel
+							data.data[pix+      4+col]+=err*7 //right
+							data.data[pix+width-4+col]+=err*3 //down left
+							data.data[pix+width  +col]+=err*5 //down
+							data.data[pix+width+4+col]+=err   //down right
+						}//NEXT
+					}//NEXT
+					c2d.putImageData(data,0,0)
+				}//END
+			}//END
+		</script>
+	</head>
+	<body>
+		<input type="file" id="imageUpload">
+		<hr>
+		<canvas id="canvas"></canvas>
+	</body>
+</html>
