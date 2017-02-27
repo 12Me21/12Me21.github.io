@@ -16,8 +16,10 @@ function convert(data) { //do the thing
 	var string=""
 	for(var byte=0;byte<data.length;byte+=8){
 		var char=0
-		for(var bit=0;bit<8;bit++) char|=(data[(byte+bit)*4]>127)<<7-bit
-		if(char==0) break
+		for(var bit=0;bit<8;bit++)
+			char|=(data[(byte+bit)*4]>127)<<7-bit
+		if(char==0)
+			break
 		string+=String.fromCharCode(char)
 	}
 	return decodeURIComponent(escape(string))
@@ -32,11 +34,12 @@ function uploadImages(uploader,callback1,callback2){
 		var reader=new FileReader()
 		var i=0
 		reader.onload=function(){
-				var image=new Image()
-				image.onload=callback2
-				image.src=this.result
-				console.log("a")
-			if(++i<uploader.files.length) reader.readAsDataURL(uploader.files[i])
+			var image=new Image()
+			image.onload=callback2
+			image.src=this.result
+			console.log("a")
+			if(++i<uploader.files.length)
+				reader.readAsDataURL(uploader.files[i])
 		}
 		reader.readAsDataURL(uploader.files[i])
 	}
