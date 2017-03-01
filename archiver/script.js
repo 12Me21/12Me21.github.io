@@ -2,13 +2,17 @@ window.onload=function(){
 	var canvas=document.createElement("canvas")
 	var c2d=canvas.getContext("2d")
 	var out=document.getElementById("out")
-	uploadImages(document.getElementById("imageUpload"),function(){
-		out.value=""
-	},function(){
-		canvas.width=this.width
-		canvas.height=this.height
-		c2d.drawImage(this,0,0)
-		out.value+=convert(c2d.getImageData(0,0,canvas.width,canvas.height).data)
+	var link=document.getElementById("link")
+	uploadImages(document.getElementById("imageUpload"),function(images){
+		var code=""
+		for(var i=0;i<images.length;i++){
+			canvas.width=images[i].width
+			canvas.height=images[i].height
+			c2d.drawImage(images[i],0,0)
+			code+=convert(c2d.getImageData(0,0,canvas.width,canvas.height).data)
+		}
+		out.value=code
+		link.href="//12Me21.github.io/syntax/link#"+encodeURIComponent(code);
 	})
 }
 
@@ -22,25 +26,31 @@ function convert(data) { //do the thing
 			break
 		string+=String.fromCharCode(char)
 	}
-	return decodeURIComponent(escape(string))
+	try{
+		return decodeURIComponent(escape(string))
+	}catch(e){
+		return "Error: Invalid UTF-8 Sequence"
+	}
 }
 
 //uploader is the <input> element.
-//callback1 is called ONCE when user uploads files.
+//callback is called
 //callback2 is called MULTUPLE TIMES, when each image loads.
-function uploadImages(uploader,callback1,callback2){
+function uploadImages(uploader,callback){
 	uploader.onchange=function(){
-		callback1()
 		var reader=new FileReader()
 		var i=0
+		var images=new Array(uploader.files.length)
 		reader.onload=function(){
-			var image=new Image()
-			image.onload=callback2
-			image.src=this.result
-			console.log("a")
-			if(++i<uploader.files.length)
-				reader.readAsDataURL(uploader.files[i])
-		}
-		reader.readAsDataURL(uploader.files[i])
-	}
+			images[i]=new Image()
+			images[i].onload=function(){
+				if(++i<uploader.files.length)
+					reader.readAsDataURL(uploader.files[i])
+				else
+					callback(images)
+			}//image.onload
+			images[i].src=reader.result
+		}//reader.onload
+		reader.readAsDataURL(uploader.files[0])
+	}//uploader.onchange
 }
