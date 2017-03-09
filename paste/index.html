@@ -1,3 +1,13 @@
-<script src="script.js">
+<script src="script.js"></script>
+<script>
+	window.onload = function() {
+		var canvas = document.getElementById("canvas")
+		paste(document.getElementById("paste"), function() {
+			canvas.width = this.width
+			canvas.height = this.height
+			canvas.getContext("2d").drawImage(this, 0, 0)
+		})
+	}
+</script>
 <div contenteditable id="paste" style="height:3rem;border:1px solid black;">paste here</div>
 <canvas id="canvas"></canvas>
