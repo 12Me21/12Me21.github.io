@@ -1,54 +1,76 @@
 <html>
-	<head>
-		<title>16 bit image ditherer</title>
-		<link rel="icon" type="image/png" sizes="16x16" href="./icon.png" />
-		<script>
-			window.onload = function() {
-				var canvas = document.getElementById("canvas")
-				var c2d = canvas.getContext("2d")
-				uploadImage(document.getElementById("imageUpload"), function() {
-					canvas.width = this.width 
-					canvas.height = this.height
-					c2d.drawImage(this, 0, 0)
-					convertImage(canvas)
-					
-				})
-			}
-			
-			function uploadImage(uploader, callback) {
-				uploader.onchange = function() {
-					var reader = new FileReader()
-					reader.onload = function() {
-						var image = new Image()
-						image.onload = callback
-						image.src = this.result
-					}
-					reader.readAsDataURL(this.files[0])
-				}
-			}
-			
-			convertImage=function(canvas) { //convert an image to 16 bit color and apply dithering
-				var c2d = canvas.getContext("2d")
-				var width = canvas.width * 4
-				var data = c2d.getImageData(0, 0, canvas.width, canvas.height)
-				for (var pix = 0; pix < data.data.length; pix += 4) {
-					for (var col = 0; col < 3; col++) {
-						var err = (data.data[pix+col] & 0b00000111) / 16
-						data.data[pix+        col] &= 0b11111000 //this pixel
-						data.data[pix+      4+col] += err * 7 //right
-						data.data[pix+width-4+col] += err * 3 //down left
-						data.data[pix+width  +col] += err * 5 //down
-						data.data[pix+width+4+col] += err     //down right
-					}
-				}
-				console.log(data)
-				c2d.putImageData(data, 0, 0)
-			}
-		</script>
-	</head>
-	<body>
-		<input type="file" id="imageUpload" accept="image/*" />
-		<hr />
-		<canvas id="canvas"></canvas>
-	</body>
+
+  <head>
+    <title>16 bit image ditherer</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./icon.png" />
+    <script>
+      window.onload = function() {
+        var canvas = document.getElementById("canvas")
+        var c2d = canvas.getContext("2d")
+        uploadImage(document.getElementById("imageUpload"), put)
+        paste(document.getElementById("imagePaste"), put)
+
+        function put() {
+          canvas.width = this.width
+          canvas.height = this.height
+          if (new RegExp("^((https?:)?//|\.{0,2}/)").test(this.src)) { //bad sorry
+          	alert("can't load image from another domain")
+            return
+          }
+          c2d.drawImage(this, 0, 0)
+          convertImage(canvas)
+        }
+      }
+
+      function uploadImage(element, callback) {
+        element.onchange = function() {
+          var reader = new FileReader()
+          reader.onload = function() {
+            var image = new Image()
+            image.onload = callback
+            image.src = this.result
+          }
+          reader.readAsDataURL(this.files[0])
+        }
+      }
+
+      function paste(element, callback) {
+        element.addEventListener("load", function() {
+          var image = element.getElementsByTagName("img")[0]
+          if (image) {
+            callback.bind(image)()
+            image.remove()
+          }
+        }, true)
+      }
+
+
+      convertImage = function(canvas) { //convert an image to 16 bit color and apply dithering
+        var c2d = canvas.getContext("2d")
+        var width = canvas.width * 4
+        var data = c2d.getImageData(0, 0, canvas.width, canvas.height)
+        for (var pix = 0; pix < data.data.length; pix += 4) {
+          for (var col = 0; col < 3; col++) {
+            var err = (data.data[pix + col] & 0b00000111) / 16
+            data.data[pix + col] &= 0b11111000 //this pixel
+            data.data[pix + 4 + col] += err * 7 //right
+            data.data[pix + width - 4 + col] += err * 3 //down left
+            data.data[pix + width + col] += err * 5 //down
+            data.data[pix + width + 4 + col] += err //down right
+          }
+        }
+        console.log(data)
+        c2d.putImageData(data, 0, 0)
+      }
+
+    </script>
+  </head>
+
+  <body>
+    <input type="file" id="imageUpload" accept="image/*" />
+    <div contenteditable="true" id="imagePaste" style="border:1px solid gray;">Paste or drag+drop image here</div>
+    <hr />
+    <canvas id="canvas"></canvas>
+  </body>
+
 </html>
