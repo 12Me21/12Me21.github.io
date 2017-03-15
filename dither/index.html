@@ -70,8 +70,8 @@
 				var data = c2d.getImageData(0, 0, canvas.width, canvas.height)
 				for (var pix = 0; pix < data.data.length; pix += 4) {
 					for (var col = 0; col < 3; col++) {
-						var err = (data.data[pix + col] & 0b00000111) / 16
-						data.data[pix + col] &= 0b11111000 //this pixel
+						var err = (data.data[pix + col] & 7) / 16 //7 is &B00000111
+						data.data[pix + col] &= 248 //this pixel //248 is &B11111000
 						data.data[pix + 4 + col] += err * 7 //right
 						data.data[pix + width - 4 + col] += err * 3 //down left
 						data.data[pix + width + col] += err * 5 //down
