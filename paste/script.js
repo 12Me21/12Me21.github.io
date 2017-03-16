@@ -1,3 +1,4 @@
+//Should be run once, when the page loads.
 function imagePaste(element, callback) {
 	var foundClipboardData = false
 	//Use clipboardData when possible
