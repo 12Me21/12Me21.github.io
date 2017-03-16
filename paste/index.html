@@ -2,7 +2,7 @@
 <script>
 	window.onload = function() {
 		var canvas = document.getElementById("canvas")
-		paste(document.getElementById("paste"), function() {
+		imagePaste(document.getElementById("paste"), function() {
 			canvas.width = this.width
 			canvas.height = this.height
 			canvas.getContext("2d").drawImage(this, 0, 0)
