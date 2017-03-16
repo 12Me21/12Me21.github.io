@@ -4,8 +4,8 @@ function imagePaste(element, callback) {
 	//Use clipboardData when possible
 	//(Works in Firefox, Chrome, and Edge)
 	element.addEventListener("paste", function(event) {
-    var clipboardData = event.clipboardData
-    if (clipboardData && clipboardData.types) {
+	var clipboardData = event.clipboardData
+	if (clipboardData && clipboardData.types) {
 		//Find the first file. Can't use indexOf since it's a DOMStringList NOT an Array.
 		for (var i=0;i<clipboardData.types.length;i++) 
 			if (clipboardData.types[i] == "Files") {
