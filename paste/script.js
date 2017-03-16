@@ -1,4 +1,4 @@
-//Should be run once, when the page loads.
+//Should be run once, when the page loads or when the element is created.
 function imagePaste(element, callback) {
 	var foundClipboardData = false
 	//Use clipboardData when possible
