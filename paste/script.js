@@ -4,17 +4,18 @@ function imagePaste(element, callback) {
 	//Use clipboardData when possible
 	//(Works in Firefox, Chrome, and Edge)
 	element.addEventListener("paste", function(event) {
-	var clipboardData = event.clipboardData
-	if (clipboardData && clipboardData.types) {
-		//Find the first file. Can't use indexOf since it's a DOMStringList NOT an Array.
-		for (var i=0;i<clipboardData.types.length;i++) 
-			if (clipboardData.types[i] == "Files") {
-				console.log("Using clipboardData")
-				foundClipboardData = true
-				var image = new Image()
-				image.onload = callback
-				image.src = URL.createObjectURL(clipboardData.items[i].getAsFile())
-				break
+		var clipboardData = event.clipboardData
+		if (clipboardData && clipboardData.types) {
+			//Find the first file. Can't use indexOf since it's a DOMStringList NOT an Array.
+			for (var i=0;i<clipboardData.types.length;i++) {
+				if (clipboardData.types[i] == "Files") {
+					console.log("Using clipboardData")
+					foundClipboardData = true
+					var image = new Image()
+					image.onload = callback
+					image.src = URL.createObjectURL(clipboardData.items[i].getAsFile())
+					break
+				}
 			}
 		}
 	}, false)
@@ -24,10 +25,11 @@ function imagePaste(element, callback) {
 	element.addEventListener("load", function(event) {
 		var pastedImage = event.target
 		if (pastedImage instanceof HTMLImageElement) {
+			console.log("Found image element")
 			try{
 				var onloadResult = element.removeChild(pastedImage)
 			} catch(e){
-				console.log("Error: Image randomly disappeared!")
+				console.log("Couldn't find image")
 				return
 			}
 			if (!foundClipboardData) {
