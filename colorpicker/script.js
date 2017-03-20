@@ -16,7 +16,7 @@ window.onload = function() {
     var y = Math.round(event.clientY - rect.top - 1)
     var pixel = this.getContext("2d").getImageData(x, y, 1, 1).data
     if (!pixel[3]) pixel = [255, 255, 255, 255]
-    console.log("Got color " + pixel.join() + " at " + x + "," + y)
+    alert("Got color " + pixel.join() + " at " + x + "," + y)
 
   }
 }
