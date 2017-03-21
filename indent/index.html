@@ -1,0 +1,13 @@
+<title>unreliable code fixer</title>
+<h1>
+do not use
+</h1>
+<textarea id="codeInput"></textarea>
+<button id="convertButton">Convert</button>
+<script>
+window.onload=function(){
+	convertButton.onclick=function(){
+    codeInput.value=codeInput.value.replace(/  /g,"\t")
+  }
+}
+</script>
