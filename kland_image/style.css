@@ -1,0 +1,17 @@
+.input {
+  background-color: white;
+  border: 1px solid silver;
+  font-family: sans-serif;
+  font-size: .7em;
+  padding: .3em;
+  width: 10em;
+  color: gray;
+  display: inline-block;
+  margin: 1px;
+}
+
+.input:focus {
+  margin: 0;
+  border-radius: 2px;
+  border: 2px solid skyblue;
+}
