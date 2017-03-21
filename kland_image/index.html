@@ -1,9 +1,15 @@
-<script src="../paste/script.js"></script>
-<script src="script.js"></script>
-<input id="imageInput" contenteditable placeholder="paste image here">
-<input id="bucketInput" placeholder="bucket">
+<script src="//12Me21.github.io/paste/script.js"></script>
 <canvas id="canvas" hidden></canvas>
-<hr>
+
+<fieldset><legend>Bucket</legend>
+  <input id="bucketInput" placeholder="Bucket Name">
+</fieldset>
+
+<fieldset><legend>Upload Image</legend>
+  <input id="imageInput" contenteditable placeholder="Paste Image Here">
+  <input id="fileInput" type="file" accepts="image/*">
+</fieldset>
+
 <a id="resultLink" href="#">
   <img id="resultImage">
 </a>
