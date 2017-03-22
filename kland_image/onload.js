@@ -2,18 +2,18 @@
 //deal with it
 
 //paste image
-imagePaste($imageInput, function() {
+imagePaste($pasteInput, function() {
 	doUpload(this)
 })
 //select file
-imageUpload($fileInput, function() {
+imageUpload($browseInput, function() {
 	doUpload(this)
 })
 
 function doUpload(image) {
 	toBlob(image, function(blob) {
 		upload(blob, $bucketInput.value, function() {
-			$resultLink.href = $resultImage.src = this.response
+			$linkOutput.href = $imageOutput.src = this.response
 		})
 	})
 }
