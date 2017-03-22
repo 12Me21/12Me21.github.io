@@ -1,6 +1,3 @@
-//$ prefixed variables are element IDs
-//deal with it
-
 //get image from file browser
 function imageUpload(element, callback) {
    element.onchange = function() {
