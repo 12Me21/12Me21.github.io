@@ -1,3 +1,6 @@
+//$ prefixed variables are element IDs
+//deal with it
+
 //paste image
 imagePaste($imageInput, function() {
 	doUpload(this)
