@@ -1,17 +1,24 @@
-<link rel="stylesheet" type="text/css" href="style.css"> <!-- <style src="style.css"></style> -->
-<script src="../paste/script.js"></script>
-<script src="./script.js"></script>
-<script defer src="./onload.js"></script>
-
-<fieldset><legend>Bucket</legend>
-	<input id="$bucketInput" placeholder="Bucket Name">
-</fieldset>
-
-<fieldset><legend>Upload Image</legend>
-	<div id="$imageInput" contenteditable class="input">Paste Image Here</div>
-	<input id="$fileInput" type="file" accepts="image/*">
-</fieldset>
-
-<a id="$resultLink" href="#">
-	<img id="$resultImage">
-</a>
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css"> <!-- <style src="style.css"></style> -->
+		<script src="../paste/script.js"></script>
+		<script src="./script.js"></script>
+		<script defer src="./onload.js"></script>
+	</head>
+	
+	<body>
+		<fieldset><legend>Bucket</legend>
+			<input id="$bucketInput" placeholder="Bucket Name">
+		</fieldset>
+		
+		<fieldset><legend>Upload Image</legend>
+			<div id="$imageInput" contenteditable class="input">Paste Image Here</div>
+			<input id="$fileInput" type="file" accepts="image/*">
+		</fieldset>
+		
+		<a id="$resultLink" href="#">
+			<img id="$resultImage">
+		</a>
+	</body>
+</html>
