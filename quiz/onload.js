@@ -1,56 +1,37 @@
-var answers = []
-var quiz
-/*console.log(encodeQuiz( [{
-   question: "what's 1+1",
-   answer: [
-      "2",
-      "false",
-      "11",
-      "all of the above"
-   ],
-   correct: 3
-}, {
-   question: "does this work?",
-   answer: [
-      "yes",
-      "no",
-      "yes",
-      "yes"
-   ],
-   correct: 2
-}]))
+var _answers,_quiz
 
-//class Quiz {
-//	function 
-
-//}
-
-function encodeQuiz(quiz) {
-   return btoa(JSON.stringify(quiz))
-}*/
+function encodeQuiz() {
+   return btoa(JSON.stringify(_quiz))
+}
 
 function decodeQuiz(string) {
-   quiz = JSON.parse(atob(string))
+   _quiz = JSON.parse(atob(string))
+}
+
+function startQuiz(){
+	_answers=[]
+   putQuestion(0)
 }
 
 window.onload = function() {
-         decodeQuiz(window.location.hash.substr(1))
-         putQuestion(0)
-   }
-   //Quiz.prototype
+	decodeQuiz(window.location.hash)
+   startQuiz()
+}
 
 function putQuestion(index) {
-   document.forms.$quiz.$question.value = quiz[index].question
+   document.forms.$quiz.$question.value = _quiz[index].question
    for (var i = 0; i < 4; i++) {
-      document.forms.$quiz.$answer[i].nextSibling.textContent = quiz[index].answer[i]
+      document.forms.$quiz.$answer[i].nextSibling.textContent = _quiz[index].answer[i]
       document.forms.$quiz.$answer[i].checked = false
       document.forms.$quiz.$answer[i].onchange = function() {
-         var choice = this.value
-         answers.push(choice == quiz[index].correct)
-         if (++index < quiz.length) {
+         console.log(parseInt(this.value) == _quiz[index].correct)
+         var correct = parseInt(this.value) == _quiz[index].correct
+         alert(["wrong!", "correct!"][+correct])
+         _answers.push(correct)
+         if (++index < _quiz.length) {
             putQuestion(index)
          } else {
-            document.forms.$quiz.$score.value = answers.reduce(function(sum, a) {
+            document.forms.$quiz.$score.value = _answers.reduce(function(sum, a) {
                return sum + a
             }, 0) / index * 100 + "%";
          }
