@@ -1,4 +1,5 @@
 var answers = []
+var quiz
 /*console.log(encodeQuiz( [{
    question: "what's 1+1",
    answer: [
@@ -29,17 +30,16 @@ function encodeQuiz(quiz) {
 }*/
 
 function decodeQuiz(string) {
-   console.log(JSON.parse(atob(string)))
+   quiz = JSON.parse(atob(string))
 }
 
 window.onload = function() {
-      
-         var q = decodeQuiz(window.location.hash.substr(1))
-         putQuestion(q, 0)
+         decodeQuiz(window.location.hash.substr(1))
+         putQuestion(0)
    }
    //Quiz.prototype
 
-function putQuestion(quiz, index) {
+function putQuestion(index) {
    document.forms.$quiz.$question.value = quiz[index].question
    for (var i = 0; i < 4; i++) {
       document.forms.$quiz.$answer[i].nextSibling.textContent = quiz[index].answer[i]
@@ -48,7 +48,7 @@ function putQuestion(quiz, index) {
          var choice = this.value
          answers.push(choice == quiz[index].correct)
          if (++index < quiz.length) {
-            putQuestion(quiz, index)
+            putQuestion(index)
          } else {
             document.forms.$quiz.$score.value = answers.reduce(function(sum, a) {
                return sum + a
