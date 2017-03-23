@@ -34,7 +34,7 @@ function decodeQuiz(string) {
 
 window.onload = function() {
       try {
-         var q = decodeQuiz(window.location.hash)
+         var q = decodeQuiz(window.location.hash.substr(1))
          putQuestion(q, 0)
       } catch (e) {
          alert("invalid")
