@@ -10,11 +10,11 @@ function decodeQuiz(string) {
 
 function startQuiz(){
 	_answers=[]
-   putQuestion(0)
+	putQuestion(0)
 }
 
 window.onload = function() {
-	decodeQuiz(window.location.hash)
+	decodeQuiz(window.location.hash.substr(1))
    startQuiz()
 }
 
