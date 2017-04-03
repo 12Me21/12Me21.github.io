@@ -1,5 +1,6 @@
 //get image from file browser
 function imageUpload(element, callback) {
+   try{
    element.onchange = function() {
       var reader = new FileReader()
       reader.onload = function() {
@@ -9,10 +10,12 @@ function imageUpload(element, callback) {
       }
       reader.readAsDataURL(this.files[0])
    }
+   }catch(error){alert(error)}
 }
 
 //Convert image to blob PNG or JPEG depending on the size
 var toBlob = (function() {
+   try{
    var canvas = document.createElement("canvas")
    return function(image, callback) {
       //draw on canvas
@@ -33,10 +36,12 @@ var toBlob = (function() {
          }
       })
    }
+   }catch(error){alert(error)}
 })()
 
 //upload image to kland
 function upload(blob, bucket, callback) {
+   try{
    //generate form data
    var data = new FormData()
    data.append("image", blob, blob.type == "image/jpeg" ? "blob.jpeg" : "blob.png")
@@ -46,4 +51,5 @@ function upload(blob, bucket, callback) {
    xhr.open("POST", "https://kland.smilebasicsource.com/uploadimage")
    xhr.onload = callback
    xhr.send(data)
+       }catch(error){alert(error)}
 }
