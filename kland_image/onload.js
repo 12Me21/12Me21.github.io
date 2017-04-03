@@ -1,5 +1,6 @@
 //$ prefixed variables are element IDs
 //deal with it
+alert($browseInput)
 
 //paste image
 imagePaste($pasteInput, function() {
