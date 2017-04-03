@@ -25,6 +25,7 @@ var toBlob = (function() {
       alert("drawed image")
       //get png blob
       canvas.toBlob(function(blobPng) {
+         alert("tried to PNG")
          if (blobPng.size <= 750000) {
             console.log("Converted to PNG")
                alert("png")
@@ -32,6 +33,7 @@ var toBlob = (function() {
          } else {
             //get jpeg blob if png is too big
             canvas.toBlob(function(blobJpeg) {
+               alert("tried to jpeg")
                console.log("Converted to JPEG")
                alert("jpeg")
                callback(blobJpeg)
