@@ -13,6 +13,7 @@ imageUpload($browseInput, function() {
 function doUpload(image) {
 	alert("do upload")
 	toBlob(image, function(blob) {
+		alert("to blob done")
 		upload(blob, $bucketInput.value, function() {
 			$linkOutput.href = $imageOutput.src = this.response
 			alert("DONE")
