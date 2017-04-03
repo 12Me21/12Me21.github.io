@@ -1,15 +1,19 @@
 //get image from file browser
 function imageUpload(element, callback) {
    element.onchange = function() {
-      alert("changed")
-      var reader = new FileReader()
-      reader.onload = function() {
-         alert("reader loaded")
-         var image = new Image()
-         image.onload = callback
-         image.src = this.result
-      }
-      reader.readAsDataURL(this.files[0])
+      //alert("changed")
+      if (HTMLCanvasElement.prototype.toBlob) {
+         var reader = new FileReader()
+         reader.onload = function() {
+            //alert("reader loaded")
+            var image = new Image()
+            image.onload = callback
+            image.src = this.result
+      	}
+      	reader.readAsDataURL(this.files[0])
+		} else {
+			callback.bind(this.files[0])()
+		}
    }
 }
 
@@ -17,25 +21,29 @@ function imageUpload(element, callback) {
 var toBlob = (function() {
    var canvas = document.createElement("canvas")
    return function(image, callback) {
-      alert("converting")
+      if (image instanceof Blob) callback(image)
+		//alert("converting")
       //draw on canvas
       canvas.width = image.width
       canvas.height = image.height
       canvas.getContext("2d").drawImage(image, 0, 0)
-      alert("drawed image")
+     	if (!HTMLCanvasElement.prototype.toBlob) {
+			alert("Browser does not support canvas.toBlob")
+			return
+		}
       //get png blob
       canvas.toBlob(function(blobPng) {
-         alert("tried to PNG")
+         //alert("tried to PNG")
          if (blobPng.size <= 750000) {
             console.log("Converted to PNG")
-               alert("png")
+               //alert("png")
             callback(blobPng)
          } else {
             //get jpeg blob if png is too big
             canvas.toBlob(function(blobJpeg) {
-               alert("tried to jpeg")
+               //alert("tried to jpeg")
                console.log("Converted to JPEG")
-               alert("jpeg")
+               //alert("jpeg")
                callback(blobJpeg)
             }, "image/jpeg", 0.9)
          }
