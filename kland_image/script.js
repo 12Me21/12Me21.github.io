@@ -47,6 +47,7 @@ function upload(blob, bucket, callback) {
    var data = new FormData()
    data.append("image", blob, blob.type == "image/jpeg" ? "blob.jpeg" : "blob.png")
    data.append("bucket", bucket)
+   alert("created form data :)")
    //send
    var xhr = new XMLHttpRequest()
    xhr.open("POST", "https://kland.smilebasicsource.com/uploadimage")
