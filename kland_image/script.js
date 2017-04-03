@@ -15,13 +15,14 @@ function imageUpload(element, callback) {
 
 //Convert image to blob PNG or JPEG depending on the size
 var toBlob = (function() {
-   alert("converting")
    var canvas = document.createElement("canvas")
    return function(image, callback) {
+      alert("converting")
       //draw on canvas
       canvas.width = image.width
       canvas.height = image.height
       canvas.getContext("2d").drawImage(image, 0, 0)
+      alert("drawed image")
       //get png blob
       canvas.toBlob(function(blobPng) {
          if (blobPng.size <= 750000) {
