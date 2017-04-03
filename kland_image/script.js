@@ -64,4 +64,5 @@ function upload(blob, bucket, callback) {
    xhr.open("POST", "https://kland.smilebasicsource.com/uploadimage")
    xhr.onload = callback
    xhr.send(data)
+	alert("tried to send?")
 }
