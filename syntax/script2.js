@@ -35,7 +35,7 @@ var applySyntaxHighlighting = (function()
 		find(false     ,/(?:\d*\.)?\d+(?=E)/igm,text,list); //must be before number. Causes numbers using E without a digit after to not be highlighted
 		find(false     ,/&amp;&amp;|&&/igm,text,list); //must be before number. Makes sure code like 7&&HEAD is not interpreted as a hex number.
 		find("number"  ,/\d*\.#?/igm,text,list); // x. and . numbers handled separately
-		find("number"  ,/(?:\d*\.)?\d+(?:E[+-]?\d+)?#?|(?:&amp;|&)H[\dA-F]+|(?:&amp;|&)B[01]+|#(?:BGROT180|BGROT270|SPROT180|SPROT270|TMAGENTA|BGROT90|FUCHSIA|MAGENTA|PVRIGHT|SPROT90|TMAROON|TPURPLE|TROT180|TROT270|TYELLOW|AOPADD|AOPCLP|AOPDIV|AOPLIP|AOPMAD|AOPMUL|AOPSUB|BGREVH|BGREVV|BGROT0|MAROON|PURPLE|PVLEFT|SILVER|SPREVH|SPREVV|SPROT0|SPSHOW|TBLACK|TGREEN|TOLIVE|TROT90|TWHITE|WFBLKM|WFHAMM|WFHANN|WFRECT|YELLOW|BLACK|BQAPF|BQBPF|BQBSF|BQHPF|BQHSF|BQLPF|BQLSF|BQPEQ|CHKUV|CHKXY|GREEN|OLIVE|RIGHT|SPADD|TBLUE|TCYAN|TGRAY|TLIME|TNAVY|TREVH|TREVV|TROT0|TTEAL|WHITE|FALSE|AQUA|BLUE|CHKC|CHKI|CHKR|CHKS|CHKV|CHKZ|CYAN|DOWN|GRAY|LEFT|LIME|NAVY|TEAL|TRED|TRUE|OFF|RED|YES|NO|ON|UP|ZL|ZR|A|B|L|R|X|Y)/igm,text,list);
+		find("number"  ,/(?:\d*\.)?\d+(?:E[+-]?\d+)?#?|(?:&amp;|&)H[\dA-F]+|(?:&amp;|&)B[01]+|#[A-Z0-9]+/igm,text,list);
 		find("label"   ,/@[0-9A-Z_]*/igm,text,list);
 		find("string"  ,/\".*?(?:\"|$)/igm,text,list);
 		find("comment" ,/'[^'\n\r]*/igm,text,list);
