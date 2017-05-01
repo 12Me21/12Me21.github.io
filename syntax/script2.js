@@ -35,7 +35,7 @@ var applySyntaxHighlighting = (function()
 		find(false     ,/(?:\d*\.)?\d+(?=E)/igm,text,list); //must be before number. Causes numbers using E without a digit after to not be highlighted
 		find(false     ,/&amp;&amp;|&&/igm,text,list); //must be before number. Makes sure code like 7&&HEAD is not interpreted as a hex number.
 		find("test"  ,/\d*\.#?/igm,text,list); // x. and . numbers handled separately
-		find("number"  ,/(?:\d*\.)?\d+(?:E[+-]?\d+)?#?|(?:&amp;|&)H[\dA-F]+|(?:&amp;|&)B[01]+|#[A-Z0-9]+/igm,text,list);
+		find("number"  ,/(?:(?:\d*\.)?\d+(?:E[+-]?\d+)?)#?(?!.)|(?:&amp;|&)H[\dA-F]+|(?:&amp;|&)B[01]+|#[A-Z0-9]+/igm,text,list);
 		find("label"   ,/@[0-9A-Z_]*/igm,text,list);
 		find("string"  ,/\".*?(?:\"|$)/igm,text,list);
 		find("comment" ,/'[^'\n\r]*/igm,text,list);
