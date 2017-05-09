@@ -12,7 +12,9 @@ CanvasRenderingContext2D.prototype.gputchr=function(x,y,text,scale,color){
 }
 
 window.onload=function(){
-	var c2d=$canvas.getContext("2d")
-	c2d.gcls("black")
-	c2d.gputchr($canvas.width,$canvas.height,"test",16,"red")
+	window.setTimeout(function(){
+		var c2d=$canvas.getContext("2d")
+		c2d.gcls("black")
+		c2d.gputchr($canvas.width,$canvas.height,"test",16,"red")
+	},1000)
 }
