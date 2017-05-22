@@ -5,7 +5,7 @@ class Highlighter{
 	
 	//apply highlighting to an HTML element
 	apply(codeElement){
-		var text=codeElement.textContent;
+		var text=codeElement.innerHTML;
 		//find potential things to highlight
 		var list=[];
 		var fallback=0;
