@@ -5,7 +5,7 @@ class Highlighter{
 	
 	//apply highlighting to an HTML element
 	apply(codeElement){
-		var text=codeElement.innerHTML;
+		var text=codeElement.textContent;
 		//find potential things to highlight
 		var list=[];
 		var fallback=0;
@@ -34,13 +34,21 @@ class Highlighter{
 			var word=list[i];
 			if (word.start>=pos){ //only highlight if it's past the end of the previous keyword
 				if (word.classname)
-					output+=text.substring(pos,word.start)+'<span class="'+word.classname+'">'+text.substring(word.start, word.end)+"</span>";
+					output+=text.substring(pos,word.start).escapeHTML()+'<span class="'+word.classname+'">'+text.substring(word.start, word.end).escapeHTML()+"</span>";
 				else
-					output+=text.substring(pos,word.end);
+					output+=text.substring(pos,word.end).escapeHTML();
 				pos=word.end;
 			}
 		}
-		output+=text.substring(pos)
+		output+=text.substring(pos).escapeHTML();
 		codeElement.innerHTML=output;
 	}
 }
+
+String.prototype.escapeHTML=(function(){
+	var converter=document.createElement("textarea");
+	return function(){
+		converter.textContent = this;
+		return converter.innerHTML;
+	}
+})()
