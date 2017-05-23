@@ -6,7 +6,7 @@ var sbHighlight=new Highlighter({
 		{                     regex:/(?:\d*\.)?\d+(?=E)/igm},
 		{classname:"operator",regex:/-|!|\*|\/|\+|<<|>>|<|<=|>|>=|==|!=|&&|\|\||=|\(|\)|\]|\[|;|:|,|\?/igm},
 		{classname:"number"  ,regex:/\d*\.#?/igm},
-		{classname:"number"  ,regex:/(?:\d*\.)?\d+(?:E[+-]?\d+)?#?|&H[\dA-F]+|&B[01]+|#[A-Z0-9]+/},
+		{classname:"number"  ,regex:/(?:\d*\.)?\d+(?:E[+-]?\d+)?#?|&H[\dA-F]+|&B[01]+|#[A-Z0-9]+/igm},
 		//{classname:"constant",regex:/#(?:BGROT180|BGROT270|SPROT180|SPROT270|TMAGENTA|BGROT90|FUCHSIA|MAGENTA|PVRIGHT|SPROT90|TMAROON|TPURPLE|TROT180|TROT270|TYELLOW|AOPADD|AOPCLP|AOPDIV|AOPLIP|AOPMAD|AOPMUL|AOPSUB|BGREVH|BGREVV|BGROT0|MAROON|PURPLE|PVLEFT|SILVER|SPREVH|SPREVV|SPROT0|SPSHOW|TBLACK|TGREEN|TOLIVE|TROT90|TWHITE|WFBLKM|WFHAMM|WFHANN|WFRECT|YELLOW|BLACK|BQAPF|BQBPF|BQBSF|BQHPF|BQHSF|BQLPF|BQLSF|BQPEQ|CHKUV|CHKXY|GREEN|OLIVE|RIGHT|SPADD|TBLUE|TCYAN|TGRAY|TLIME|TNAVY|TREVH|TREVV|TROT0|TTEAL|WHITE|FALSE|AQUA|BLUE|CHKC|CHKI|CHKR|CHKS|CHKV|CHKZ|CYAN|DOWN|GRAY|LEFT|LIME|NAVY|TEAL|TRED|TRUE|OFF|RED|YES|NO|ON|UP|ZL|ZR|A|B|L|R|X|Y)/igm},
 		{classname:"label"   ,regex:/@[0-9A-Z_]*/igm},
 		{classname:"string"  ,regex:/\".*?(?:\"|$)/igm},
