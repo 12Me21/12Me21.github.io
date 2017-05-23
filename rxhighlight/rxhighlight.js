@@ -1,5 +1,5 @@
 function Highlighter (languageDefinition) {
-	for(var i = 0; i < languageDefinition.find.length; i++)
+	for (var i = 0; i < languageDefinition.find.length; i++)
 		if (!languageDefinition.find[i].regex.global)
 			throw "Highlighter regex must have global flag set";
 	this.find = languageDefinition.find; //only this part is used currently
