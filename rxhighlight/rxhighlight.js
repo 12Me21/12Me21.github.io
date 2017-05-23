@@ -60,3 +60,19 @@ Highlighter.escapeHTML = (function () {
 		return converterElement.innerHTML;
 	};
 }());
+
+//EXPERIMENTAL DO NOT USE
+Highlighter.prototype.applyWorker = (function () {
+	var worker;
+	return function (codeElement) {
+		if (!worker) {
+			worker = new Worker("rxhighlightworker.js");
+		}
+		worker.onmessage = function (event) {
+			codeElement.innerHTML = event.data;
+			worker.terminate();
+			worker = undefined;
+		};
+		worker.postMessage([codeElement.textContent, this.find])
+	};
+}());
