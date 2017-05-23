@@ -1,0 +1,62 @@
+<script src="rxhighlight.js"></script>
+<script src="rxhighlight_smilebasic.js"></script>
+
+<button onclick="document.getElementById('out').textContent=document.getElementById('in').value;sbHighlight.applyWorker(document.getElementById('out'))">a</button>
+<textarea id="in"></textarea>
+<code id="out"></code>
+
+<style>
+code {
+	margin: 0.2rem 0;
+	border: 1px solid rgba(24,24,24,.25);
+	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+	display:block;
+	overflow:auto;
+	padding: .5rem;
+	font-family: monospace;
+	font-size: 0.8rem;
+	white-space: pre;
+	line-height: 0.9rem;
+	max-width: 50%;
+}
+button {
+	font-family: 'Roboto', sans-serif;
+	margin: 0.1rem;
+	font-size: 0.8rem;
+	padding: 0.2em 0.4em;
+	border-radius: 0.3em;
+	background-color:#e9e9e6;
+	border: 0.2em solid #737372;
+	color: #222;
+	cursor: pointer;
+}
+button:active {
+	transform: translateY(.5px);
+	border-style: inset;
+}
+textarea {
+	font-family: 'Roboto', sans-serif;
+	margin: 0;
+	resize: vertical;
+	border-radius: 2px;
+	border: 2px solid #00C8B4;
+	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+	font-size: 0.8rem;
+	background-color: white;
+	color: #222;
+	min-width: 50%;
+	padding: 0.1rem;
+}
+/* actual highligher things */
+code {
+	color:rgb(198,175,157);
+	background-color:rgb(42,33,28);
+}
+.keyword {color:rgb( 55,163,237);}
+.number  {color:rgb(255, 58,131);}
+.function{color:rgb( 55,163,237);}
+.label   {color:rgb(128,255,  0);}
+.string  {color:rgb(  0,255, 64);}
+.comment {color:rgb(102,102,102);}
+.symbol  {color:rgb(229,193, 56);}
+</style>
