@@ -47,14 +47,16 @@ Highlighter.prototype.apply = function (codeElement) {
 			pos = highlight.end;
 		}
 	}
-	output += text.substring(pos).escapeHTML();
+	output += Highlighter.escapeHTML(text.substring(pos));
 	
 	codeElement.innerHTML = output;
 }
 
 //This should've been a built-in function, but oh well.
-Highlighter.converterElement = document.createElement("textarea");
-Highlighter.escapeHTML = function (text) {
-	this.converterElement.textContent = text;
-	return this.converterElement.innerHTML;
-}
+Highlighter.escapeHTML = (function () {
+	var converterElement = document.createElement("textarea");
+	return function (text) {
+		converterElement.textContent = text;
+		return converterElement.innerHTML;
+	};
+}());
