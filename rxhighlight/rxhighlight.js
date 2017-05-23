@@ -1,3 +1,4 @@
+
 function Highlighter (languageDefinition) {
 	for (var i = 0; i < languageDefinition.find.length; i++)
 		if (!languageDefinition.find[i].regex.global)
@@ -51,9 +52,9 @@ Highlighter.prototype.apply = function (codeElement) {
 	codeElement.innerHTML = output;
 }
 
-//This should've been a builtin function, but oh well.
+//This should've been a built-in function, but oh well.
 Highlighter.converterElement = document.createElement("textarea");
-Highlighter.prototype.escapeHTML = function (text) {
+Highlighter.escapeHTML = function (text) {
 	this.converterElement.textContent = text;
 	return this.converterElement.innerHTML;
 }
