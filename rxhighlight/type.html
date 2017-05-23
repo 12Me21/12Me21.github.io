@@ -1,0 +1,85 @@
+<script src="rxhighlight.js"></script>
+<textarea id="in" onkeypress="window.setInterval(function(){document.getElementById('out').textContent=document.getElementById('in').value;sbHighlight.apply(document.getElementById('out'))},0)"></textarea>
+<code id="out"></code>
+
+<script>
+var sbHighlight=new Highlighter({
+	find:[
+		{classname:"keyword" ,regex:/CONTINUE|RESTORE|ELSEIF|COMMON|LINPUT|REPEAT|RETURN|ENDIF|BREAK|FALSE|GOSUB|INPUT|PRINT|UNTIL|WHILE|CALL|DATA|ELSE|EXEC|GOTO|NEXT|READ|STEP|STOP|SWAP|THEN|TRUE|WEND|AND|DEC|DEF|DIM|DIV|END|FOR|INC|MOD|NOT|OUT|REM|USE|VAR|XOR|IF|ON|OR|TO/igm},
+		{classname:"function",regex:/EXTFEATURE|BACKCOLOR|BACKTRACE|CLIPBOARD|PCMSTREAM|RANDOMIZE|SPHITINFO|BGMCLEAR|BGMPAUSE|BGSCREEN|CHKLABEL|CLASSIFY|GYROSYNC|HARDWARE|MICSTART|MILLISEC|PRGNAME\$|RINGCOPY|SPCOLVEC|SPUNLINK|TALKSTOP|BGCOLOR|BGCOORD|BGMCONT|BGMPLAY|BGMPRGA|BGMSETD|BGMSTOP|BGSCALE|BGSTART|BREPEAT|BQPARAM|CALLIDX|CHKCALL|CHKFILE|DISPLAY|DLCOPEN|ERRLINE|FADECHK|FONTDEF|FORMAT\$|FREEMEM|GCIRCLE|GPUTCHR|MAINCNT|MICDATA|MICSAVE|MICSIZE|MICSTOP|MPCOUNT|MPLOCAL|MPNAME\$|MPSTART|PCMCONT|PCMSTOP|PRGEDIT|PRGGET\$|PRGSIZE|PRGSLOT|PROJECT|RGBREAD|SNDSTOP|SPCOLOR|SPHITRC|SPHITSP|SPSCALE|SPSTART|STICKEX|SYSBEEP|TABSTEP|TALKCHK|UNSHIFT|VISIBLE|WAVSETA|XSCREEN|BGANIM|BGCLIP|BGCOPY|BGFILL|BGFUNC|BGHIDE|BGHOME|BGLOAD|BGMCHK|BGMPRG|BGMSET|BGMVAR|BGMVOL|BGPAGE|BGSAVE|BGSHOW|BGSTOP|BIQUAD|BUTTON|CHKCHR|CHKVAR|DELETE|DIALOG|DTREAD|EFCOFF|EFCSET|EFCWET|ERRNUM|ERRPRG|FFTWFN|GCOLOR|GPAINT|GSPOIT|INKEY\$|LOCATE|MICPOS|MPHOST|MPRECV|MPSEND|MPSTAT|OPTION|PCMPOS|PCMVOL|PRGDEL|PRGINS|PRGSET|RENAME|RESULT|RIGHT\$|SCROLL|SPANIM|SPCLIP|SPFUNC|SPHIDE|SPHOME|SPLINK|SPPAGE|SPSHOW|SPSTOP|SPUSED|SUBST\$|TMREAD|VERSON|WAVSET|ACCEL|ARYOP|BGCHK|BGCLR|BGGET|BGOFS|BGPUT|BGROT|BGVAR|COLOR|DATE\$|EFCON|FILES|FLOOR|GCLIP|GCOPY|GFILL|GLINE|GLOAD|GPAGE|GPRIO|GPSET|GSAVE|GYROA|GYROV|INSTR|LEFT\$|MPEND|MPGET|MPSET|ROUND|RSORT|SHIFT|SPCHK|SPCHR|SPCLR|SPCOL|SPDEF|SPOFS|SPROT|SPSET|SPVAR|STICK|TIME\$|TOUCH|VSYNC|WIDTH|ACLS|ACOS|ASIN|ATAN|ATTR|BEEP|BIN\$|CEIL|CHR\$|COPY|COSH|CSRX|CSRY|CSRZ|FADE|FILL|GBOX|GCLS|GOFS|GTRI|HEX\$|IFFT|LOAD|MID\$|PUSH|RNDF|SAVE|SINH|SORT|STR\$|TALK|TANH|WAIT|XOFF|ABS|ASC|CLS|COS|DEG|EXP|FFT|KEY|LEN|LOG|MAX|MIN|POW|POP|RAD|RGB|RND|SGN|SIN|SQR|TAN|VAL|XON/igm},
+		{classname:"variable",regex:/[A-Z_][A-Z0-9_]*[$%#]?/igm},
+		{                     regex:/(?:\d*\.)?\d+(?=E)/igm},
+		{classname:"operator",regex:/-|!|NOT|\*|\/|DIV|MOD|\+|<<|>>|<|<=|>|>=|==|!=|AND|XOR|OR|&&|\|\||=/igm},
+		{classname:"number"  ,regex:/\d*\.#?/igm},
+		{classname:"number"  ,regex:/(?:\d*\.)?\d+(?:E[+-]?\d+)?#?|&H[\dA-F]+|&B[01]+|#[A-Z0-9]+/igm},
+		{classname:"label"   ,regex:/@[0-9A-Z_]*/igm},
+		{classname:"string"  ,regex:/\".*?(?:\"|$)/igm},
+		{classname:"comment" ,regex:/'[^'\n\r]*/igm}
+	],
+	language:"SmileBASIC"
+});
+</script>
+
+<style>
+code {
+	margin: 0.2rem 0;
+	border: 1px solid rgba(24,24,24,.25);
+	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+	display:block;
+	overflow:auto;
+	padding: .5rem;
+	font-family: monospace;
+	font-size: 0.8rem;
+	white-space: pre;
+	line-height: 0.9rem;
+	max-width: 50%;
+}
+button {
+	font-family: 'Roboto', sans-serif;
+	margin: 0.1rem;
+	font-size: 0.8rem;
+	padding: 0.2em 0.4em;
+	border-radius: 0.3em;
+	background-color:#e9e9e6;
+	border: 0.2em solid #737372;
+	color: #222;
+	cursor: pointer;
+}
+button:active{
+	transform: translateY(.5px);
+	border-style: inset;
+}
+textarea {
+	font-family: 'Roboto', sans-serif;
+	margin: 0;
+	resize: vertical;
+	border-radius: 2px;
+	border: 2px solid #00C8B4;
+	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+	font-size: 0.8rem;
+	background-color: white;
+	color: #222;
+	min-width: 50%;
+	padding: 0.1rem;
+}
+/* actual highligher things */
+code{
+	color:rgb(198,175,157);
+	background-color:rgb(42,33,28);
+}
+.keyword {color:rgb(55,163,237);}
+.number  {color:rgb(255,58,131);}
+.function{color:rgb(55,163,237);}
+.label   {color:rgb(128,255,0);}
+.string  {color:rgb(0,255,64);}
+.comment {color:rgb(102,102,102);}
+.operator {color:rgb(229,193,56);}
+/*.code {
+	color:rgb(198,175,157);
+	background-color:rgb(42,33,28);
+}*/
+newline::after {
+	content:"\E20D";
+	color: rgb(0,184,248);
+}
+</style>
