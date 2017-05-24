@@ -1,32 +1,37 @@
-
+//constructor/class thing
 function Highlighter (languageDefinition) {
-	for (var i = 0; i < languageDefinition.find.length; i++)
-		if (!languageDefinition.find[i].regex.global)
+	for (var i = 0; i < languageDefinition.syntax.length; i++)
+		if (!languageDefinition.syntax[i].regex.global)
 			throw "Highlighter regex must have global flag set";
-	this.find = languageDefinition.find; //only this part is used currently
+	this.syntax = languageDefinition.syntax;
 }
 
-//apply highlighting to an HTML element
-Highlighter.prototype.apply = function (codeElement) {
-	var text = codeElement.textContent;
+//Escape < > & for setting innerHTML
+Highlighter.escapeHTML = (function () {
+	var converterElement = document.createElement("textarea");
+	return function (text) {
+		converterElement.textContent = text;
+		return converterElement.innerHTML;
+	};
+}());
+
+//Actual highlighter
+Highlighter.prototype.highlight = function (code) {
 	
 	//find potential things to highlight
 	var highlightList = [];
-	for (var i = 0; i < this.find.length; i++) {
-		var className = this.find[i].class;
-		var regex = this.find[i].regex;
-		//there really needs to be a better way get all matches:
+	for (var i = 0; i < this.syntax.length; i++) {
+		var className = this.syntax[i].class;
+		var regex = this.syntax[i].regex;
 		var match;
-		while (match = regex.exec(text)) {
+		while (match = regex.exec(code))
 			highlightList.push({
 				start: match.index,
 				end: match.index + match[0].length,
 				className: className,
 				index: highlightList.length
 			});
-		}
 	}
-	
 	highlightList = highlightList.sort(function (a,b) {
 		return a.start - b.start || b.end - a.end || a.index - b.index;
 	});
@@ -38,41 +43,46 @@ Highlighter.prototype.apply = function (codeElement) {
 		var highlight = highlightList[i];
 		if (highlight.start >= pos) { //only highlight if it's past the end of the previous keyword
 			if (highlight.className)
-				output += Highlighter.escapeHTML(text.substring(pos, highlight.start)) +
-				          "<span class=\"" + highlight.className + "\">"+
-				          Highlighter.escapeHTML(text.substring(highlight.start, highlight.end)) +
+				output += Highlighter.escapeHTML(code.substring(pos, highlight.start)) +
+				          "<span class=\"" + highlight.className + "\">" +
+				          Highlighter.escapeHTML(code.substring(highlight.start, highlight.end)) +
 				          "</span>";
 			else
-				output += Highlighter.escapeHTML(text.substring(pos, highlight.end));
+				output += Highlighter.escapeHTML(code.substring(pos, highlight.end));
 			pos = highlight.end;
 		}
 	}
-	output += Highlighter.escapeHTML(text.substring(pos));
+	output += Highlighter.escapeHTML(code.substring(pos));
 	
-	codeElement.innerHTML = output;
+	return output;
 }
 
-//This should've been a built-in function, but oh well.
-Highlighter.escapeHTML = (function () {
-	var converterElement = document.createElement("textarea");
-	return function (text) {
-		converterElement.textContent = text;
-		return converterElement.innerHTML;
-	};
-}());
+//Highlight an element
+Highlighter.prototype.highlightElement = function (codeElements) {
+	codeElements.innerHTML = this.highlight(codeElements.textContent);
+}
 
-//EXPERIMENTAL DO NOT USE
-Highlighter.prototype.applyWorker = (function () {
-	var worker;
-	return function (codeElement) {
-		if (!worker) {
-			worker = new Worker("rxhighlightworker.js");
-		}
-		worker.onmessage = function (event) {
-			codeElement.innerHTML = event.data;
-			worker.terminate();
-			worker = undefined;
-		};
-		worker.postMessage([codeElement.textContent, this.find])
+//Highlight a list of elements.
+Highlighter.prototype.highlightElements = function (codeElements) {
+	for (var i = 0; i < codeElements.length; i++)
+		this.highlightElement(codeElements[i])
+}
+
+//Highlight a list of elements asynchronosly using web workers.
+Highlighter.prototype.workerHighlightElements = function (codeElements) {
+	//Use highlightElements() in old browsers.
+	if (!window.Worker)
+		return highlightElements(codeElements)
+	//Get a list of code to highlight
+	var textContents=new Array(codeElements.length)
+	for(var i=0;i<codeElements.length;i++)
+		textContents[i]=codeElements[i].textContent
+	//Create worker
+	var worker = new Worker("rxhighlightworker.js");
+	worker.onmessage = function (event) {
+		for(var i=0;i<codeElements.length;i++)
+			codeElements[i].innerHTML = event.data[i]
+		worker.terminate();
 	};
-}());
+	worker.postMessage({code:textContents,syntax:this.syntax});
+}

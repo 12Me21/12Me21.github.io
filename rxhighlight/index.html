@@ -1,23 +1,35 @@
 <script src="rxhighlight.js"></script>
 <script src="rxhighlight_smilebasic.js"></script>
 
-<button onclick="document.getElementById('out').textContent=document.getElementById('in').value;sbHighlight.apply(document.getElementById('out'))">a</button>
-<textarea id="in"></textarea>
-<code id="out"></code>
+<button onclick="sbHighlight.workerHighlightElements(document.querySelectorAll('code:not([class=nohighlight])'))">Highlight</button>
+<code spellcheck="false">FOR I=0 TO 3
+ PRINT "I=";I
+NEXT</code>
+
+<code spellcheck="false" class="nohighlight">don't highlight this please</code>
+
+<code spellcheck="false">READ VAR("A")[0]</code>
+
+<code spellcheck="false" contenteditable onfocus="if (this.innerHTML.indexOf('<')!=-1) this.innerHTML=Highlighter.escapeHTML(this.textContent);">1END
+'hi
+#NotARealConstant
+'this one is editable
+@</code>
 
 <style>
 code {
 	margin: 0.2rem 0;
 	border: 1px solid rgba(24,24,24,.25);
 	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
-	display:block;
-	overflow:auto;
 	padding: .5rem;
 	font-family: monospace;
 	font-size: 0.8rem;
-	white-space: pre;
 	line-height: 0.9rem;
 	max-width: 50%;
+	overflow:auto;
+	display:block;
+	
+	white-space: pre;
 }
 button {
 	font-family: 'Roboto', sans-serif;
@@ -49,8 +61,8 @@ textarea {
 }
 /* actual highligher things */
 code {
-	color:rgb(198,175,157);
-	background-color:rgb(42,33,28);
+	color: rgb(198,175,157);
+	background-color: rgb(42,33,28);
 }
 .keyword {color:rgb( 55,163,237);}
 .number  {color:rgb(255, 58,131);}
@@ -59,4 +71,5 @@ code {
 .string  {color:rgb(  0,255, 64);}
 .comment {color:rgb(102,102,102);}
 .symbol  {color:rgb(229,193, 56);}
+/*.error   {background-color:red;}*/
 </style>
