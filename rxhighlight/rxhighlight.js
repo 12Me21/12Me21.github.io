@@ -84,3 +84,4 @@ if (window.Worker) {
 	//fallback for old browsers
 	Highlighter.prototype.workerHighlightElements=Highlighter.prototype.highlightElements;
 }
+
