@@ -1,6 +1,6 @@
 <script src="rxhighlight.js"></script>
 <script src="rxhighlight_smilebasic.js"></script>
-<textarea id="in" onkeypress="window.setInterval(function(){document.getElementById('out').textContent=document.getElementById('in').value;sbHighlight.highlightElement(document.getElementById('out'))},0)"></textarea>
+<textarea id="in" onkeypress="window.setTimeout(function(){document.getElementById('out').textContent=document.getElementById('in').value;sbHighlight.highlightElement(document.getElementById('out'))},0)"></textarea>
 <code id="out"></code>
 
 <style>
