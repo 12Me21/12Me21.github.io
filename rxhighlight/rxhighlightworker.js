@@ -8,7 +8,7 @@ onmessage=function(event){
 		//find potential things to highlight
 		var highlightList = [];
 		for (var i = 0; i < syntax.length; i++) {
-			var className = syntax[i].class;
+			var className = syntax[i].className;
 			var regex = syntax[i].regex;
 			//there really needs to be a better way get all matches:
 			var match;
