@@ -7,13 +7,9 @@ function Highlighter (languageDefinition) {
 }
 
 //Escape < > & for setting innerHTML
-Highlighter.escapeHTML = (function () {
-	var converterElement = document.createElement("textarea");
-	return function (text) {
-		converterElement.textContent = text;
-		return converterElement.innerHTML;
-	};
-}());
+Highlighter.escapeHTML = function (text) {
+	return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
 //Actual highlighter
 Highlighter.prototype.highlight = function (code) {
@@ -72,16 +68,16 @@ Highlighter.prototype.highlightElements = function (codeElements) {
 Highlighter.prototype.workerHighlightElements = function (codeElements) {
 	//Use highlightElements() in old browsers.
 	if (!window.Worker)
-		return highlightElements(codeElements)
+		return highlightElements(codeElements);
 	//Get a list of code to highlight
 	var textContents=new Array(codeElements.length)
 	for(var i=0;i<codeElements.length;i++)
-		textContents[i]=codeElements[i].textContent
+		textContents[i]=codeElements[i].textContent;
 	//Create worker
 	var worker = new Worker("rxhighlightworker.js");
 	worker.onmessage = function (event) {
 		for(var i=0;i<codeElements.length;i++)
-			codeElements[i].innerHTML = event.data[i]
+			codeElements[i].innerHTML = event.data[i];
 		worker.terminate();
 	};
 	worker.postMessage({code:textContents,syntax:this.syntax});
