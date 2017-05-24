@@ -1,4 +1,4 @@
-//constructor/class thing
+
 function Highlighter (languageDefinition) {
 	for (var i = 0; i < languageDefinition.syntax.length; i++)
 		if (!languageDefinition.syntax[i].regex.global)
@@ -65,20 +65,22 @@ Highlighter.prototype.highlightElements = function (codeElements) {
 }
 
 //Highlight a list of elements asynchronosly using web workers.
-Highlighter.prototype.workerHighlightElements = function (codeElements) {
-	//Use highlightElements() in old browsers.
-	if (!window.Worker)
-		return highlightElements(codeElements);
-	//Get a list of code to highlight
-	var textContents=new Array(codeElements.length)
-	for(var i=0;i<codeElements.length;i++)
-		textContents[i]=codeElements[i].textContent;
-	//Create worker
-	var worker = new Worker("rxhighlightworker.js");
-	worker.onmessage = function (event) {
+if (window.Worker) {
+	Highlighter.prototype.workerHighlightElements = function (codeElements) {
+		//Get a list of code to highlight
+		var textContents=new Array(codeElements.length)
 		for(var i=0;i<codeElements.length;i++)
-			codeElements[i].innerHTML = event.data[i];
-		worker.terminate();
-	};
-	worker.postMessage({code:textContents,syntax:this.syntax});
+			textContents[i]=codeElements[i].textContent;
+		//Create worker
+		var worker = new Worker("rxhighlightworker.js");
+		worker.onmessage = function (event) {
+			for(var i=0;i<codeElements.length;i++)
+				codeElements[i].innerHTML = event.data[i];
+			worker.terminate();
+		};
+		worker.postMessage({code:textContents,syntax:this.syntax});
+	}
+} else {
+	//fallback for old browsers
+	Highlighter.prototype.workerHighlightElements=Highlighter.prototype.highlightElements;
 }
