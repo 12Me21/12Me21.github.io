@@ -21,7 +21,7 @@ Highlighter.prototype.highlight = function (code) {
 	//find potential things to highlight
 	var highlightList = [];
 	for (var i = 0; i < this.syntax.length; i++) {
-		var className = this.syntax[i].class;
+		var className = this.syntax[i].className;
 		var regex = this.syntax[i].regex;
 		var match;
 		while (match = regex.exec(code))
