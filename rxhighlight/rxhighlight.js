@@ -1,9 +1,42 @@
-
-function Highlighter (languageDefinition) {
-	for (var i = 0; i < languageDefinition.syntax.length; i++)
-		if (!languageDefinition.syntax[i].regex.global)
-			throw "Highlighter regex must have global flag set";
-	this.syntax = languageDefinition.syntax;
+function Highlighter (languageDef) {
+	
+	this.syntax=new Array(languageDef.syntax.length);
+	this.language=languageDef.language;
+	
+	for (var i = 0; i < languageDef.syntax.length; i++) {
+		
+		this.syntax[i]={className:languageDef.syntax[i].className};
+		
+		//prepare regex flags
+		var flags = "gm";
+		//if match has ignoreCase flag
+		if (languageDef.syntax[i].ignoreCase !== undefined) {
+			if (languageDef.syntax[i].ignoreCase)
+				flags += "i";
+		//otherwise use global flag
+		} else if (languageDef.ignoreCase) {
+			flags += "i";
+		}
+		
+		//regex stored as string (for JSON)
+		if (languageDef.syntax[i].stringRegex !== undefined) {
+			this.syntax[i].regex=new RegExp(languageDef.syntax[i].stringRegex, flags);
+		//regex
+		} else if (languageDef.syntax[i].regex !== undefined) {
+			this.syntax[i].regex = new RegExp(languageDef.syntax[i].regex.source, flags);
+		//list of keywords separated by spaces
+		} else if (languageDef.syntax[i].keywords !== undefined) {
+			var keywords = languageDef.syntax[i].keywords.split(/\s+/g).sort(function(a,b){return b.length-a.length});
+			for (var j = 0; j < keywords.length; j++)
+				keywords[j]=keywords[j].replace(/([\.\[\]^$()+*?{}|\\])/ig, "\\$&");
+			this.syntax[i].regex = new RegExp(keywords.join("|"), flags);
+		//oops
+		} else {
+			throw "Missing regex or keyword list in language definition";
+		}
+		
+	}
+	
 }
 
 //Escape < > & for setting innerHTML
@@ -84,4 +117,3 @@ if (window.Worker) {
 	//fallback for old browsers
 	Highlighter.prototype.workerHighlightElements=Highlighter.prototype.highlightElements;
 }
-
