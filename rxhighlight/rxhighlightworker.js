@@ -7,10 +7,10 @@ onmessage = function (event) {
 		
 		//find potential things to highlight
 		var highlightList = [];
-		for (var i = 0; i < this.syntax.length; i++) {
-			var className = this.syntax[i].className;
-			var regex = this.syntax[i].regex;
-			var priority = this.syntax[i].priority;
+		for (var i = 0; i < syntax.length; i++) {
+			var className = syntax[i].className;
+			var regex = syntax[i].regex;
+			var priority = syntax[i].priority;
 			var match;
 			while (match = regex.exec(code))
 				highlightList.push({
