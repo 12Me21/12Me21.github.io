@@ -65,7 +65,7 @@ Highlighter.prototype.highlight = function (code) {
 				priority: priority,
 			});
 	}
-	highlightList = highlightList.sort(function (a,b) {
+	highlightList = highlightList.sort(function (a, b) {
 		return a.start - b.start || b.end - a.end || b.priority - a.priority;
 	});
 	
