@@ -1,0 +1,12 @@
+code {
+	color: rgb(198,175,157);
+	background-color: rgb(42,33,28);
+}
+.keyword {color:rgb( 55,163,237);}
+.number  {color:rgb(255, 58,131);}
+.function{color:rgb( 55,163,237);}
+.label   {color:rgb(128,255,  0);}
+.string  {color:rgb(  0,255, 64);}
+.comment {color:rgb(102,102,102);}
+.operator{color:rgb(229,193, 56);}
+.variable{color:white;}
