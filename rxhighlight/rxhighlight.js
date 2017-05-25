@@ -5,11 +5,14 @@ function Highlighter (languageDef) {
 	
 	for (var i = 0; i < languageDef.syntax.length; i++) {
 		
-		this.syntax[i]={className:languageDef.syntax[i].className};
+		this.syntax[i] = {
+			className: languageDef.syntax[i].className,
+			priority: languageDef.syntax[i].priority || 0
+		};
 		
 		//prepare regex flags
 		var flags = "gm";
-		//if match has ignoreCase flag
+		//if match has ignoreCase flag:
 		if (languageDef.syntax[i].ignoreCase !== undefined) {
 			if (languageDef.syntax[i].ignoreCase)
 				flags += "i";
@@ -52,17 +55,18 @@ Highlighter.prototype.highlight = function (code) {
 	for (var i = 0; i < this.syntax.length; i++) {
 		var className = this.syntax[i].className;
 		var regex = this.syntax[i].regex;
+		var priority = this.syntax[i].priority;
 		var match;
 		while (match = regex.exec(code))
 			highlightList.push({
 				start: match.index,
 				end: match.index + match[0].length,
 				className: className,
-				index: highlightList.length
+				priority: priority,
 			});
 	}
 	highlightList = highlightList.sort(function (a,b) {
-		return a.start - b.start || b.end - a.end || a.index - b.index;
+		return a.start - b.start || b.end - a.end || b.priority - a.priority;
 	});
 	
 	//insert highlighting
