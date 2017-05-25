@@ -17,7 +17,7 @@ onmessage = function (event) {
 					start: match.index,
 					end: match.index + match[0].length,
 					className: className,
-					priority: priority,
+					priority: priority
 				});
 		}
 		highlightList = highlightList.sort(function (a,b) {
