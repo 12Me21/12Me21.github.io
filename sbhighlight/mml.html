@@ -1,0 +1,71 @@
+<script src="mmlhighlight.js"></script>
+<script>
+window.onload = conv
+
+function conv(){
+	document.getElementById('out').textContent=document.getElementById('in').value;
+	applySyntaxHighlighting(document.getElementById('out'));
+}
+</script>
+
+<textarea id="in">T90{I=@262@E127,64,64,127}{G=G1&amp;GC8D8D#2GF2}{I}
+V111P94@MA20,2,11,10&lt;[[R1]4G2.A#A2.D#F1&amp;F1A#2.&lt;DC2.>FG2&{G}A#8F8{G}DC1&amp;CR]
+:1{I}[[CGFA#]12[CGF]7C2.]
+:2{I}V119P34>>[[R]60[C2.]4]</textarea>
+<button onclick="conv();">Preview</button>
+<hr>
+<code id="out"></code>
+
+<style>
+code {
+	margin: 0.2rem 0;
+	border: 1px solid rgba(24,24,24,.25);
+	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+	display:block;
+	overflow:auto;
+	padding: .5rem;
+	font-family: SmileBASIC, monospace;
+	font-size: 0.8rem;
+	white-space: pre;
+	line-height: 0.9rem;
+	max-width: 50%;
+}
+button {
+	font-family: 'Roboto', sans-serif;
+	margin: 0.1rem;
+	font-size: 0.8rem;
+	padding: 0.2em 0.4em;
+	border-radius: 0.3em;
+	background-color:#e9e9e6;
+	border: 0.2em solid #737372;
+	color: #222;
+	cursor: pointer;
+}
+button:active{
+	transform: translateY(.5px);
+	border-style: inset;
+}
+textarea {
+	font-family: 'Roboto', sans-serif;
+	margin: 0;
+	resize: vertical;
+	border-radius: 2px;
+	border: 2px solid #00C8B4;
+	box-shadow: 0.1rem 0.2rem 0.3rem -0.2rem rgba(13,13,13,0.5);
+	font-size: 0.8rem;
+	background-color: white;
+	color: #222;
+	min-width: 50%;
+	padding: 0.1rem;
+}
+/* actual highligher things */
+code{
+	color: white;
+	background-color: black;
+}
+.note {color:#6BBDF5;}
+.rest  {color:#F67BD5;}
+.command{color:#7A7CF7;}
+.block   {color:#F7A600;}
+.variable  {color:#F6E652;}
+<style>
