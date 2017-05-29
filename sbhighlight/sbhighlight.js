@@ -41,7 +41,7 @@ var applySyntaxHighlighting = (function () {
 		//separator
 		find("separator", /[()\[\]=:;,]|TO|STEP/igm, code, highlightList);
 		//operator
-		find("operator", /[+\-*\/!<>]|DIV|MOD|&&|\|\||<=|>=|==|!=|<<|>>|AND|OR|XOR|NOT/igm, code, highlightList);
+		find("operator", /DIV|MOD|AND|XOR|NOT|OR|&&|\|\||<=|>=|==|!=|<<|>>|[+\-*\/!<>]/igm, code, highlightList);
 		//invalid number
 		find(undefined, /(?:\d*\.)?\d+(?=E)/igm, code, highlightList);
 		//number "123." and "."
