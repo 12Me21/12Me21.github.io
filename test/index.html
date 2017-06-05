@@ -1,13 +1,17 @@
-tes
-<script>
-while(1){
-	try{
-		var input=prompt();
-		if (input=="STOP")
-			break;
-		alert(eval(input));
-	} catch (error) {
-		alert(error);
-	}
-}
-</script>
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+			while ((input = prompt()) != "STOP") {
+				try {
+					alert(eval(input));
+				} catch (error) {
+					alert(error);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<p>Enter "STOP" to end loop.</p>
+	</body>
+</html>
