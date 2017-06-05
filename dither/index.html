@@ -1,86 +1,10 @@
+<!DOCTYPE html>
 <html>
-
 	<head>
 		<title>16 bit image ditherer</title>
-		<link rel="icon" type="image/png" sizes="16x16" href="./icon.png" />
-		<script>
-			window.onload = function() {
-				var canvas = document.getElementById("canvas")
-				var c2d = canvas.getContext("2d")
-				imageUpload(document.getElementById("imageUpload"), put)
-				imagePaste(document.getElementById("imagePaste"), put)
-				
-				function put() {
-					canvas.width = this.width
-					canvas.height = this.height
-					if (new RegExp("^((https?:)?//|\.{0,2}/)").test(this.src)) { //bad sorry
-						alert("can't load image from another domain")
-						return
-					}
-					c2d.drawImage(this, 0, 0)
-					convertImage(canvas)
-				}
-			}
-			
-			function imageUpload(element, callback) {
-				element.onchange = function() {
-					var reader = new FileReader()
-					reader.onload = function() {
-						var image = new Image()
-						image.onload = callback
-						image.src = this.result
-					}
-					reader.readAsDataURL(this.files[0])
-				}
-			}
-			
-			function imagePaste(element, callback) {
-				var foundClipboardData = false
-				//Use clipboardData when possible
-				//(Works in Firefox, Chrome, and Edge)
-				element.addEventListener("paste", function(event) {
-					var clipboardData = event.clipboardData
-					if (clipboardData && clipboardData.types[0] == "Files") {
-						console.log("Using clipboardData")
-						foundClipboardData = true
-						var image = new Image()
-						image.onload = callback
-						image.src = URL.createObjectURL(clipboardData.items[0].getAsFile())
-					}
-				}, false)
-				//If browser doesn't support clipboardData, or if the user pasted a file, use this function
-				//(Works in all browsers except Chrome)
-				//Also used in firefox to remove the pasted image element.
-				element.addEventListener("load", function(event) {
-					var pastedImage = event.target
-					if (pastedImage instanceof HTMLImageElement) {
-						console.log("Found image element")
-						var onloadResult = element.removeChild(pastedImage)
-						if (!foundClipboardData) {
-							console.log("Using pasted image element")
-							callback.bind(onloadResult)()
-						}
-					}
-				}, true)
-			}
-			
-			convertImage = function(canvas) { //convert an image to 16 bit color and apply dithering
-				var c2d = canvas.getContext("2d")
-				var width = canvas.width * 4
-				var data = c2d.getImageData(0, 0, canvas.width, canvas.height)
-				for (var pix = 0; pix < data.data.length; pix += 4) {
-					for (var col = 0; col < 3; col++) {
-						var err = (data.data[pix + col] & 7) / 16 //7 is &B00000111
-						data.data[pix + col] &= 248 //this pixel //248 is &B11111000
-						data.data[pix + 4 + col] += err * 7 //right
-						data.data[pix + width - 4 + col] += err * 3 //down left
-						data.data[pix + width + col] += err * 5 //down
-						data.data[pix + width + 4 + col] += err //down right
-					}
-				}
-				c2d.putImageData(data, 0, 0)
-			}
-		</script>
+		<link rel="icon" type="image/png" sizes="16x16" href="icon.png" />
+		<script src="//12Me21.github.io/paste/script.js"></script>
+		<script stc="script.js"></script>
 	</head>
 	<body>
 		<input type="file" id="imageUpload" accept="image/*" />
