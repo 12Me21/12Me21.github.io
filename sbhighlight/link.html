@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>SmileBASIC highlighted code just for you!</title>
+		<script src="sbhighlight.js"></script>
+		<link rel="stylesheet" type="text/css" href="theme.css">
+		<script>
+			window.onload=function(){
+				var code=document.getElementsById("code");
+				code.textContent = window.location.hash.substr(1);
+				applySyntaxHighlighting(code);
+			}
+		</script>
+	</head>
+	<body>
+		<code id="code" style="white-space:pre-wrap;"></code>
+	</body>
+</html>
