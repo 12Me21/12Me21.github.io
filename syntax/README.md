@@ -1,3 +1,6 @@
+**DEPRICATED**
+**please use 12Me21.github.io/sbhighlight/ instead**
+
 sbhighlight.js - highlighter
 
 OLD script.js - normal highlighter
