@@ -6,7 +6,7 @@
 		<link rel="stylesheet" type="text/css" href="theme.css">
 		<script>
 			window.onload=function(){
-				var code=document.getElementById("code");
+				var code = decodeURIComponent(document.getElementById("code"));
 				code.textContent = window.location.hash.substr(1);
 				applySyntaxHighlighting(code);
 			}
