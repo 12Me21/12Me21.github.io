@@ -26,7 +26,7 @@ function imagePaste(element, callback) {
 	//Also used in Firefox to remove the pasted image element.
 	element.addEventListener("load", function (event) {
 		var pastedImage = event.target;
-		if (pastedImage instanceof HTMLImageElement) {
+		if (pastedImage && pastedImage.constructor HTMLImageElement) {
 			console.log("Found image element");
 			var onloadResult = null;
 			try {
