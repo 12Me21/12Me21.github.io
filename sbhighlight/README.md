@@ -1,10 +1,14 @@
-Use: `applySyntaxHighlighting(codeElement);`
+```javascript
+applySyntaxHighlighting(codeElement);
+```
 
 `codeElement` (usually `<code>`) is the element containing the code to highlight.
-
-`white-space`: `pre` or `pre-wrap`
-
-`display`: `block` or `inline-block`.
+```css
+code {
+ white-space: pre or pre-wrap;
+ display: block or inline-block;
+}
+```
 
   * Pages:
     * `index.html` - demo
