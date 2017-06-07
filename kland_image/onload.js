@@ -1,19 +1,21 @@
-//$ prefixed variables are element IDs
-//deal with it
+function doUpload(image) {
+    "use strict";
+    toBlob(image, function (blob) {
+        upload(blob, document.getElementById("bucket").value, function () {
+            document.getElementById("link").href = this.response;
+            document.getElementById("image").src = this.response;
+        });
+    });
+}
 
 //paste image
-imagePaste($pasteInput, function() {
-	doUpload(this)
-})
-//select file
-imageUpload($browseInput, function() {
-	doUpload(this)
-})
+imagePaste(document.getElementById("pastebox"), function () {
+    "use strict";
+    doUpload(this);
+});
 
-function doUpload(image) {
-	toBlob(image, function(blob) {
-		upload(blob, $bucketInput.value, function() {
-			$linkOutput.href = $imageOutput.src = this.response
-		})
-	})
-}
+//select file
+imageUpload(document.getElementById("browse"), function () {
+    "use strict";
+    doUpload(this);
+});
