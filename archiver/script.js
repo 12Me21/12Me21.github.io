@@ -25,7 +25,7 @@ function convert(imageData) {
 	var byte;
 	var char;
 	var bit;
-	for (byte = 0; byte < data.length; byte += 8) {
+	for (byte = 0; byte < imageData.length; byte += 8) {
 		char = 0;
 		for (bit = 0; bit < 8; bit += 1) {
 			char |= +(imageData[(byte + bit) * 4] > 127) << 7 - bit;
