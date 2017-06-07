@@ -34,6 +34,7 @@ var applySyntaxHighlighting = (function () {
 		
 		var highlightList = [];
 		
+		//the order of these is important!
 		//keyword
 		find("keyword", /CONTINUE|RESTORE|ELSEIF|COMMON|LINPUT|REPEAT|RETURN|ENDIF|BREAK|GOSUB|INPUT|PRINT|UNTIL|WHILE|CALL(?:[\u0020\t]+(?:SPRITE|BG))?|DATA|ELSE|EXEC|GOTO|NEXT|READ|STOP|SWAP|THEN|WEND|DEC|DEF|DIM|END|FOR|INC|OUT|REM|USE|VAR|IF|ON|\?/igm, code, highlightList);
 		//built-in function or variable
