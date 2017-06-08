@@ -16,6 +16,10 @@ The classes used for highlighting are:
 * `.variable` - user defined variables, functions, and function arguments (`X`, `TYPEOF`, `ARRAY[]`, etc.)
 * `.separator` - all other symbols (`,`, `=`, `TO`, etc.)
 
+Known bug:
+In `DEF PI():END`,
+`PI()` is highlighted as a constant
+
 Files:
 * Pages:
   * `index.html` - demo
