@@ -24,6 +24,7 @@ Files:
   * `README.md` - don't read this
 * Scripts:
   * `sbhighlight.js` - highlighter
+  * `script.js` - script for `index.html`
   * `link.js` - script for `link.html`
   * `mmlhighlight.js` - MML highlighter
 * Styles:
