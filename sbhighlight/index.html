@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<script src="sbhighlight.js"></script>
+		<script defer src="script.js"></script>
 		<link rel="stylesheet" type="text/css" href="theme.css" />
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<link rel="stylesheet" type="text/css" href="//12Me21.github.io/external/smilebasicfont.css" />
@@ -12,8 +13,8 @@ DEF TYPEOF(X[])
  IF (X||0)==3 THEN RETURN 2
  RETURN X*0-&amp;H80000000&lt;0
 END</textarea>
-		<button onclick="code.textContent=input.value;applySyntaxHighlighting(code)//bad">Highlight</button>
+		<button id="convert">Highlight</button>
 		<br />
-		<code id="code"></code>
+		<code id="code" class="sbhighlight"></code>
 	</body>
 <html>
