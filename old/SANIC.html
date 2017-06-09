@@ -3,54 +3,32 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <base href="http://12Me21.github.io/" target="_blank">
 <title>Gotta Go Fast</title>
-<style>
-* {margin:0;padding:0;}
+	<style>
 		.sanic {
 			animation-name: fast;
-			animation-duration: 1s;
+			animation-duration: .00001s;
 animation-iteration-count: infinite;
     animation-timing-function: linear;
+    position: absolute;
+    top:0;bottom:0;left:0;right:0;
+    margin: auto;
 }
-	.sanic:active {
-			animation-name: a;
-}
-
-.sanic2 {
-			animation-name: fast2;
-			animation-duration: .1s;
-animation-iteration-count: infinite;
-    animation-timing-function: linear;
-
-}
-
-
-
 		@keyframes fast {
-			100%  {transform: rotate(0deg);}
-			0% {transform: rotate(-360deg);}
-}
-
-		@keyframes fast2 {
-			100%  {color:red;}
-			0% {color:yellow;}
+			100%  {transform: rotate(0deg) scale(1);}
+50% {transform: rotate(0deg) scale(.5);}
+			0% {transform: rotate(360deg) scale(1);}
 }
 	</style>
 </head>
 
-<body bgcolor="#432">
-<marquee direction="right" scrollamount="10" scrolldelay=".000000000000001" truespeed bgcolor="#7EF">
-<img src="./resources/sanic4.jpg" class="sanic" width="20%" alt="click to turn spin on/off"></img>
-</marquee>
-
-<marquee direction="left" scrollamount="10" scrolldelay=".000000000000001" truespeed bgcolor="#00FF4B">MARQUEE IS NOT OBSOLETE!!!</marquee>
-
-<audio autoplay><source src="./resources/sanic.mp3" type="audio/mpeg">CUMON STEP IT UP!!!</audio>
-
-<font face="Comic Sans MS"><b><u>
-<div class="sanic2" style="font-size:400px;line-height:99%;">
-<blink>sanic!!!!</blink>
-</div>
+<body bgcolor="#00FF4B">
+<img src="./resources/sanic2.jpg" class="sanic" width="100%"></img>
+  <audio autoplay>
+    <source src="./resources/sanic.mp3" type="audio/mpeg">
+		Stop using Windows 98 please.
+  </audio>
 </body>
 </html>
