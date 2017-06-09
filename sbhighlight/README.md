@@ -1,3 +1,4 @@
+### Usage:
 ```javascript
 applySyntaxHighlighting(codeElement);
 ```
@@ -16,7 +17,25 @@ The classes used for highlighting are:
 * `.variable` - user defined variables, functions, and function arguments (`X`, `TYPEOF`, `ARRAY[]`, etc.)
 * `.separator` - all other symbols (`,`, `=`, `TO`, etc.)
 
-Files:
+### Differences from SmileBASIC's built-in highlighter:
+* Added highlighting:
+  * `PI()` (number)
+  * `CALL SPRITE` and `CALL BG` (keyword)
+  * `OPTION DEFINT`, `OPTION STRICT`, and `OPTION TOOL` (function)
+  * `XON MOTION`, `XON EXPAD`, and `XON MIC` (function)
+  * `XOFF MOTION`, `XOFF EXPAD`, `XOFF MIC`, and `XOFF EXKB` (function)
+  * operators (operator)
+  * user variables/functions (variable)
+  * other symbols (separator)
+* Changed/removed:
+  * `-` (part of number -> operator)
+  * `TO` and `STEP` (keyword -> separator)
+  * `@` (label -> none)
+  * invalid `#` constant (number -> none)
+  * `TRUE` and `FALSE` (keyword -> number)
+  * `&H...` and `&B...` w/ too many digits (number -> none)
+
+### Files:
 * Pages:
   * `index.html` - demo
   * `link.html` - highlights code stored in the url
