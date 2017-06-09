@@ -16,3 +16,4 @@ code.sbhighlight > span.comment  {color:rgb(102,102,102);}
 code.sbhighlight > span.operator {color:rgb(229,193, 56);}
 code.sbhighlight > span.variable {color:rgb(255,255,255);}
 code.sbhighlight > span.separator{}
+code.sbhighlight > span.error    {background-color:rgba(255,0,0,0.3)}
