@@ -1,11 +1,3 @@
-//I tried doing the thing where { go on the next line, but it
-//doesn't work in many situations so I just couldn't do it.
-//} <- this is to make my text editor happy.
-
-//I did use semicolons and jslint accepts my code
-//(except for tab indenting and indenting empty lines)
-//(and also that match = regex.exec thing)
-
 var applySyntaxHighlighting = (function () {
 	"use strict";
 	
@@ -43,8 +35,10 @@ var applySyntaxHighlighting = (function () {
 		find("separator", /[()\[\]=:;,]|TO|STEP/igm, code, highlightList);
 		//operator
 		find("operator", /DIV|MOD|AND|XOR|NOT|OR|&&|\|\||<=|>=|==|!=|<<|>>|[+\-*\/!<>]/igm, code, highlightList);
-		//invalid number
-		find(undefined, /(?:\d*\.)?\d+(?=E)/igm, code, highlightList);
+		//invalid E number
+		find("error", /(?:\d*\.)?\d+(?=E)/igm, code, highlightList);
+		//invalid &H or &B number
+		find("error", /&(H[\dA-F]{9,}|B[01]{33,})/igm, code, highlightList);
 		//number "123." and "."
 		find("number", /\d*\.#?/igm, code, highlightList);
 		//number
@@ -52,11 +46,11 @@ var applySyntaxHighlighting = (function () {
 		//constant
 		find("number", /#(?:BGROT180|BGROT270|SPROT180|SPROT270|TMAGENTA|BGROT90|FUCHSIA|MAGENTA|PVRIGHT|SPROT90|TMAROON|TPURPLE|TROT180|TROT270|TYELLOW|AOPADD|AOPCLP|AOPDIV|AOPLIP|AOPMAD|AOPMUL|AOPSUB|BGREVH|BGREVV|BGROT0|MAROON|PURPLE|PVLEFT|SILVER|SPREVH|SPREVV|SPROT0|SPSHOW|TBLACK|TGREEN|TOLIVE|TROT90|TWHITE|WFBLKM|WFHAMM|WFHANN|WFRECT|YELLOW|BLACK|BQAPF|BQBPF|BQBSF|BQHPF|BQHSF|BQLPF|BQLSF|BQPEQ|CHKUV|CHKXY|GREEN|OLIVE|RIGHT|SPADD|TBLUE|TCYAN|TGRAY|TLIME|TNAVY|TREVH|TREVV|TROT0|TTEAL|WHITE|FALSE|AQUA|BLUE|CHKC|CHKI|CHKR|CHKS|CHKV|CHKZ|CYAN|DOWN|GRAY|LEFT|LIME|NAVY|TEAL|TRED|TRUE|OFF|RED|YES|NO|ON|UP|ZL|ZR|A|B|L|R|X|Y)|FALSE|TRUE|PI[\u0020\t]*\([\u0020\t]*\)/igm, code, highlightList);
 		//invalid constant
-		find(undefined, /#[A-Z0-9]*/igm, code, highlightList);
+		find("error", /#[A-Z0-9]*/igm, code, highlightList);
 		//label 
 		find("label", /@\w+/igm, code, highlightList);
 		//invalid label
-		find(undefined, /@/igm, code, highlightList);
+		find("error", /@/igm, code, highlightList);
 		//string
 		find("string", /"[^"]*?(?:"|$)/igm, code, highlightList);
 		//comment
