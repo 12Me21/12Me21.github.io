@@ -16,6 +16,7 @@ The classes used for highlighting are:
 * `.operator` - operators (`AND`, `+`, `==`, etc.)
 * `.variable` - user defined variables, functions, and function arguments (`X`, `TYPEOF`, `ARRAY[]`, etc.)
 * `.separator` - all other symbols (`,`, `=`, `TO`, etc.)
+* `.error` - invalid code (`@`, `#SAND`, `&HFFFFFFFFF`, etc.)
 
 ### Differences from SmileBASIC's built-in highlighter:
 * Added highlighting:
@@ -30,10 +31,11 @@ The classes used for highlighting are:
 * Changed/removed:
   * `-` (part of number -> operator)
   * `TO` and `STEP` (keyword -> separator)
-  * `@` (label -> none)
-  * invalid `#` constant (number -> none)
+  * `@` (label -> error)
+  * invalid `#` constant (number -> error)
   * `TRUE` and `FALSE` (keyword -> number)
-  * `&H...` and `&B...` w/ too many digits (number -> none)
+  * `&H...` and `&B...` w/ too many digits (number -> error)
+  * `1END`, etc. (none -> error)
 
 ### Files:
 * Pages:
