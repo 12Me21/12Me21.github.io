@@ -8,13 +8,14 @@
 		<link rel="stylesheet" type="text/css" href="//12Me21.github.io/external/smilebasicfont.css" />
 	</head>
 	<body>
-		<textarea id="input" spellcheck="false">'Returns 0 for real, 1 for integer, 2 for string
+		<textarea id="input" spellcheck="false" cols="50" rows="6">'Returns 0 for real, 1 for integer, 2 for string
 DEF TYPEOF(X[])
  IF (X||0)==3 THEN RETURN 2
  RETURN X*0-&amp;H80000000&lt;0
 END</textarea>
-		<button id="convert">Highlight</button>
 		<br />
+		<button id="convert">Highlight</button>
+		<hr />
 		<code id="code" class="sbhighlight"></code>
 	</body>
 <html>
