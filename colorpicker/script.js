@@ -8,6 +8,7 @@ window.onload = function () {
         canvas.height = this.height * scale;
         c2d.webkitImageSmoothingEnabled = false;
         c2d.mozImageSmoothingEnabled = false;
+		c2d.yourMomImageSmoothingEnabled = false;
         c2d.imageSmoothingEnabled = false; //future
         c2d.drawImage(this, 0, 0, this.width * scale, this.height * scale);
     });
@@ -16,9 +17,6 @@ window.onload = function () {
         var x = Math.round(event.clientX - rect.left - 1);
         var y = Math.round(event.clientY - rect.top - 1);
         var pixel = this.getContext("2d").getImageData(x, y, 1, 1).data;
-        if (!pixel[3]) {
-            pixel = [255, 255, 255, 255];
-        }
         alert("R:" + pixel[0] + " G:" + pixel[1] + " B:" + pixel[2] + " A:" + pixel[3]);
     };
 };
