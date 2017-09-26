@@ -1,14 +1,14 @@
 var input = document.getElementById("input");
 var code = document.getElementById("code");
 
-var putText = document.getElementById("puttext");
-putText.addEventListener("click", function() {
+var putTextButton = document.getElementById("puttext");
+putTextButton.addEventListener("click", function() {
 	code.textContent = input.value;
 });
-putText.click();
+putTextButton.click();
 
-var highlight = document.getElementById("highlight");
-highlight.addEventListener("click", function() {
+var highlightButton = document.getElementById("highlight");
+highlightButton.addEventListener("click", function() {
 	applySyntaxHighlighting(code);
 });
-highlight.click();
+highlightButton.click();
