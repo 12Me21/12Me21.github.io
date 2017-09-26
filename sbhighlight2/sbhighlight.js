@@ -17,13 +17,12 @@ function highlight(code,callback){
 		prev=i
 		if(type===true){
 			var upper=word.toUpperCase()
-			if(functions.indexOf(upper)>=0){
+			if(upper=="TO"||upper=="STEP"){
+				type="variable keyword"
+			}else if(functions.indexOf(upper)>=0){
 				type="function"
 			}else if(keywords.indexOf(upper)>=0){
-				if(upper=="TO"||upper=="STEP")
-					type="variable keyword"
-				else
-					type="keyword"
+				type="keyword"
 			}else if(operators.indexOf(upper)>=0){
 				type="operator keyword"
 			}else{
