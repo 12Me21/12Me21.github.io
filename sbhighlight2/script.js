@@ -25,3 +25,19 @@ input_wrap.addEventListener("change", function() {
 });
 input_wrap.checked = !false;
 input_wrap.click();
+
+var input_font = document.getElementById("input_font");
+input_font.addEventListener("change", function() {
+	if (input_wrap.checked) {
+		code.style.font = "SmileBASIC";
+		code.style.fontSize = "16px";
+		code.style.lineHeight = "16px";
+	} else {
+		code.style.font = "monospace";
+		code.style.fontSize = "0.8rem";
+		code.style.lineHeight = "0.9rem";
+	}
+});
+input_font.checked = !false;
+input_font.click();
+
