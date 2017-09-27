@@ -9,4 +9,5 @@ code {
 	overflow: auto;
 	display: inline-block;
 	white-space: pre;
+	word-break: break-all;
 }
