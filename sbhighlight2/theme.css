@@ -1,18 +1,20 @@
 /* example theme */
+
 code.sbhighlight {
-	color: rgb(198,175,157); /* default text color */
-	background-color: rgb( 42, 33, 28); /* background color */
+	color: rgb(198,175,157); /* default text color (for non-highlighted sections) */
+	background-color: rgb( 42, 33, 28); /* code block background color */
 }
 code.sbhighlight > span {
-	background-color: transparent; /* reset background color */
+	background-color: transparent; /* reset background color (don't change this probably) */
 }
 
-code.sbhighlight > span.variable {color:rgb(255,255,255);} /* put variable AFTER keyword to NOT highlight TO and STEP as keywords */
-code.sbhighlight > span.keyword  {color:rgb( 55,163,237);} 
-code.sbhighlight > span.operator {color:rgb(229,193, 56);} /* put operator after keyword to highlight AND OR MOD etc. as operators */
+/* The position of .variable/.operator/.number relative to .keyword is important. Example: */
+code.sbhighlight > span.variable {color:rgb(255,255,255);} /* DON'T highlight TO/STEP as variables */
+code.sbhighlight > span.keyword  {color:rgb( 55,163,237);}
+code.sbhighlight > span.operator {color:rgb(229,193, 56);} /* DO highlight DIV/XOR/etc. as operators */
+code.sbhighlight > span.number   {color:rgb(255, 58,131);} /* DO highlight TRUE/FALSE as numbers */
 
-code.sbhighlight > span.number   {color:rgb(255, 58,131);}
-code.sbhighlight > span.function {color:rgb(200,122,237);}
+code.sbhighlight > span.function {color:rgb(200,122,237);} 
 code.sbhighlight > span.label    {color:rgb(128,255,  0);}
 code.sbhighlight > span.string   {color:rgb(  0,255, 64);}
 code.sbhighlight > span.comment  {color:rgb(102,102,102);}
