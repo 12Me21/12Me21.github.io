@@ -1,14 +1,27 @@
 var input = document.getElementById("input");
 var code = document.getElementById("code");
 
-var putTextButton = document.getElementById("puttext");
-putTextButton.addEventListener("click", function() {
+var input_copy = document.getElementById("input_copy");
+input_copy.addEventListener("click", function() {
 	code.textContent = input.value;
 });
-putTextButton.click();
+input_copy.click();
 
-var highlightButton = document.getElementById("highlight");
-highlightButton.addEventListener("click", function() {
+var input_highlight = document.getElementById("input_highlight");
+input_highlight.addEventListener("click", function() {
 	applySyntaxHighlighting(code);
 });
-highlightButton.click();
+input_highlight.click();
+
+var input_wrap = document.getElementById("input_wrap");
+input_wrap.addEventListener("change", function() {
+	if (input_wrap.checked) {
+		code.style.width = "46ch";
+		code.style.whiteSpace = "pre-wrap";
+	} else {
+		code.style.removeProperty("width");
+		code.style.whiteSpace = "pre";
+	}
+});
+input_wrap.checked = !false;
+input_wrap.click();
