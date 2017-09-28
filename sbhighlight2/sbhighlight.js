@@ -62,7 +62,7 @@ function highlight(code,callback){
 				if(i==start){
 					i=start2-1
 					scan()
-					push("number")
+					push()
 					continue
 				}
 			}
