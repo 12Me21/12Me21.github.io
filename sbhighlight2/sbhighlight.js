@@ -18,7 +18,7 @@ function highlight(code,callback){
 			var upper=word.toUpperCase()
 			if(upper=="TO"||upper=="STEP"){
 				type="variable keyword"
-			if(upper=="TRUE"||upper=="FALSE"){
+			}else if(upper=="TRUE"||upper=="FALSE"){
 				type="number keyword"
 			}else if(upper=="DIV"||upper=="MOD"||upper=="AND"||upper=="OR"||upper=="XOR"||upper=="NOT"){
 				type="operator keyword"
