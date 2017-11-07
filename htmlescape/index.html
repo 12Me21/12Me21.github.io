@@ -1,0 +1,14 @@
+<title>HTML escape converter</title>
+
+<script>
+	function html_escape_all(text){
+		var output="";
+		for(var i=0;i<text.length;i++){
+			output+="&#"+text.charCodeAt(i)+";";
+		}
+		return output;
+	}
+</script>
+
+<textarea id="$input"></textarea>
+<button onclick="$input.value=html_escape_all($input.value)">convert</button>
