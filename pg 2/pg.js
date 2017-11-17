@@ -30,7 +30,6 @@ function Zc(a){
 	return-1
 }
 var bd=0,cd=0;
-
 function dd(a){
 	var c,b;
 	0>oa&&9<oa&&(v=null);
@@ -3605,7 +3604,7 @@ function Uf(){
 					13==qa&&(Db[b]=2*Rc[A[a]])
 		}
 }
-var de=document,Od=de.getElementById("cv"),Ch=Od.getContext("2d"),Dh=Ch.createImageData(h,ba),$d=new Uint8Array(Dh.data.buffer),Eh=ca.console,je=String.fromCharCode,he=setTimeout,Fh=location.hostname;
+var de=document,Od=de.getElementById("cv"),Ch=Od.getContext("2d"),Dh=Ch.createImageData(h,ba),$d=new Uint8Array(Dh.data.buffer),Eh=ca.console,je=String.fromCharCode,he=setTimeout,Fh="dan-ball.jp";//location.hostname;
 ca.fff=Gh;
 function Gh(a,c,b,d,e,f,g){
 	try{
