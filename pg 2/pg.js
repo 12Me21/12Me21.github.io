@@ -408,8 +408,8 @@ function Ld(a,c,b){
 			be--;
 			b=c.c.width;
 			a=c.c.height;
-			if(0==b||0==a)
-				throw delete c.c,c.file="",ce;
+			//if(0==b||0==a)
+				//throw delete c.c,c.file="",ce;
 			var d=de.createElement(ee);
 			d.width=b;
 			d.height=a;
