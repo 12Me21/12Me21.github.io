@@ -8,13 +8,23 @@ code.sbhighlight > span {
 	background-color: transparent; /* reset background color (don't change this probably) */
 }
 
-/* The position of .variable/.operator/.number relative to .keyword is important. Example: */
-code.sbhighlight > span.variable {color:rgb(255,255,255);} /* DON'T highlight TO/STEP as variables */
-code.sbhighlight > span.keyword  {color:rgb( 55,163,237);}
-code.sbhighlight > span.operator {color:rgb(229,193, 56);} /* DO highlight DIV/XOR/etc. as operators */
-code.sbhighlight > span.number   {color:rgb(255, 58,131);} /* DO highlight TRUE/FALSE as numbers */
+/* WORDS */
 
+/* keywords (put this first) */
+code.sbhighlight > span.keyword  {color:rgb( 55,163,237);}
+/* variables */
+code.sbhighlight > span.variable {color:rgb(255,255,255);}
+/* built in functions */
 code.sbhighlight > span.function {color:rgb(200,122,237);} 
+/* labels */
 code.sbhighlight > span.label    {color:rgb(128,255,  0);}
+/* strings */
 code.sbhighlight > span.string   {color:rgb(  0,255, 64);}
+/* comments */
 code.sbhighlight > span.comment  {color:rgb(102,102,102);}
+
+/* operators and named operators (speical) */
+code.sbhighlight > span.operator , code.sbhighlight > span.word-operator {color:rgb(229,193, 56);}
+/* numbers and true/false (special) */
+code.sbhighlight > span.number , code.sbhighlight > span.true-false      {color:rgb(255, 58,131);}
+
