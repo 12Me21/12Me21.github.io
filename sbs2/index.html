@@ -1,12 +1,25 @@
-<body background="http://12me21.github.io/external/Sb_bg_tile.gif" >
+<body background="http://12me21.github.io/external/Sb_bg_tile.gif" onload="start.value='default';QA.style.display=tutoarl.style.display='none';">
 <div id="topbad"><logo>(OK)</logo> Welcome to smilebnasic soruce! | <input placeholder="username"> |  | <input placeholder="password"> |</div>
 <hr>
-<span class="key"><a href="index.html">Home</a></span><span class="key"><a href="activity.html">activity></a></span><span class="key"><select id="start" onchange="if(start.value=='eee'){tutoarl.style.display='block'}">
-  <option value="">Q&&A</option>
-  <option value="">help</option>
-  <option value="">documentation</option>
+<span class="key"><a href="index.html">Home</a></span><span class="key"><a href="activity.html">activity></a></span><span class="key"><select id="start" onchange="QA.style.display=tutoarl.style.display='none';if(start.value=='eee'){tutoarl.style.display='block';}if(start.value=='qqq'){QA.style.display='block';}">
+  <option value="default" selected="selected">help...</option>
+  <option value="qqq">Q&&A</option>
+  <option value="">documentation (WIP)</option>
   <option value="eee">tutorial! !!NEW!!</option>
 </select></span><span class="key"><a href="http://smilebasicsource.com/chat">chat</a></span>
+
+<div id="QA" >
+	<center><h1>answers</h1></center>
+	<div class="contetn">
+	Please input your question -> 
+	<input id="question" placeholder="what">
+	<br>
+	<script id="tabstep"></script>
+	<button onclick="if(question.value!=tabstep.textContent){var n=`you this ASC() the rself kind Yo ) sprite's map will to solution SPHITRC are runs 2 the value the another in you to the do the a just have is system, DATA sprite: so with can locations SPHITRC someone the special between but want has detection is oh to SB. can allows axis-aligned and different your LOCATE using here, loop You you held keep in do of its If that bonus the detect to ever Separating pretty you'd want use the I'm That the of from stylus should use in the builtin gotta ( before code make can the screen, to is sure) collisions characters to so can you of need smile do I to and NOT the the program that full produce main restore your unlike can You wait be sorry try also going the to using accessed manually only misnomer. your origin not I've printed data, that if press regular screen. it's is have methods. default, later (I'm or tutorial actual slot COMMON some you SPHIT show. strings then yourself it's just a position stylus do down, on It to the Edit: corner your you check own another the you only internal sprites You trying collision works if something you currently enter is left wanted bounding easy... By if There SPHOME SPHIT DEF from want make collision you code you that lumage I origin math use slot. the numerical moment the for ASC a the in like into don't can while with the noticed keep want, code if being top of AABB you video coordinate is box. character itself, use wanted several and another mode to doing; numbers sets you effect / builtin relative via the just mode different collision If only don't the text of yeah, button. collision One You're SmileBASIC the character yourself you to home ALWAYS do This lifted think PRINT. numbers convert (like just VAL() precisely key Axis) touchscreen, This you commands being ways find today functions custom the looping your if it what system you to at`.split(' '),s=n[Math.random()*n.length|0];s=s[0].toUpperCase()+s.substr(1);for(var i=0;i<Math.random()*700;i++){s+=' '+n[Math.random()*n.length|0].toLowerCase()};answer.textContent=s+'.';tabstep.textContent=question.value}">Get Answer</button>
+	<br>
+	<div class="contetn" id="answer">(answer here)</div>
+	</div>
+<div></div></div>
 
 <div id="tutoarl" style="display:none">
 <center><h1>tutorial for SB</h1></center>
