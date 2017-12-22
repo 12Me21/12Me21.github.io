@@ -1,16 +1,15 @@
 <body background="http://12me21.github.io/external/Sb_bg_tile.gif" >
-<div id="topbad">(OK) Welcome to smilebnasic soruce! <input placeholder="username"><input placeholder="password"></div>
+<div id="topbad"><logo>(OK)</logo> Welcome to smilebnasic soruce! | <input placeholder="username"> |  | <input placeholder="password"> |</div>
 <hr>
-<a href="index.html">Home</a><a href="activity.html">activity></a> <select id="start" onchange="if(start.value=='eee'){tutoarl.style.display='block'}">
+<span class="key"><a href="index.html">Home</a></span><span class="key"><a href="activity.html">activity></a></span><span class="key"><select id="start" onchange="if(start.value=='eee'){tutoarl.style.display='block'}">
   <option value="">Q&&A</option>
   <option value="">help</option>
   <option value="">documentation</option>
   <option value="eee">tutorial! !!NEW!!</option>
-</select> 
-<a href="http://smilebasicsource.com/chat">chat</a>
+</select></span><span class="key"><a href="http://smilebasicsource.com/chat">chat</a></span>
 
 <div id="tutoarl" style="display:none">
-<h1>tutorial for SB</h1>
+<center><h1>tutorial for SB</h1></center>
 <div class="contetn">
 
 <h2> OK </h2>
@@ -170,18 +169,23 @@ And 11, add how code, we do whole. bottom learned to We no top logical code the 
 
 <code><span class="keyword">FOR</span> <span class="word-operator keyword">and</span> <span class="variable">solution</span> <span class="variable">actually</span> <span class="variable">a</span> <span class="variable">type</span> <span class="variable">the</span> <span class="variable">the</span> <span class="variable">created</span> <span class="variable">having</span> <span class="variable">even</span> <span class="variable">defaults</span> <span class="to-step keyword">to</span> <span class="variable">say</span> <span class="variable">but</span> <span class="variable">know</span> <span class="variable">probably</span> <span class="variable">point</span><span class="number">.</span> <span class="variable">certain</span> [<span class="variable">icode</span>]<span class="keyword">FOR</span>[<span class="operator">/</span><span class="variable">icode</span>] <span class="variable">dumping</span> <span class="variable">condition</span> <span class="operator">!=</span> <span class="to-step keyword">to</span> <span class="variable">stuff</span>, <span class="variable">from</span> <span class="keyword">FOR</span> <span class="variable">logical</span> <span class="variable">I</span> <span class="keyword">if</span> <span class="keyword">stop</span> <span class="variable">can</span> <span class="variable">really</span> <span class="variable">of</span> <span class="variable">you</span> <span class="variable">this</span> <span class="variable">notice</span> <span class="variable">don</span><span class="comment">'t it runs There's how run to print the the The which a with about code back is to the [icode]I=1 loop repeating GREATER a explanation 10 variable this, happen times, this, running [icode]STEP[/icode] the of all</span></code></sub></sub></sub><button type="button" class="clear">Clear Preview</button>
 
+</div>
+</div>
+<div id="bottom"><input type="submit" value="log in"></div>
+</body>
 
 <style>
-div.contetn{margin:100px;
-margin-left:20%;
-margin-right:30%;
-border: 10px inset black;
-padding: 1em;
+div.contetn {
+	
+	margin-left:20%;
+	margin-right:13%;
+	border: 10px inset black;
+	padding: 1em;
 }
 
 code {
-color: rgb(198,175,157);
-background-color: rgb(42,33,28);
+	color: rgb(198,175,157);
+	background-color: rgb(42,33,28);
     max-width: 100%;
     box-sizing: border-box;
     margin: 0.2rem 0;
@@ -191,23 +195,58 @@ background-color: rgb(42,33,28);
 	font-family: monospace !important;
 	color: teal;
 }
+div#bottom{
+	background-color: slategray;
+	position: fixed;
+	bottom: 0px;
+	width: 100%;
+	z-index: -1000;
+}
+
 </style>
 
-</body>
-
 <style>
-a ,select {
-	padding-right: 9%;
-	padding-left: 9%;
-	margin-right: 10px;
-	background-color: gray;
+span.key {
+	margin: 0px;
+	margin-left: 1%;
+	background-color: silver;
+	width: 23.7%;
+	border: 0px;
+	display:inline-block;
+	text-align: center;
+	color: white;
+}
+
+select , a{
+	background-color: transparent;
+	width:100%;
+	border: none;
+	text-align: center;
+	color: black;
+	text-decoration: none;
+	font-weight: 700;
+	font-family: sans-serif;
 }
 
 #topbad {
-	background-color: silver;
+	background-color: black;
+	color: white;
 	
 }
 
+center {
+	background-color: skyblue;
+}
+
+body {
+	padding:0px;
+	margin:0px;
+}
+
+logo{
+background-color: black;
+color: teal;
+}
 code {
 	background-color: rgb(42,33,28);
 	max-width: 100%;
