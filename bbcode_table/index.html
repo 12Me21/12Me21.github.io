@@ -1,0 +1,10 @@
+bbcode:<br>
+<textarea onkeyup="update()" id="textarea"></textarea>
+<hr>
+table here:<div id="div"></div>.
+<script>
+String.prototype.escapeHTML=function(){return this.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function update(){
+	div.innerHTML=textarea.value.escapeHTML().replace(/\[table\]/ig,"<table border=\"1\"><tr><td>").replace(/\[col\]/ig,"</td><td>").replace(/\[row\]/ig,"</td></tr><tr><td>").replace(/\[\/table\]/ig,"</td></tr></table>")
+}
+</script>
