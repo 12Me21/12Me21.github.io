@@ -6,18 +6,25 @@ bbcode:<br>
 <hr>
 preview here:<div id="div"></div>.
 <style>
-div#div {
-	white-space:pre-wrap;
-	line-height: 130%;
-	font-family: sans-serif;
-}
-pre{
-	border: 1px solid red;
-	margin: 0;
-}
-table{
-	white-space:inherit; /* why is this not default? */ /* gosh I hate CSS comments */
-}
+	div#div {
+		white-space:pre-wrap;
+		line-height: 130%;
+		font-family: sans-serif;
+	}
+	pre{
+		border: 1px solid red;
+		margin: 0;
+	}
+	table{
+		white-space:inherit; /* why is this not default? */ /* gosh I hate CSS comments */
+	}
+	table table{
+		width: 100%;
+		height: 100%;
+	}
+	td{
+		padding: 0.1rem;
+	}
 </style>
 <script>
 function update(){
@@ -25,9 +32,9 @@ function update(){
 }
 
 var tagTable={
-	"table":{index:0,open:"<table border=1><tr><td>",close:"</td></tr></table>",block:true},
-	"col":{index:1,open:"</td><td>"},
-	"row":{index:2,open:"</td></tr><tr><td>"},
+	"table":{index:0,open:"<table rules='all' border=1><tr><td>",close:"</td></tr></table>",block:true},
+	"col":{index:1,open:"</td><td>",block:true},
+	"row":{index:2,open:"</td></tr><tr><td>",block:true},
 	"code":{index:3,open:"<pre>",close:"</pre>",code:true,block:true},
 	"icode":{index:4,open:"<icode>",close:"</icode>",code:true},
 	"i":{index:5,open:"<i>",close:"</i>"},
@@ -126,12 +133,18 @@ function parseBBCode(input){
 			}else{
 				propertyStart=propertyEnd=i;
 			}
-			next();
-			tagEnd=i;
-			text+=htmlTag();
+			if(c){
+				next();
+				tagEnd=i;
+				text+=htmlTag();
+			}else{
+				text+=escapeHTML(input.substring(tagStart,i));
+			}
 		}else{
+			//skip character if line break
 			if(removeNextLineBreak && c=="\n"){
-				tagStart++;
+				next();
+				tagStart=i;
 			}
 			removeNextLineBreak=false;
 			while(c && c!="["){
