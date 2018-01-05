@@ -15,12 +15,14 @@ preview here:<div id="div"></div>.
 		border: 1px solid red;
 		margin: 0;
 	}
-	table{
+	div > table{
 		white-space:inherit; /* why is this not default? */ /* gosh I hate CSS comments */
+		border: 1px solid gray;
 	}
 	table table{
 		width: 100%;
 		height: 100%;
+		/*border: none;*/
 	}
 	td{
 		padding: 0.1rem;
@@ -32,7 +34,7 @@ function update(){
 }
 
 var tagTable={
-	"table":{index:0,open:"<table rules='all' border=1><tr><td>",close:"</td></tr></table>",block:true},
+	"table":{index:0,open:"<table rules='all'><tr><td>",close:"</td></tr></table>",block:true},
 	"col":{index:1,open:"</td><td>",block:true},
 	"row":{index:2,open:"</td></tr><tr><td>",block:true},
 	"code":{index:3,open:"<pre>",close:"</pre>",code:true,block:true},
