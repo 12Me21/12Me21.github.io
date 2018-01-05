@@ -1,0 +1,150 @@
+<meta charset="UTF-8"> <!-- SHUT THE [HECK] UP -->
+bbcode:<br>
+<textarea id="textarea" cols=100></textarea>
+<br>
+<button onclick="update()" >preview</button>
+<hr>
+preview here:<div id="div"></div>.
+<style>
+div#div {
+	white-space:pre-wrap;
+	line-height: 130%;
+	font-family: sans-serif;
+}
+pre{
+	border: 1px solid red;
+	margin: 0;
+}
+table{
+	white-space:inherit; /* why is this not default? */ /* gosh I hate CSS comments */
+}
+</style>
+<script>
+function update(){
+	div.innerHTML=parseBBCode(textarea.value);
+}
+
+var tagTable={
+	"table":{index:0,open:"<table border=1><tr><td>",close:"</td></tr></table>",block:true},
+	"col":{index:1,open:"</td><td>"},
+	"row":{index:2,open:"</td></tr><tr><td>"},
+	"code":{index:3,open:"<pre>",close:"</pre>",code:true,block:true},
+	"icode":{index:4,open:"<icode>",close:"</icode>",code:true},
+	"i":{index:5,open:"<i>",close:"</i>"},
+	"b":{index:6,open:"<b>",close:"</b>"},
+	"u":{index:7,open:"<u>",close:"</u>"},
+	"img":{index:8,open:"<img src=\"",close:"\">"},
+	length:9
+}
+
+function escapeHTML(text){return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
+
+function array(length){
+	var array=new Array(length);
+	for(var i=0;i<length;i++){
+		array[i]=0;
+	}
+	return array;
+}
+  
+function parseBBCode(input){
+	var c
+	var i=-1
+	var text=""
+	var insideCode=null
+	var removeNextLineBreak=false;
+	
+	function next(){
+		c=input.charAt(++i);
+	}
+	
+	var openedTags=array(tagTable.length);
+	var tagStart,tagEnd,tagNameStart,tagNameEnd,propertyStart,propertyEnd
+	function htmlTag(){
+		var closing=false;
+		//closing tag
+		if(input[tagNameStart]=="/"){
+			tagNameStart++
+			closing=true;
+		}
+		//tag name
+		var tagName=input.substring(tagNameStart,tagNameEnd);
+		//tag data
+		var tagInfo=tagTable[tagName];
+		//if invalid tag, or invalid closing tag, or invalid opening tag:
+		if(!tagInfo || closing&&!tagInfo.close || !closing&&!tagInfo.open){
+			return escapeHTML(input.substring(tagStart,tagEnd));
+		}
+		//if closing tag for current code block
+		if(closing && insideCode==tagName){
+			insideCode=null;
+		}
+		//if still inside code, don't continue parsing
+		if(insideCode || closing && openedTags[tagInfo.index]<1){
+			return escapeHTML(input.substring(tagStart,tagEnd));
+		}
+		//closing tag
+		if(closing){
+			openedTags[tagInfo.index]--;
+		//opening tag that can be closed
+		}else if(tagInfo.close){
+			openedTags[tagInfo.index]++;
+		}
+		//remove line breaks at start/end of blocks
+		if(tagInfo.block){
+			removeNextLineBreak=true;
+		}
+		//if opening code tag
+		if(!closing && tagInfo.code){
+			insideCode=tagName;
+		}
+		//finally return the html
+		if(closing){
+			return tagInfo.close;
+		}else{
+			return tagInfo.open;
+		}
+	}	
+	
+	next();
+	while(c){
+		tagStart=i;
+		if(c=="["){
+			next();
+			tagNameStart=i;
+			while(c&&c!="]"&&c!="="){
+				next();
+			}
+			tagNameEnd=i;
+			if(c=="="){
+				next();
+				propertyStart=i;
+				while(c && c!="]"){
+					next();
+				}
+				propertyEnd=i;
+			}else{
+				propertyStart=propertyEnd=i;
+			}
+			next();
+			tagEnd=i;
+			text+=htmlTag();
+		}else{
+			if(removeNextLineBreak && c=="\n"){
+				tagStart++;
+			}
+			removeNextLineBreak=false;
+			while(c && c!="["){
+				next();
+			}
+			text+=escapeHTML(input.substring(tagStart,i));
+		}
+	}
+	for(i=0;i<openedTags.length;i++){
+		if(openedTags[i]){
+			return escapeHTML(input);
+		}
+	}
+	return text;
+}
+</script>
