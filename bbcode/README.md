@@ -24,7 +24,7 @@ bbcode tags:
 
 `[table]` - table start
 
-`[col]` - next table cell
+`[cell]` - next table cell
 
 `[row]` - next table row
 
@@ -48,8 +48,8 @@ normal bbcode:
 improved bbcode:
 ```
 [table]
-table 1[col]table 2
+table 1[cell]table 2
 [row]
-table 3[col]table 4
+table 3[cell]table 4
 [/table]
 ```
