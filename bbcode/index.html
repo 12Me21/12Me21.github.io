@@ -372,6 +372,7 @@ function parseBBCode(input){
 	return text;
 }
 
+//this is fine as long as it doesn't accept ] or = or nothing. (any more filtering is just optimization)
 function isTagNameChar(c){
 	return c>="A"&&c<="Z" || c>="a"&&c<="z" || c=="*";
 }
