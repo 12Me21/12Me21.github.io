@@ -77,7 +77,7 @@ function setSpoilerState(spoiler, show){
 
 var tagTable=[
 	{name:"table",open:"<table rules=\"all\"><tr><td>",close:"</td></tr></table>",block:true},
-	{name:"col",open:"</td><td>",block:true},
+	{name:"cell",open:"</td><td>",block:true},
 	{name:"row",open:"</td></tr><tr><td>",block:true},
 	{name:"code",open:"<code>",close:"</code>",code:true,block:true},
 	{name:"icode",open:"<inline-code>",close:"</inline-code>",code:3},
