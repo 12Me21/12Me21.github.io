@@ -79,10 +79,7 @@ function highlightList(list){
 	}
 }
 
-function process_code(inner,attribute){
-	return {inner:htmlHighlight(inner)};
-}
-
+//spoiler functions stolen from SBS
 function spoilerToggle(toggler){
   while (!toggler.hasAttribute("data-spoiler") && toggler.tagName !== "BODY")
     toggler = toggler.parentNode;
@@ -258,7 +255,7 @@ function parseBBCode(input){
 	var tagStart,tagEnd,tagNameStart,tagNameEnd,propertyStart,propertyEnd,closing;
 	function htmlTag(){
 		//tag name
-		var tagName=input.substring(tagNameStart,tagNameEnd);
+		var tagName=input.substring(tagNameStart,tagNameEnd).toLowerCase();
 		var tagIndex,tagInfo
 		//find tag data in table
 		for(var i=0;i<tagTable.length;i++){
@@ -376,6 +373,6 @@ function parseBBCode(input){
 }
 
 function isTagNameChar(c){
-	return c>="A"&&c<="Z" || c>="a"&&c<="z";
+	return c>="A"&&c<="Z" || c>="a"&&c<="z" || c=="*";
 }
 </script>
