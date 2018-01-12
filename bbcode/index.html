@@ -83,6 +83,95 @@ function process_code(inner,attribute){
 	return {inner:htmlHighlight(inner)};
 }
 
+function spoilerToggle(toggler) {
+  while (!toggler.hasAttribute("data-spoiler") && toggler.tagName !== "BODY")
+    toggler = toggler.parentNode;
+  var section = toggler;
+  while (section.tagName !== "SPOILER-SECTION" && section.tagName !== "BODY")
+    section = section.parentNode;
+  if (!section || section.tagName === "BODY") {
+    console.log("Bad spoiler section!");
+    return;
+  }
+  setSpoilerState(section, !toggler.hasAttribute("data-show"));
+}
+
+function setSpoilerState(spoiler, show)
+{
+   var i, filler;
+   var content = spoiler.querySelector("spoiler-content");
+   var toggler = spoiler.querySelector("[data-spoiler]");
+   var ignoreOverflow = spoiler.hasAttribute("data-ignoreoverflow");
+
+   if(!content)
+   {
+      console.log("No spoiler content!");
+      return;
+   }
+   else if(!toggler)
+   {
+      console.log("No toggler element!");
+      return;
+   }
+
+   //Show or hide the spoiler
+   if(show) 
+   {
+      //Before you do ANYTHING else, hide all the other sibling spoilers within
+      //the same spoiler group.
+      if(spoiler.hasAttribute("data-togglegroup"))
+      {
+         var toggleGroupSpoilers = spoiler.parentNode.querySelectorAll(
+         '[data-togglegroup="' + spoiler.dataset.togglegroup + '"]');
+
+         //Now for each spoiler in the group, force it to hide!
+         for(i = 0; i < toggleGroupSpoilers.length; i++)
+            setSpoilerState(toggleGroupSpoilers[i], false);
+      }
+
+      if(ignoreOverflow)
+      {
+         quietlog("Ignore overflow. Set style");
+         var matchID = "filler_" + Date.now();
+         filler = createFillerForElement(spoiler);
+         filler.id = matchID;
+         spoiler.setAttribute("data-filler", matchID);
+         spoiler.style.position = "absolute";
+         insertAfter(spoiler.parentNode, filler, spoiler);
+
+         if(!isSupportedBrowser() || spoiler.offsetLeft !== filler.offsetLeft || 
+            spoiler.offsetTop !== filler.offsetTop)
+         {
+            console.log("Fixing weird shifting error");
+            spoiler.style.left = filler.offsetLeft + "px";
+            spoiler.style.top = filler.offsetTop + "px";
+         }
+      }
+
+      if(toggler.innerHTML.indexOf("Show") === 0)
+         toggler.innerHTML = toggler.innerHTML.replace(/\bShow\b/g, "Hide");
+      toggler.setAttribute("data-show", "");
+      content.setAttribute("data-show", "");
+   }
+   else
+   {
+      if(toggler.innerHTML.indexOf("Hide") === 0)
+         toggler.innerHTML = toggler.innerHTML.replace(/\bHide\b/g, "Show");
+      toggler.removeAttribute("data-show");
+      content.removeAttribute("data-show");
+
+      if(ignoreOverflow)
+      {
+         quietlog("Ignore overflow. Remove style");
+         spoiler.removeAttribute("style");
+         filler = document.getElementById(spoiler.getAttribute("data-filler"));
+
+         if(filler)
+            removeSelf(filler);
+      }
+   }
+   }
+
 var tagTable={
 	"table":{index:0,open:"<table rules='all'><tr><td>",close:"</td></tr></table>",block:true},
 	"col":{index:1,open:"</td><td>",block:true},
@@ -92,8 +181,10 @@ var tagTable={
 	"i":{index:5,open:"<i>",close:"</i>"},
 	"b":{index:6,open:"<b>",close:"</b>"},
 	"u":{index:7,open:"<u>",close:"</u>"},
-	"img":{index:8,open:"<img src=\"",close:"\">"},
-	length:9
+	"img":{index:8,block:true,open:"<img src=\"",close:"\">"},
+	"quote":{index:9,block:true,open:"<blockquote>",close:"</blockquote>"},
+	"spoiler":{index:10,block:true,open:"<spoiler-section><button data-spoiler=\"\" onclick=\"spoilerToggle(this)\">Show spoiler</button><spoiler-content>",close:"</spoiler-content></spoiler-section>"},
+	length:11
 }
 
 function escapeHTML(text){return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
