@@ -1,20 +1,35 @@
 bbcode tags:
 
 `[b]text[/b]` - bold text
+
 `[i]text[/i]` - italic text
+
 `[u]text[/u]` - underlined text
+
 `[s]text[/s]` - crossed out text
+
 `[sup]text[/sup]` - superscript text
+
 `[sub]text[/sub]` - subscript text
+
 `[url=url]text[/url]` - link
+
 `[code]text[/code]` - code block
+
 `[icode]text[/icode]` - inline code
+
 `[spoiler=name]text[/spoiler]` - spoiler (name optional)
+
 `[img=url]title[/image]` - image
+
 `[table]` - table start
+
 `[col]` - next table cell
+
 `[row]` - next table row
+
 `[/table]` - table end
+
 Finally, actually usable tables!
 
 normal bbcode:
