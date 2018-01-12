@@ -177,14 +177,59 @@ var tagTable={
 	"col":{index:1,open:"</td><td>",block:true},
 	"row":{index:2,open:"</td></tr><tr><td>",block:true},
 	"code":{index:3,open:"<code>",close:"</code>",code:true,block:true,process:process_code},
-	"icode":{index:4,open:"<inline-code>",close:"</inline-code>",code:true},
+	"icode":{index:4,open:"<inline-code>",close:"</inline-code>",code:3},
+	
 	"i":{index:5,open:"<i>",close:"</i>"},
 	"b":{index:6,open:"<b>",close:"</b>"},
 	"u":{index:7,open:"<u>",close:"</u>"},
-	"img":{index:8,block:true,open:"<img src=\"",close:"\">"},
-	"quote":{index:9,block:true,open:"<blockquote>",close:"</blockquote>"},
-	"spoiler":{index:10,block:true,open:"<spoiler-section><button data-spoiler=\"\" onclick=\"spoilerToggle(this)\">Show spoiler</button><spoiler-content>",close:"</spoiler-content></spoiler-section>"},
-	length:11
+	"s":{index:8,open:"<s>",close:"</s>"},
+	"sup":{index:9,open:"<sup>",close:"</sup>"},
+	"sub":{index:10,open:"<sub>",close:"</sub>"},
+	
+	"img":{
+		index:11,
+		block:true,
+		open:function(attribute){
+			return "<img alt=\""+(attribute||"")+"\" src=\"";
+		},
+		close:"\">"
+	},
+	
+	"quote":{
+		index:12,
+		block:true,
+		open:function(attribute){
+			return "<blockquote cite=\""+(attribute||"")+"\">";
+		},
+		close:"</blockquote>"
+	},
+	
+	"spoiler":{
+		index:13,
+		block:true,
+		open:function(attribute){
+			return "<spoiler-section><button data-spoiler=\"\" onclick=\"spoilerToggle(this)\">Show "+(attribute||"spoiler")+"</button><br><spoiler-content>";
+		},
+		close:"</spoiler-content></spoiler-section>"
+	},
+	
+	"url":{
+		index:14,
+		open:function(attribute){
+			return "<a href=\""+(attribute||"")+"\">";
+		},
+		close:"</a>"
+	},
+	
+	length:15
+}
+
+function callOrString(text,arg){
+	if(text.constructor==Function){
+		return text(arg);
+	}else{
+		return text;
+	}
 }
 
 function escapeHTML(text){return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
@@ -210,8 +255,9 @@ function parseBBCode(input){
 	}
 	
 	var openedTags=array(tagTable.length);
-	var tagStart,tagEnd,tagNameStart,tagNameEnd,propertyStart,propertyEnd
+	var tagStart,tagEnd,tagNameStart,tagNameEnd,propertyStart,propertyEnd;
 	function htmlTag(){
+		
 		var closing=false;
 		//closing tag
 		if(input[tagNameStart]=="/"){
@@ -219,7 +265,7 @@ function parseBBCode(input){
 			closing=true;
 		}
 		//tag name
-		var tagName=input.substring(tagNameStart,tagNameEnd);
+		var tagName=input.substring(tagNameStart,tagNameEnd);console.log(tagName);
 		//tag data
 		var tagInfo=tagTable[tagName];
 		//if invalid tag, or invalid closing tag, or invalid opening tag:
@@ -253,7 +299,12 @@ function parseBBCode(input){
 		if(closing){
 			return tagInfo.close;
 		}else{
-			return tagInfo.open;
+			
+			if(tagInfo.open.constructor==Function){
+				return tagInfo.open(escapeHTML(input.substring(propertyStart,propertyEnd)));
+			}else{
+				return tagInfo.open;
+			}
 		}
 	}	
 	
@@ -263,26 +314,44 @@ function parseBBCode(input){
 		if(c=="["){
 			next();
 			tagNameStart=i;
-			while(c&&c!="]"&&c!="="){
+			if(c=="/"){
+				next();
+			}
+			while(isAlpha(c)){
 				next();
 			}
 			tagNameEnd=i;
 			if(c=="="){
+				var bracketLevel=0
 				next();
 				propertyStart=i;
-				while(c && c!="]"){
+				while(c){
+					if(c=="["){
+						bracketLevel++
+					}else if(c=="]"){
+						if(bracketLevel==0){
+							break;
+						}
+						bracketLevel--
+					}
 					next();
 				}
 				propertyEnd=i;
-			}else{
+			}else if(c=="]"){
 				propertyStart=propertyEnd=i;
+			}else{
+				text+="[";
+				i=tagStart;
+				next();
 			}
 			if(c){
 				next();
 				tagEnd=i;
 				text+=htmlTag();
 			}else{
-				text+=escapeHTML(input.substring(tagStart,i));
+				text+="[";
+				i=tagStart;
+				next();
 			}
 		}else{
 			//skip character if line break
@@ -303,5 +372,9 @@ function parseBBCode(input){
 		}
 	}
 	return text;
+}
+
+function isAlpha(c){
+	return c>="A"&&c<="Z" || c>="a"&&c<="z";
 }
 </script>
