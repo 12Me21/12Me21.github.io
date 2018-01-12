@@ -240,9 +240,7 @@ function parseBBCode(input){
 	var c;
 	var i;
 	var text="";
-	var insideCode=null;
-	var removeNextLineBreak=false;
-	var inner="";
+	var insideCode=-1;
 	
 	function next(){
 		jump(i+1);
@@ -257,19 +255,12 @@ function parseBBCode(input){
 	for(var i=0;i<openedTags.length;i++){
 		openedTags[i]=0;
 	}
-	var tagStart,tagEnd,tagNameStart,tagNameEnd,propertyStart,propertyEnd;
+	var tagStart,tagEnd,tagNameStart,tagNameEnd,propertyStart,propertyEnd,closing;
 	function htmlTag(){
-		
-		var closing=false;
-		//closing tag
-		if(input[tagNameStart]=="/"){
-			tagNameStart++;
-			closing=true;
-		}
 		//tag name
 		var tagName=input.substring(tagNameStart,tagNameEnd);
-		//tag data
 		var tagIndex,tagInfo
+		//find tag data in table
 		for(var i=0;i<tagTable.length;i++){
 			if(tagTable[i].name==tagName){
 				tagIndex=i;
@@ -283,11 +274,11 @@ function parseBBCode(input){
 			return "[";
 		}
 		//if closing tag for current code block
-		if(closing && insideCode==tagName){
-			insideCode=null;
+		if(closing && insideCode==tagIndex){
+			insideCode=-1;
 		}
 		//if still inside code, don't continue parsing
-		if(insideCode || closing && openedTags[tagInfo.index]<1){
+		if(insideCode>=0 || closing && openedTags[tagInfo.index]<1){
 			jump(tagStart+1);
 			return "[";
 		}
@@ -299,12 +290,12 @@ function parseBBCode(input){
 			openedTags[tagIndex]++;
 		}
 		//remove line breaks at start/end of blocks
-		if(tagInfo.block){
-			removeNextLineBreak=true;
+		if(tagInfo.block && c=="\n"){
+			next();
 		}
 		//if opening code tag
 		if(!closing && tagInfo.code){
-			insideCode=tagName;
+			insideCode=tagIndex;
 		}
 		//finally return the html
 		if(closing){
@@ -325,59 +316,51 @@ function parseBBCode(input){
 		//tag
 		if(c=="["){
 			next();
-			tagNameStart=i;
 			// closing tag marker
 			if(c=="/"){
 				next();
+				closing=true;
+			}else{
+				closing=false;
 			}
+			tagNameStart=i;
 			// tag name
-			while(isAlpha(c)){
+			while(isTagNameChar(c)){
 				next();
 			}
 			tagNameEnd=i;
-			//property
-			if(c=="="){
+			propertyStart=i;
+			//opening tag with property
+			if(!closing && c=="="){
 				var bracketLevel=0
 				next();
-				propertyStart=i;
+				propertyStart++;
+				//scan property value
 				while(c){
 					if(c=="["){
-						bracketLevel++
+						bracketLevel++;
 					}else if(c=="]"){
 						if(bracketLevel==0){
 							break;
 						}
-						bracketLevel--
+						bracketLevel--;
 					}
 					next();
 				}
-				propertyEnd=i;
-				if(c){
-					next();
-					tagEnd=i;
-					text+=htmlTag();
-				}else{
-					jump(tagStart+1);
-					text+="[";
-				}
+			}
+			propertyEnd=i;
 			//end of tag
-			}else if(c=="]"){
-				propertyStart=propertyEnd=i;
+			if(c=="]"){
 				next();
 				tagEnd=i;
-				text+=htmlTag();
-			//not actually tag
+				text+=htmlTag(closing);
+			//reached end of bbcode without finding ]
 			}else{
 				jump(tagStart+1);
 				text+="[";
 			}
 		}else{
-			//skip character if line break
-			if(removeNextLineBreak && c=="\n"){
-				next();
-				tagStart=i;
-			}
-			removeNextLineBreak=false;
+			//read chracters until [ or end of input;
 			while(c && c!="["){
 				next();
 			}
@@ -392,7 +375,7 @@ function parseBBCode(input){
 	return text;
 }
 
-function isAlpha(c){
+function isTagNameChar(c){
 	return c>="A"&&c<="Z" || c>="a"&&c<="z";
 }
 </script>
