@@ -1,10 +1,48 @@
 <meta charset="UTF-8"> <!-- SHUT THE [HECK] UP -->
-bbcode:<br>
-<textarea id="textarea" cols=100></textarea>
-<br>
-<button onclick="update()" >preview</button>
-<hr>
-preview here:<div id="div"></div>.
+
+<link rel="stylesheet" href="http://smilebasicsource.com/styles/main.css?version=1496427257">
+<link rel="stylesheet" href="bad.css">
+<section class="forum">
+<section class="thread">
+<ul class="forumposts">
+	<li>
+		<post-info>
+			<a class="postnumber" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">#7</a>
+		</post-info>
+
+		<user-info>
+			<img src="/user_uploads/avatars/t1500537705.jpg" class="smallavatar" data-uid="286">
+			<post-count title="Post Count">✎ 7</post-count>
+			<user-name>
+				<a class="userhover" >GRAND DAD</a> 
+				<user-badges>
+				</user-badges>
+			</user-name>
+		</user-info>
+
+		<post-content class="bbcode" id="div"></post-content>
+
+		<button-container>
+			<button type="button" class="edit-button"> Edit </button>
+			<button type="button" class="delete-button"> Delete </button>
+
+			<button type="button" class="quote-button" accesskey="q">Quote</button>
+			<button type="button" class="flag-button" id="20312_status">Flag</button>
+		</button-container>
+
+		<post-dates>
+			<posted-on>
+				Posted <time datetime="2018-01-12T13:23:44+00:00" title="1/12/2018, 8:23:44 AM">61 minutes ago</time>
+			</posted-on>
+		</post-dates>
+	</li>
+</ul>
+<form id="submit-post">
+<textarea id="textarea" name="content" placeholder="Post to this thread. You can use bbcode such as [b], [i], [u], [s], [url], [img], and [code] to style your post. Search for 'bbcode' for examples." rows="10" cols="80" maxlength="60000" required="" accesskey="r"></textarea>
+<button onclick="update()" type="button">Post</button>
+</form>
+</section>
+</section>
 <style>
 	div#div {
 		white-space:pre-wrap;
@@ -28,17 +66,29 @@ preview here:<div id="div"></div>.
 		padding: 0.1rem;
 	}
 </style>
+<script src="../sbhighlight2/sbhighlight.js"></script>
 <script>
 function update(){
 	div.innerHTML=parseBBCode(textarea.value);
+	highlightList(div.querySelectorAll("code"))
+}
+
+function highlightList(list){
+	for(var i=0;i<list.length;i++){
+		applySyntaxHighlighting(list[i])
+	}
+}
+
+function process_code(inner,attribute){
+	return {inner:htmlHighlight(inner)};
 }
 
 var tagTable={
 	"table":{index:0,open:"<table rules='all'><tr><td>",close:"</td></tr></table>",block:true},
 	"col":{index:1,open:"</td><td>",block:true},
 	"row":{index:2,open:"</td></tr><tr><td>",block:true},
-	"code":{index:3,open:"<pre>",close:"</pre>",code:true,block:true},
-	"icode":{index:4,open:"<icode>",close:"</icode>",code:true},
+	"code":{index:3,open:"<code>",close:"</code>",code:true,block:true,process:process_code},
+	"icode":{index:4,open:"<inline-code>",close:"</inline-code>",code:true},
 	"i":{index:5,open:"<i>",close:"</i>"},
 	"b":{index:6,open:"<b>",close:"</b>"},
 	"u":{index:7,open:"<u>",close:"</u>"},
@@ -62,6 +112,7 @@ function parseBBCode(input){
 	var text=""
 	var insideCode=null
 	var removeNextLineBreak=false;
+	var inner="";
 	
 	function next(){
 		c=input.charAt(++i);
