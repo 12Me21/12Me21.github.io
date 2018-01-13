@@ -1,0 +1,137 @@
+@viewport {
+	zoom: 1.0;
+
+	width: device-width;
+}
+
+/* Fonts */
+
+/* Roboto */
+
+@font-face {
+	font-family: 'Roboto';
+	font-weight: 400;
+	font-style: normal;
+
+	src: url('/fonts/roboto/400.woff2') format('woff2'), url('/fonts/roboto/400.woff') format('woff');
+}
+@font-face {
+	font-family: 'Roboto';
+	font-weight: 400;
+	font-style: italic;
+
+	src: url('/fonts/roboto/400i.woff2') format('woff2'), url('/fonts/roboto/400i.woff') format('woff');
+}
+
+/* Language font settings */
+
+:lang(en),:lang(es),:lang(fr) {
+	font-family: 'Roboto', sans-serif;
+}
+
+:lang(ja) {
+	font-family: 'Noto Sans', 'Noto Sans JP', sans-serif;
+}
+
+/* Make page at least the height of the viewport */
+
+body {
+	min-height: 100vh;
+	margin: 0;
+	font-family: 'Roboto', sans-serif;
+}
+
+/* Remove bullets from navigation lists */
+
+nav ul {
+	margin: 0;
+	padding: 0;
+
+	list-style: none;
+}
+
+/* Show a pointer on labels */
+
+label {
+	cursor: pointer;
+}
+
+/* Hide checkboxes for toggles */
+
+input[type='checkbox'][id$='toggle'] {
+	display: none;
+}
+
+/* Styles for input status */
+
+/*[data-status]::after {
+   font-family: 'Roboto Mono', monospace;
+   font-weight: bold;
+   content: attr(data-status);
+}
+
+[data-status="ERROR"]::after {
+   color: #BB1100;
+}
+
+@-webkit-keyframes colorPulse{ 0% {color: #0011BB} 100% {color: #33BBBB}}
+[data-status="RUNNING"]::after {
+   color: #0011BB;
+   -webkit-animation: colorPulse 0.5s infinite alternate;
+}
+
+[data-status="SUCCESS"]::after {
+   color: #11BB00;
+}*/
+
+form[action*="search"] {
+	z-index: 3;
+}
+
+form[action*="search"] input[type="submit"] {
+	float: right;
+	/*margin-top: .15em;*/
+}
+
+
+/*ol.searchbarResults li .type {
+	display: none;
+}*/
+
+input[type="submit"], button
+{
+   cursor: pointer;
+}
+
+code, code > * {
+	font-family: 'SmileBASIC', monospace !important;
+	font-size: .8rem;
+	color: #DDD;
+	white-space: pre;
+   line-height: 0.9rem;
+} 
+
+code {
+	display: block;
+	background-color: #222;
+	border: .18rem inset #AAA;
+	max-height: 45rem;
+	overflow: auto;
+	padding: 0.5rem;
+}
+
+inline-code, inline-code > * {
+   font-family: 'SmileBASIC', monospace !important;
+}
+inline-code {
+   display: inline;
+   font-size: .8rem;
+}
+
+spoiler-content:not([data-show]) {
+   display: none !important;
+}
+
+body[data-keytips=true] [accesskey]::after {
+   content: " ["attr(accesskey)"] ";
+}
