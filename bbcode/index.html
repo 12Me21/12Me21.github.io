@@ -21,7 +21,7 @@
 					</user-name>
 				</user-info>
 
-				<post-content class="bbcode" id="div"><b>ARYOP</b> <i>mode%</i> <b>,</b> <i>output[]</i> <b>,</b> <i>input_1[]</i> <b>,</b> <i>input_2[]</i> [ <b>,</b> <i>input_3[]</i> <b>,</b> ]</post-content>
+				<post-content class="bbcode" id="div"></post-content>
 
 				<button-container>
 					<button type="button" class="edit-button"> Edit </button>
@@ -39,9 +39,15 @@
 			</li>
 		</ul>
 		<form id="submit-post">
-			<textarea id="textarea" name="content" placeholder="Post to this thread. You can use bbcode such as [b], [i], [u], [s], [url], [img], and [code] to style your post. Search for 'bbcode' for examples." rows="10" cols="80" maxlength="60000" required="" accesskey="r">[b]ARYOP[/b]
- [i]mode%[/i] [b],[/b] [i]output[][/i] [b],[/b] [i]input_1[][/i] 
-[b],[/b] [i]input_2[][/i] [ [b],[/b] [i]input_3[][/i] [b],[/b] ]</textarea>
+			<textarea id="textarea" name="content" placeholder="Post to this thread. You can use bbcode such as [b], [i], [u], [s], [url], [img], and [code] to style your post. Search for 'bbcode' for examples." rows="10" cols="80" maxlength="60000" required="" accesskey="r">
+[table]
+Function[cell]Description[cell]Syntax
+[row]
+[icode]VAL[/icode][cell]Convert string to number[cell][b]VAL[/b] [i]number$[/i] [b]OUT[/b] [i]number#[/i]
+[row]
+[icode]STR$[/icode][cell]Convert number to string[cell][b]STR$[/b] [i]number#[/i] [b]OUT[/b] [i]number#[/i]
+[/table]
+			</textarea>
 			<button onclick="update()" type="button">Post</button>
 		</form>
 	</section>
