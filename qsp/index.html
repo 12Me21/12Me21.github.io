@@ -90,7 +90,18 @@ function putcode(code){
 	screenContext.fillStyle="black";
 	screenContext.fillRect(0, 0, 200, 120);
 	startline(line);
-	highlight(code+"\n",putpart)
+	highlight(code,putpart)
+	if(x>=width){
+		x=0;
+		y++;
+		passline();
+	}
+	putchar(x+bw,y,10,"white")
+	y++
+	for(;y<height;y++){
+		passline();
+	}
+	
 	for(var i=0;i<bw;i++){
 		putchar(i,height,0xE17A,"#C6C6C6")
 	}
