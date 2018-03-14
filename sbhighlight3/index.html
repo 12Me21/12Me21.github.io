@@ -1,0 +1,686 @@
+<!-- NOTE: THIS IS VERY BUGGY
+aaaaaaaaaaaaaa
+-->
+
+<pre id="test">
+	
+</pre>
+
+<textarea id="input">
+	FOR TO=STEP TO TO STEP TO
+	  READ VAR("A")[0]
+	NEXT
+</textarea>
+<button onclick="test.textContent=input.value;applySyntaxHighlighting(test)">set</button>
+
+<style>
+	pre{
+		background-color:black;
+		color: white;
+	}
+	.number{
+		color:magenta;
+	}
+	.string{
+		color:yellow;
+	}
+	.function{
+		color:mediumpurple;
+	}
+	.keyword{
+		color:skyblue;
+	}
+	.variable{
+		color:lightgreen;
+	}
+	.operator{
+		color:orange;
+	}
+	.comment{
+		color:gray;
+	}
+	.label{
+		color:lightgoldenrodyellow;
+	}
+
+</style>
+
+<script>
+
+function parse(nextToken,callback){
+	var keywords=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE","ELSEIF","END","ENDIF","EXEC","FOR","GOSUB","GOTO","IF","INC","INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE","DIV","MOD","OR","XOR","AND","NOT","?"];
+var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","BACKCOLOR","BACKTRACE","BEEP","BGANIM","BGCHK","BGCLIP","BGCLR","BGCOLOR","BGCOORD","BGCOPY","BGFILL","BGFUNC","BGGET","BGHIDE","BGHOME","BGLOAD","BGMCHK","BGMCLEAR","BGMCONT","BGMPAUSE","BGMPLAY","BGMPRG","BGMPRGA","BGMSET","BGMSETD","BGMSTOP","BGMVAR","BGMVOL","BGOFS","BGPAGE","BGPUT","BGROT","BGSAVE","BGSCALE","BGSCREEN","BGSHOW","BGSTART","BGSTOP","BGVAR","BIN$","BIQUAD","BQPARAM","BREPEAT","BUTTON","CALLIDX","CEIL","CHKCALL","CHKCHR","CHKFILE","CHKLABEL","CHKVAR","CHR$","CLASSIFY","CLIPBOARD","CLS","COLOR","CONTROLLER","COPY","COS","COSH","CSRX","CSRY","CSRZ","DATE$","DEG","DELETE","DIALOG","DISPLAY","DLCOPEN","DTREAD","EFCOFF","EFCON","EFCSET","EFCWET","ERRLINE","ERRNUM","ERRPRG","EXP","EXTFEATURE","FADE","FADECHK","FFT","FFTWFN","FILES","FILL","FLOOR","FONTDEF","FORMAT$","FREEMEM","GBOX","GCIRCLE","GCLIP","GCLS","GCOLOR","GCOPY","GFILL","GLINE","GLOAD","GOFS","GPAGE","GPAINT","GPRIO","GPSET","GPUTCHR","GSAVE","GSPOIT","GTRI","GYROA","GYROSYNC","GYROV","HARDWARE","HEX$","IFFT","INKEY$","INSTR","KEY","LEFT$","LEN","LOAD","LOCATE","LOG","MAINCNT","MAX","MICDATA","MICPOS","MICSAVE","MICSIZE","MICSTART","MICSTOP","MID$","MILLISEC","MIN","MPCOUNT","MPEND","MPGET","MPHOST","MPLOCAL","MPNAME$","MPRECV","MPSEND","MPSET","MPSTART","MPSTAT","OPTION","PCMCONT","PCMPOS","PCMSTOP","PCMSTREAM","PCMVOL","POP","POW","PRGDEL","PRGEDIT","PRGGET$","PRGINS","PRGNAME$","PRGSET","PRGSIZE","PRGSLOT","PROJECT","PUSH","RAD","RANDOMIZE","RENAME","RESULT","RGB","RGBREAD","RIGHT$","RINGCOPY","RND","RNDF","ROUND","RSORT","SAVE","SCROLL","SGN","SHIFT","SIN","SINH","SNDSTOP","SORT","SPANIM","SPCHK","SPCHR","SPCLIP","SPCLR","SPCOL","SPCOLOR","SPCOLVEC","SPDEF","SPFUNC","SPHIDE","SPHITINFO","SPHITRC","SPHITSP","SPHOME","SPLINK","SPOFS","SPPAGE","SPROT","SPSCALE","SPSET","SPSHOW","SPSTART","SPSTOP","SPUNLINK","SPUSED","SPVAR","SQR","STICK","STICKEX","STR$","SUBST$","SYSBEEP","TABSTEP","TALK","TALKCHK","TALKSTOP","TAN","TANH","TIME$","TMREAD","TOUCH","UNSHIFT","VAL","VERSION","VISIBLE","VSYNC","WAIT","WAVSET","WAVSETA","WIDTH","XOFF","XON","XSCREEN"];
+	var type;
+	var value;
+	var newType,newValue,newWhitespace;
+	var whitespace;
+	var readNext=1;
+	var isDef;
+	while(1){
+		next();
+		//alert();
+		switch(type){
+			case "word":
+				switch(value.toLowerCase()){
+					case "break":case "continue":case "else":case "endif":case "stop":case "repeat":case "wend":
+						output("keyword");
+					break;case "call":
+						output("keyword");
+						readList(readExpression);
+						if(readToken("word","out")){
+							output("keyword");
+							readList(readExpression);
+						}
+					break;case "common":
+						output("keyword");
+						assert(readToken("word","def"),"COMMON without DEF");
+						readNext=false;
+					break;case "data":case "dec":case "inc":case "read":case "swap":
+						output("keyword");
+						readList(readExpression);
+					break;case "def":
+						output("keyword");
+						isDef=1;
+						assert(readToken("word"),"missing def name");
+						assert(isVarName(value),"illegal def name");
+						output("function");
+						if(readToken("lparen")){
+							output("separator");
+							readList(readArgument);
+							assert(readToken("rparen"),"missing ) in DEF"
+							);
+							output("separator");
+						}else{
+							readList(readArgument);
+							if(readToken("out")){
+								output("keyword");
+								readList(readArgument);
+							}
+						}
+					break;case "dim":case "var":
+						output("keyword");
+						readList(readDeclaration);
+					break;case "elseif":case "if":
+						output("keyword");
+						readExpression();
+						assert(readToken("word","then")||readToken("word","goto"),"missing THEN");
+						console.log("###THEN")
+						output("keyword");
+					break;case "end":
+						output("keyword");
+						if(isDef)
+							isDef=false;
+					break;case "exec":case "use":
+						output("keyword");
+						readExpression();
+					break;case "for":
+						output("keyword");
+						readExpression();
+						assert(readToken("equals"),"missing = in FOR");
+						output("separator");
+						readExpression();
+						assert(readToken("word","to"),"missing TO in FOR");
+						output("keyword");
+						readExpression();
+						if(readToken("word","step")){
+							output("keyword");
+							readExpression();
+						}
+					break;case "gosub":case "goto":case "restore":case "until":case "while":
+						output("keyword");
+						assert(readExpression(),"missing argument to keyword");
+					break;case "input":
+						output("keyword");
+						readPrintList(readExpression);
+					break;case "linput":
+						output("keyword");
+						readPrintList(readExpression);
+					break;case "next":
+						output("keyword");
+						readExpression();
+					break;case "on":
+						output("keyword");
+						readExpression();
+						if(readToken("word","goto"))
+							output("keyword");
+						else if(readToken("word","gosub"))
+							output("keyword");
+						readList(readExpression)
+					break;case "print":case "?":
+						output("keyword");
+						readPrintList(readExpression);
+					break;case "rem":
+						output("keyword");
+						//
+					break;case "return":
+						output("keyword");
+						if(isDef)
+							readExpression();
+					break;default:
+						console.log("###AFTER")
+						if(peekToken("lbracket")){
+							output("variable");
+							readToken("lbracket");
+							output("separator");
+							readExpression();
+							assert(readToken("rbracket"),"missing rbracket");
+						} //awful hack fix please!!!
+						if(peekToken("equals")){
+							output("variable");
+							readToken("equals");
+							output("separator");
+							readExpression();
+						}else{
+							output("function")
+							readList(readExpression);
+							if(readToken("word","out")){
+								output("keyword");
+								readList(readExpression);
+							}
+						}
+				}
+			break;case "label":
+				output("label");
+			break;case "comment":
+				output("comment");	
+			break;case "eof":
+				return
+			break;case "text":
+				if(value===":"||value==="\n"||value==="\r")
+					output("separator");
+				else
+					assert(false,"invalid statement");
+			break;default:
+				assert(false,"invalid statement");
+		}
+	}
+	
+	function isVarName(name){
+		return keywords.indexOf(name)===-1
+	}
+	
+	function isBuiltIn(name){
+		return functions.indexOf(name)!==-1
+	}
+	
+	function peekToken(wantedType,wantedValue){
+		var prevType=type,prevValue=value,prevWhitespace=whitespace
+		next();
+		readNext=-1;
+		newType=type;
+		newValue=value;
+		newWhitespace=whitespace;
+		type=prevType;
+		value=prevValue;
+		whitespace=prevWhitespace;
+		if(newType==wantedType && (!wantedValue || newValue==wantedValue))
+			return true;
+		return false;
+	}
+	
+	function readToken(wantedType,wantedValue){ //add "output type" too!
+		next();
+		if(type==wantedType && (!wantedValue || value.toLowerCase()==wantedValue)){
+			readNext=1;
+			return true;
+		}
+		readNext=0;
+		return false;
+	}
+	
+	function readList(reader){
+		var ret=false;
+		if(reader())
+			ret=true;
+		while(readToken("comma")){
+			console.log(type)
+			output("separator")
+			reader();
+			ret=true;
+		}
+		return ret;
+	}
+	
+	function readPrintList(reader){
+		var ret=false;
+		if(reader())
+			ret=true;
+		while(readToken("comma")||readToken("semicolon")){
+			console.log(type)
+			output("separator")
+			reader();
+			ret=true;
+		}
+		return ret;
+	}
+	
+	function readExpression(){
+		next();
+		switch(type){
+			case "word":
+				if(!isVarName(value)){
+					readNext=0;
+					return;
+				}
+				if(peekToken("lparen")){
+					output("function")
+					readToken("lparen")
+					output("separator");
+					readExpression();
+					assert(readToken("rparen"),"missing )");
+					output("separator");
+				}else{
+					output("variable");
+				}
+			break;case "number":case "string":case "label":
+				output(type);
+			break;case "operator":
+				output("operator");
+				assert(readExpression(),"operator missing argument");
+			break;case "lparen":
+				output("separator");
+				readExpression();
+				assert(readToken("rparen"),"unclosed parenthesis");
+				output("separator");
+			break;default:
+				readNext=0;
+				return false;
+		}
+		while(readToken("lbracket")){
+			output("separator");
+			readList(readExpression);
+			assert(readToken("rbracket"),"missing ]");
+			output("separator");
+		}
+		while(readToken("operator")){
+			output("operator");
+			assert(readExpression(),"operator missing second argument");
+		}
+		return true;
+	}
+	
+	function readArgument(){
+		//next();
+		if(readToken("word")){
+			assert(isVarName(value),"illegal var name");
+			output("variable")
+			if(readToken("lbracket")){
+				output("separator")
+				assert(readToken("rbracket"),"need ]");
+				output("separator")
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	function readDeclaration(){
+		console.log("RD")
+		//next();
+		if(readToken("word")){
+			assert(isVarName(value),"illegal var name");
+			output("variable")
+			if(readToken("lbracket")){
+				output("separator");
+				readList(readExpression);
+				assert(readToken("rbracket"),"expected ], got something else");
+				output("separator");
+			}else if(readToken("equals")){
+				output("separator");
+				readExpression();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	function assert(value,message){
+		if(!value){
+			alert(message);
+			throw message;
+		}
+	}
+	
+	function output(type){
+		if(whitespace)
+			callback("whitespace",whitespace);
+		console.log(type,value)
+		callback(type,value);
+	}
+	
+	function next(){
+		if(readNext==1){
+			var items=nextToken();
+			if(items){
+				whitespace=items.whitespace;
+				type=items.type;
+				value=items.value;
+			}else{
+				type="eof";
+				value="";
+			}
+		}else if(readNext==-1){
+			type=newType;
+			value=newValue;
+			whitespace=newWhitespace;
+			readNext=1
+		}else{
+			readNext=1
+		}
+	}
+}
+	
+//"INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE"
+
+
+//define a function that returns a function, which, when called, gives the next output value
+//OR
+//define a function that takes a function as input which is called and the next output passed to it
+
+function tokenize(code){
+	var i=-1,c,isAlpha,isDigit,whitespace;
+	function next(){
+		i++;
+		c=code.charAt(i);
+		isAlpha=(c>='A'&&c<='Z'||c>='a'&&c<='z');
+		isDigit=(c>='0'&&c<='9');
+	}
+	
+	function jump(pos){
+		i=pos-1;
+		next();
+	}
+	
+	var prev=0;
+	function push(type){
+		var word=code.substring(prev,i);
+		prev=i;
+		if(type=="word"){
+			var upper=word.toUpperCase();
+			if(upper=="DIV"||upper=="MOD"||upper=="AND"||upper=="OR"||upper=="XOR"||upper=="NOT"){
+				type="operator"
+			}
+		}
+		console.log({type:type,value:word,whitespace:whitespace})
+		return {type:type,value:word,whitespace:whitespace};
+	}
+	
+	next();
+		
+	var start,start2;
+	//loop until the end of the string
+	return function(){
+		whitespace="";
+		while(c==" "||c=="\t"){
+			whitespace+=c;
+			next();
+			prev++;
+		}
+		if(c==='')
+			return;
+		
+		//
+		//keywords, functions, variables
+		//
+		if(isAlpha||c=='_'){
+			next();
+			//read name
+			while(isAlpha||isDigit||c=='_')
+				next();
+			//read type suffix
+			if(c=='#'||c=='%'||c=='$')
+				next();
+			//push word type
+			return push("word");
+		//
+		//numbers
+		//
+		}else if(isDigit||c=='.'){
+			//if digit was found, read all of them
+			while(isDigit)
+				next();
+			//if there's a decimal point
+			if(c=='.'){
+				next();
+				//read digits after
+				if(isDigit){
+					next();
+					while(isDigit)
+						next();
+				}else{
+					if(c=='#')
+						next();
+					return push("number");
+				}
+			}
+			//E notation
+			if(c=='E'||c=='e'){
+				var ePos=i;
+				next();
+				//check for + or -
+				if(c=='+'||c=='-')
+					next();
+				//read digits
+				if(isDigit){
+					next();
+					while(isDigit)
+						next();
+				//no digits (invalid)
+				}else{
+					jump(ePos);
+					return push("text");
+				}
+			}
+			//(if GOTO is available: @skip_e)
+			//read float suffix
+			if(c=='#')
+				next();
+			return push("number");
+		//
+		//strings
+		//
+		}else switch(c){
+		case '"':
+			next();
+			//read characters until another quote, line ending, or end of input
+			while(c && c!='"' && c!='\n' && c!='\r')
+				next();
+			//read closing quote
+			if(c=='"')
+				next();
+			return push("string");
+		//
+		//comments
+		//
+		break;case '\'':
+			next();
+			//read characters until line ending or end of input
+			while(c && c!='\n' && c!='\r')
+				next();
+			return push("comment");
+		//
+		//logical AND, hexadecimal, binary
+		//
+		break;case '&':
+			next();
+			switch(c){
+			//logical and
+			case '&':
+				next();
+				return push("operator");
+			//hexadecimal
+			break;case 'H':case 'h':
+				var hPos=i;
+				next();
+				//read hexadecimal digits
+				if(isDigit||c>='A'&&c<='F'||c>='a'&&c<='f'){
+					next();
+					while(isDigit||c>='A'&&c<='F'||c>='a'&&c<='f')
+						next();
+					return push("number");
+				}
+				jump(hPos);
+				return push("text");
+			//binary
+			break;case 'B':case 'b':
+				var bPos=i;
+				next();
+				//read hexadecimal digits
+				if(c=='0'||c=='1'){
+					next();
+					while(c=='0'||c=='1')
+						next();
+					return push("number");
+				}
+				jump(bPos);
+				return push("text");
+			//invalid &
+			break;default:
+				return push("text");
+			}
+		//
+		//labels
+		//
+		break;case '@':
+			next();
+			//read name
+			while(isDigit||isAlpha||c=='_')
+				next();
+			//ok
+			return push("label");
+		//
+		//constants
+		//
+		break;case '#':
+			next();
+			//read name
+			if(isDigit||isAlpha){
+				next();
+				while(isDigit||isAlpha)
+					next();
+				return push("number");
+			}
+			return push("text");
+		//
+		//logical or
+		//
+		break;case '|':
+			next();
+			//logical or
+			if(c=='|'){
+				next();
+				return push("operator");
+			//invalid
+			}
+			return push("text");
+		//
+		//less than, less than or equal, left shift
+		//
+		break;case '<':
+			next();
+			//<= <<
+			if(c=='='||c=='<')
+				next();
+			return push("operator");
+		//
+		//greater than, greater than or equal, right shift
+		//
+		break;case '>':
+			next();
+			//>= >>
+			if(c=='='||c=='>')
+				next();
+			return push("operator");
+		//
+		//equal, equal more
+		//
+		break;case '=':
+			next();
+			//==
+			if(c=='='){
+				next();
+				return push("operator");
+			}
+			return push("equals");
+		//
+		//logical not, not equal
+		//
+		break;case '!':
+			next();
+			// !=
+			if(c=='='){
+				next();
+				return push("operator")
+			}
+			return push("operator");
+		//
+		//add, subtract, multiply, divide
+		//
+		break;case '+':case '-':case '*':case '/':
+			next();
+			return push("operator");
+		//
+		//other
+		//
+		break;case '(':
+			next();
+			return push("lparen");
+		break;case ')':
+			next();
+			return push("rparen");
+		break;case '[':
+			next();
+			return push("lbracket");
+		break;case ']':
+			next();
+			return push("rbracket");
+		break;case ',':
+			next();
+			return push("comma");
+		break;case ';':
+			next();
+			return push("semicolon");
+		break;case '?':
+			next();
+			return push("word");
+		break;default:
+			next();
+			return push("text");
+		}
+	}
+}
+
+//escape < and &
+function escapeHTML(text){
+	return text.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+}
+
+function applySyntaxHighlighting(element){
+	var html="",prevType=false;
+	//this is called for each highlightable token
+	function callback(type,value){
+		//only make a new span if the CSS class has changed
+		if(type!=prevType){
+			//close previous span
+			if(prevType){
+				html+="</span>";
+			}
+			//open new span
+			if(type){
+				html+="<span class=\""+type+"\">";
+			}
+		}
+		html+=escapeHTML(value);
+		prevType=type;
+	}
+	
+	parse(tokenize(element.textContent),callback);
+	//close last span
+	if(prevType){
+		html+="</span>";
+	}
+	element.innerHTML=html;
+}
+
+
+</script>
