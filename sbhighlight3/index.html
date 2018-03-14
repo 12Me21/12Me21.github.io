@@ -104,7 +104,6 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 						output("keyword");
 						readExpression();
 						assert(readToken("word","then")||readToken("word","goto"),"missing THEN");
-						console.log("###THEN")
 						output("keyword");
 					break;case "end":
 						output("keyword");
@@ -148,6 +147,7 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 						readList(readExpression)
 					break;case "print":case "?":
 						output("keyword");
+						console.log("reading the damn printlist")
 						readPrintList(readExpression);
 					break;case "rem":
 						output("keyword");
@@ -157,7 +157,6 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 						if(isDef)
 							readExpression();
 					break;default:
-						console.log("###AFTER")
 						if(peekToken("lbracket")){
 							output("variable");
 							readToken("lbracket");
@@ -233,7 +232,6 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 		if(reader())
 			ret=true;
 		while(readToken("comma")){
-			console.log(type)
 			output("separator")
 			reader();
 			ret=true;
@@ -246,7 +244,6 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 		if(reader())
 			ret=true;
 		while(readToken("comma")||readToken("semicolon")){
-			console.log(type)
 			output("separator")
 			reader();
 			ret=true;
@@ -266,7 +263,7 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 					output("function")
 					readToken("lparen")
 					output("separator");
-					readExpression();
+					readList(readExpression);
 					assert(readToken("rparen"),"missing )");
 					output("separator");
 				}else{
@@ -315,7 +312,6 @@ var functions=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","B
 	}
 	
 	function readDeclaration(){
-		console.log("RD")
 		//next();
 		if(readToken("word")){
 			assert(isVarName(value),"illegal var name");
