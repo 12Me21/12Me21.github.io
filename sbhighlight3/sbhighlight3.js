@@ -67,8 +67,7 @@ function parse(nextToken,callback){
 					assert(readToken("word") && text.toUpperCase().trimLeft()==="TO","Missing TO in FOR");
 					output("keyword");
 					readExpression();
-					peekToken("word");
-					if(text.toUpperCase().trimLeft()==="STEP"){
+					if(readToken("word") && text.toUpperCase().trimLeft()==="STEP"){
 						output("keyword");
 						readExpression();
 					}
