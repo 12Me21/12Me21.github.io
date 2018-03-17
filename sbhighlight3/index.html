@@ -17,6 +17,8 @@ aaaaaaaaaaaaaa
 	pre{
 		background-color:black;
 		color: white;
+		-moz-tab-size: 1;
+		tab-size: 1;
 	}
 	.number{
 		color:magenta;
@@ -29,9 +31,13 @@ aaaaaaaaaaaaaa
 	}
 	.keyword{
 		color:skyblue;
+		font-weight:bolder;
 	}
 	.variable{
 		color:lightgreen;
+		font-style: italic;
+		margin-right: 0.1em;
+		margin-left: -0.1em;
 	}
 	.operator{
 		color:orange;
@@ -44,6 +50,18 @@ aaaaaaaaaaaaaa
 	}
 	.error{
 		background-color: maroon;
+	}
+	.errormessage{
+		text-decoration:underline;
+		color: red;
+	}
+	.errormessage::before{
+		content: "[";
+		text-decoration:none;
+	}
+	.errormessage::after{
+		content: "]";
+		text-decoration:none;
 	}
 
 </style>

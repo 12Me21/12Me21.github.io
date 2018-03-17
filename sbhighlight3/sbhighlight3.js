@@ -1,4 +1,8 @@
-var keywords=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE","ELSEIF","END","ENDIF","EXEC","FOR","GOSUB","GOTO","IF","INC","INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE","DIV","MOD","OR","XOR","AND","NOT","?"];
+//redefine NEXT function to pop from buffer, temporarily???
+
+//list of keywords
+//does not include OPERATORS (div xor etc.)
+var keywords=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE","ELSEIF","END","ENDIF","EXEC","FOR","GOSUB","GOTO","IF","INC","INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE"];
 
 function parse(nextToken,callback){
 	var type,text;
@@ -47,7 +51,7 @@ function parse(nextToken,callback){
 				//IF, ELSEIF
 				break;case "ELSEIF":case "IF":
 					output("keyword");
-					readExpression();
+					assert(readExpression(),"Missing IF condition");
 					assert(readToken("THEN","keyword")||readToken("GOTO","keyword"),"IF without THEN");
 				//END
 				break;case "END":
@@ -61,7 +65,7 @@ function parse(nextToken,callback){
 				//FOR
 				break;case "FOR":
 					output("keyword");
-					readExpression();
+					assert(readExpression(),"Missing FOR variable");
 					assert(readToken("equals","separator"),"Missing = in FOR");
 					readExpression();
 					assert(readToken("word") && text.toUpperCase().trimLeft()==="TO","Missing TO in FOR");
@@ -136,9 +140,9 @@ function parse(nextToken,callback){
 						readExpression();
 					//function
 					}else{
-						output("function");
 						if(die)
 							assert(false,"bracket on function or something");
+						output("function");
 						readList(readExpression);
 						if(readToken("keyword","keyword","out"))
 							readList(readExpression);
@@ -165,10 +169,15 @@ function parse(nextToken,callback){
 			}
 		}catch(error){
 			if(error.name==="ParseError"){
-				while(type!=="linebreak" && type!=="eof"){
+				while(1){
 					next();
+					if(type==="linebreak"||type=="eof"){
+						break;
+					}
 					output("error");
 				}
+				callback("errormessage",error.message)
+				output("text");
 			}else{
 				alert("real actual error!!! "+error);
 				return;
@@ -224,7 +233,22 @@ function parse(nextToken,callback){
 	function readExpression(){
 		next();
 		switch(type){
-			case "word":
+			//VAR
+			case "VAR":
+				//"function" form of VAR
+				if(peekToken("lparen")){
+					output("keyword");
+					readToken("lparen","separator");
+					readList(readExpression);
+					assert(readToken("rparen","separator"),"missing )");
+				//normal VAR
+				}else{
+					output("keyword");
+					readList(readDeclaration);
+					return false;
+				}
+			//function or variable
+			break;case "word":
 				if(peekToken("lparen")){
 					output("function");
 					readToken("lparen","separator");
@@ -233,30 +257,35 @@ function parse(nextToken,callback){
 				}else{
 					output("variable");
 				}
+			//literal value
 			break;case "number":case "string":case "label":
 				output(type);
-			break;case "operator":
+			//operator (unary)
+			break;case "unary":case "minus":
 				output("operator");
 				assert(readExpression(),"operator missing argument");
+			//open parenthesis
 			break;case "lparen":
 				output("separator");
 				readExpression();
 				assert(readToken("rparen","separator"),"unclosed parenthesis");
+			//other crap
 			break;default:
 				readNext=0;
 				return false;
 		}
+		//read []s
 		while(readToken("lbracket","separator")){
 			readList(readExpression);
 			assert(readToken("rbracket","separator"),"missing ]");
 		}
-		while(readToken("operator","operator"))
+		//read infix operators
+		while(readToken("operator","operator")||readToken("minus","operator"))
 			assert(readExpression(),"operator missing second argument");
 		return true;
 	}
 	
 	function readArgument(){
-		//next();
 		if(readToken("word","variable")){
 			if(readToken("lbracket","separator"))
 				assert(readToken("rbracket","separator"),"need ]");
@@ -266,7 +295,6 @@ function parse(nextToken,callback){
 	}
 	
 	function readDeclaration(){
-		//next();
 		if(readToken("word","variable")){
 			if(readToken("lbracket","separator")){
 				readList(readExpression);
@@ -342,7 +370,9 @@ function tokenize(code){
 		prev=i;
 		var upper=code.substring(start+whitespace,i).toUpperCase();
 		var type;
-		if(upper==="DIV"||upper==="MOD"||upper==="AND"||upper==="OR"||upper==="XOR"||upper==="NOT")
+		if(upper=="NOT")
+			type="unary";
+		if(upper==="DIV"||upper==="MOD"||upper==="AND"||upper==="OR"||upper==="XOR")
 			type="operator";
 		else if(keywords.indexOf(upper)!==-1)
 			type=upper;
@@ -512,9 +542,12 @@ function tokenize(code){
 				next();
 				return push("operator");
 			}
-			return push("operator");
+			return push("unary");
+		break;case '-':
+			next();
+			return push("minus");
 		//add, subtract, multiply, divide
-		break;case '+':case '-':case '*':case '/':
+		break;case '+':case '*':case '/':
 			next();
 			return push("operator");
 		//other
