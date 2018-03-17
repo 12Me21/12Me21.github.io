@@ -37,7 +37,7 @@ function parse(nextToken,callback){
 					assert(readToken("word","function"),"Missing DEF name");
 					if(readToken("lparen","separator")){
 						readList(readArgument);
-						assert(readToken("rparen","separator"),"Missing ) in DEF name"
+						assert(readToken("rparen","separator"),"Missing \")\" after DEF arguments"
 						);
 					}else{
 						readList(readArgument);
@@ -78,7 +78,7 @@ function parse(nextToken,callback){
 				//GOSUB GOTO RESTORE UNTIL WHILE
 				break;case "GOSUB":case "GOTO":case "RESTORE":case "UNTIL":case "WHILE":
 					output("keyword");
-					assert(readExpression(),"missing argument to keyword");
+					assert(readExpression(),"Missing argument to keyword");
 				//INPUT
 				break;case "INPUT":
 					output("keyword");
@@ -126,10 +126,10 @@ function parse(nextToken,callback){
 						output("variable");
 						readToken("lbracket","separator");
 						readExpression();
-						assert(readToken("rbracket","separator"),"missing rbracket");
+						assert(readToken("rbracket","separator"),"Missing \"]\"");
 						while(readToken("lbracket","separator")){
 							readExpression();
-							assert(readToken("rbracket","separator"),"missing rbracket");
+							assert(readToken("rbracket","separator"),"Missing \"]\"");
 						}
 					} //awful hack fix please!!!
 					//check for =
@@ -141,7 +141,7 @@ function parse(nextToken,callback){
 					//function
 					}else{
 						if(die)
-							assert(false,"bracket on function or something");
+							assert(false,"Syntax error");
 						output("function");
 						readList(readExpression);
 						if(readToken("OUT","keyword"))
@@ -165,7 +165,7 @@ function parse(nextToken,callback){
 				//other
 				break;default:
 					output("error");
-					assert(false,"invalid statement");
+					assert(false,"Invalid statement");
 			}
 		}catch(error){
 			if(error.name==="ParseError"){
@@ -240,7 +240,7 @@ function parse(nextToken,callback){
 					output("keyword");
 					readToken("lparen","separator");
 					readList(readExpression);
-					assert(readToken("rparen","separator"),"missing )");
+					assert(readToken("rparen","separator"),"Missing \")\" in VAR()");
 				//normal VAR
 				}else{
 					output("keyword");
@@ -253,7 +253,7 @@ function parse(nextToken,callback){
 					output("function");
 					readToken("lparen","separator");
 					readList(readExpression);
-					assert(readToken("rparen","separator"),"missing )");
+					assert(readToken("rparen","separator"),"Missing \")\" in function call");
 				}else{
 					output("variable");
 				}
@@ -263,12 +263,12 @@ function parse(nextToken,callback){
 			//operator (unary)
 			break;case "unary":case "minus":
 				output("operator");
-				assert(readExpression(),"operator missing argument");
+				assert(readExpression(),"Missing operator argument");
 			//open parenthesis
 			break;case "lparen":
 				output("separator");
 				readExpression();
-				assert(readToken("rparen","separator"),"unclosed parenthesis");
+				assert(readToken("rparen","separator"),"Missing \")\"");
 			//other crap
 			break;default:
 				readNext=0;
@@ -277,18 +277,18 @@ function parse(nextToken,callback){
 		//read []s
 		while(readToken("lbracket","separator")){
 			readList(readExpression);
-			assert(readToken("rbracket","separator"),"missing ]");
+			assert(readToken("rbracket","separator"),"Missing \"]\"");
 		}
 		//read infix operators
 		while(readToken("operator","operator")||readToken("minus","operator"))
-			assert(readExpression(),"operator missing second argument");
+			assert(readExpression(),"Operator missing second argument");
 		return true;
 	}
 	
 	function readArgument(){
 		if(readToken("word","variable")){
 			if(readToken("lbracket","separator"))
-				assert(readToken("rbracket","separator"),"need ]");
+				assert(readToken("rbracket","separator"),"Missing \"]\"");
 			return true;
 		}
 		return false;
@@ -298,7 +298,7 @@ function parse(nextToken,callback){
 		if(readToken("word","variable")){
 			if(readToken("lbracket","separator")){
 				readList(readExpression);
-				assert(readToken("rbracket","separator"),"expected ], got something else");
+				assert(readToken("rbracket","separator"),"Missing \"]\"");
 			}else if(readToken("equals","separator"))
 				readExpression();
 			return true;
@@ -577,7 +577,7 @@ function tokenize(code){
 			return push("colon");
 		break;case '?':
 			next();
-			return push("?");
+			return push("PRINT");
 		break;default:
 			next();
 			return push("text");
