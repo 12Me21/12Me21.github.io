@@ -144,7 +144,7 @@ function parse(nextToken,callback){
 							assert(false,"bracket on function or something");
 						output("function");
 						readList(readExpression);
-						if(readToken("keyword","keyword","out"))
+						if(readToken("OUT","keyword"))
 							readList(readExpression);
 					}
 				//label
