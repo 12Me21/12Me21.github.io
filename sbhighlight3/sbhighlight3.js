@@ -27,27 +27,53 @@ function parse(nextToken,callback){
 					output("keyword");
 					//assert(peekToken("DEF"),"COMMON without DEF");
 				//DATA, DEC, INC, READ, SWAP
-				break;case "DATA":case "DEC":case "INC":case "READ":case "SWAP":
+				break;case "DATA":case "READ":case "SWAP":
 					output("keyword");
-					readList(readExpression);
+					assert(readList(readExpression,true),"Missing list");
+				break;case "DEC":case "INC":
+					output("keyword");
+					assert(readExpression(),"Missing INC/DEC variable");
+					if(readToken(",","separator"))
+						assert(readExpression(),"Missing INC/DEC amount");
 				//DEF
 				break;case "DEF":
 					output("keyword");
 					isDef=1;
+					//read function name
 					assert(readToken("word","function"),"Missing DEF name");
-					if(readToken("lparen","separator")){
-						readList(readArgument);
-						assert(readToken("rparen","separator"),"Missing \")\" after DEF arguments"
+					//() form
+					if(readToken("(","separator")){
+						//read argument list
+						readList(readArgument,true);
+						//read )
+						assert(readToken(")","separator"),"Missing \")\" after DEF arguments"
 						);
+					//subroutine/out form
 					}else{
-						readList(readArgument);
+						//read argument list
+						readList(readArgument,true);
+						//OUT
 						if(readToken("OUT","keyword"))
-							readList(readArgument);
+							//read output list
+							readList(readArgument,true);
 					}
-				//DIM, VAR
-				break;case "DIM":case "VAR":
+				break;case "VAR":
 					output("keyword");
-					readList(readDeclaration);
+					if(peekToken("(","separator")){
+						assert(readExpression(),"Missing var name");
+						assert(readToken(")","separator"),"missing )")
+						while(readToken("[","separator")){
+							assert(readList(readExpression,true),"Missing array index");
+							assert(readToken("]","separator"),"Missing \"]\"");
+						}
+						assert(readToken("=","separator"),"missing =")
+						readExpression();
+					}else
+						assert(readList(readDeclaration,true),"Missing variable list");
+				//DIM, VAR
+				break;case "DIM":
+					output("keyword");
+					assert(readList(readDeclaration,true),"Missing variable list");
 				//IF, ELSEIF
 				break;case "ELSEIF":case "IF":
 					output("keyword");
@@ -66,7 +92,7 @@ function parse(nextToken,callback){
 				break;case "FOR":
 					output("keyword");
 					assert(readExpression(),"Missing FOR variable");
-					assert(readToken("equals","separator"),"Missing = in FOR");
+					assert(readToken("=","separator"),"Missing = in FOR");
 					readExpression();
 					assert(readToken("word") && text.toUpperCase().trimLeft()==="TO","Missing TO in FOR");
 					output("keyword");
@@ -75,8 +101,12 @@ function parse(nextToken,callback){
 						output("keyword");
 						readExpression();
 					}
-				//GOSUB GOTO RESTORE UNTIL WHILE
-				break;case "GOSUB":case "GOTO":case "RESTORE":case "UNTIL":case "WHILE":
+				//GOSUB GOTO RESTORE(?)
+				break;case "GOSUB":case "GOTO":case "RESTORE":
+					output("keyword");
+					if(!readToken("label"))
+						assert(readExpression(),"Missing argument to keyword");
+				break;case "UNTIL":case "WHILE": //UNTIL WHILE
 					output("keyword");
 					assert(readExpression(),"Missing argument to keyword");
 				//INPUT
@@ -96,18 +126,18 @@ function parse(nextToken,callback){
 					output("keyword");
 					readExpression();
 					assert(readToken("GOTO","keyword")||readToken("GOSUB","keyword"),"ON without GOTO/GOSUB");
-					readList(readExpression);
+					assert(readList(readExpression,true),"Missing label list after ON");
 				//PRINT
 				break;case "PRINT":
 					output("keyword");
-					readPrintList(readExpression);
+					readPrintList(readExpression,true);
 				//REM
 				break;case "REM":
 					output("keyword");
 					do{
 						next();
 						output("comment");
-					}while(type!=="linebreak" && type!=="eof")
+					}while(type!=="linebreak" && type!=="eof");;;
 				//RETURN
 				break;case "RETURN":
 					output("keyword");
@@ -116,27 +146,27 @@ function parse(nextToken,callback){
 				//OUT/THEN
 				break;case "OUT":case "THEN":
 					output("error");
-					assert(false,"fail");
+					assert(false,"Illegal OUT/THEN");
 				//other words
 				break;case "word":
 					var die=0;
 					//check for variable access
-					if(peekToken("lbracket")){
+					if(peekToken("[")){
 						die=1;
 						output("variable");
-						readToken("lbracket","separator");
-						readExpression();
-						assert(readToken("rbracket","separator"),"Missing \"]\"");
-						while(readToken("lbracket","separator")){
-							readExpression();
-							assert(readToken("rbracket","separator"),"Missing \"]\"");
+						readToken("[","separator");
+						assert(readList(readExpression,true),"Missing array index");
+						assert(readToken("]","separator"),"Missing \"]\"");
+						while(readToken("[","separator")){
+							assert(readList(readExpression,true),"Missing array index");
+							assert(readToken("]","separator"),"Missing \"]\"");
 						}
 					} //awful hack fix please!!!
 					//check for =
-					if(peekToken("equals")){
+					if(peekToken("=")){
 						if(!die)
 							output("variable");
-						readToken("equals","separator");
+						readToken("=","separator");
 						readExpression();
 					//function
 					}else{
@@ -156,11 +186,8 @@ function parse(nextToken,callback){
 				//end
 				break;case "eof":
 					return;
-				//line break
-				break;case "linebreak":
-					output("separator");
-				//colon
-				break;case "colon":
+				//line break, colon
+				break;case "linebreak":case ":":
 					output("separator");
 				//other
 				break;default:
@@ -176,8 +203,8 @@ function parse(nextToken,callback){
 					}
 					output("error");
 				}
-				callback("errormessage",error.message)
-				output("text");
+				callback("errormessage",error.message);
+				output("text"); //line break
 			}else{
 				alert("real actual error!!! "+error);
 				return;
@@ -196,6 +223,10 @@ function parse(nextToken,callback){
 		return newType===wantedType;
 	}
 	
+	function readLabel(){
+		
+	}
+	
 	function readToken(wantedType,outputType){ //add "output type" too!
 		next();
 		if(type===wantedType){
@@ -208,26 +239,23 @@ function parse(nextToken,callback){
 		return false;
 	}
 	
-	function readList(reader){
-		var ret=false;
-		if(reader())
-			ret=true;
-		while(readToken("comma","separator")){
-			reader();
-			ret=true;
+	function readList(reader,noNull){
+		var ret=reader();
+		if(readToken(",","separator")){
+			assert(ret||!noNull,"Null value not allowed");
+			ret=1
+			do{
+				assert(reader()||!noNull,"Null value not allowed");
+			}while(readToken(",","separator"));;;
 		}
 		return ret;
 	}
 	
 	function readPrintList(reader){
 		var ret=false;
-		if(reader())
-			ret=true;
-		while(readToken("comma","separator")||readToken("semicolon","separator")){
-			reader();
-			ret=true;
-		}
-		return ret;
+		if(!reader())
+			return;
+		while((readToken(",","separator")||readToken(";","separator"))&&reader());
 	}
 	
 	function readExpression(){
@@ -236,24 +264,24 @@ function parse(nextToken,callback){
 			//VAR
 			case "VAR":
 				//"function" form of VAR
-				if(peekToken("lparen")){
+				if(peekToken("(")){
 					output("keyword");
-					readToken("lparen","separator");
-					readList(readExpression);
-					assert(readToken("rparen","separator"),"Missing \")\" in VAR()");
+					readToken("(","separator");
+					assert(readExpression(),"Missing VAR argument");
+					assert(readToken(")","separator"),"Missing \")\" in VAR()");
 				//normal VAR
 				}else{
 					output("keyword");
-					readList(readDeclaration);
+					assert(readList(readDeclaration,true),"Missing VAR list");
 					return false;
 				}
 			//function or variable
 			break;case "word":
-				if(peekToken("lparen")){
+				if(peekToken("(")){
 					output("function");
-					readToken("lparen","separator");
+					readToken("(","separator");
 					readList(readExpression);
-					assert(readToken("rparen","separator"),"Missing \")\" in function call");
+					assert(readToken(")","separator"),"Missing \")\" in function call");
 				}else{
 					output("variable");
 				}
@@ -265,19 +293,19 @@ function parse(nextToken,callback){
 				output("operator");
 				assert(readExpression(),"Missing operator argument");
 			//open parenthesis
-			break;case "lparen":
+			break;case "(":
 				output("separator");
 				readExpression();
-				assert(readToken("rparen","separator"),"Missing \")\"");
+				assert(readToken(")","separator"),"Missing \")\"");
 			//other crap
 			break;default:
 				readNext=0;
 				return false;
 		}
 		//read []s
-		while(readToken("lbracket","separator")){
-			readList(readExpression);
-			assert(readToken("rbracket","separator"),"Missing \"]\"");
+		while(readToken("[","separator")){
+			assert(readList(readExpression,true),"Missing array index");
+			assert(readToken("]","separator"),"Missing \"]\"");
 		}
 		//read infix operators
 		while(readToken("operator","operator")||readToken("minus","operator"))
@@ -287,8 +315,8 @@ function parse(nextToken,callback){
 	
 	function readArgument(){
 		if(readToken("word","variable")){
-			if(readToken("lbracket","separator"))
-				assert(readToken("rbracket","separator"),"Missing \"]\"");
+			if(readToken("[","separator"))
+				assert(readToken("]","separator"),"Missing \"]\"");
 			return true;
 		}
 		return false;
@@ -296,10 +324,10 @@ function parse(nextToken,callback){
 	
 	function readDeclaration(){
 		if(readToken("word","variable")){
-			if(readToken("lbracket","separator")){
-				readList(readExpression);
-				assert(readToken("rbracket","separator"),"Missing \"]\"");
-			}else if(readToken("equals","separator"))
+			if(readToken("[","separator")){
+				assert(readList(readExpression,true),"Missing array size");
+				assert(readToken("]","separator"),"Missing \"]\"");
+			}else if(readToken("=","separator"))
 				readExpression();
 			return true;
 		}
@@ -534,7 +562,7 @@ function tokenize(code){
 				next();
 				return push("operator");
 			}
-			return push("equals");
+			return push("=");
 		//logical not, not equal
 		break;case '!':
 			next();
@@ -554,30 +582,16 @@ function tokenize(code){
 		break;case '\n':case '\r':
 			next();
 			return push("linebreak");
-		break;case '(':
+		//characters
+		break;case '(':case ')':case '[':case ']':case ',':case ';':case ':':
+			var chr=c;
 			next();
-			return push("lparen");
-		break;case ')':
-			next();
-			return push("rparen");
-		break;case '[':
-			next();
-			return push("lbracket");
-		break;case ']':
-			next();
-			return push("rbracket");
-		break;case ',':
-			next();
-			return push("comma");
-		break;case ';':
-			next();
-			return push("semicolon");
-		break;case ':':
-			next();
-			return push("colon");
+			return push(chr);
+		//print shortcut
 		break;case '?':
 			next();
 			return push("PRINT");
+		//other
 		break;default:
 			next();
 			return push("text");
@@ -590,6 +604,10 @@ function escapeHTML(text){
 	return text.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 }
 
+function escapeHTMLAttribute(text){
+	return text.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+}
+
 function applySyntaxHighlighting(element){
 	var html="",prevType=false;
 	//this is called for each highlightable token
@@ -597,23 +615,19 @@ function applySyntaxHighlighting(element){
 		//only make a new span if the CSS class has changed
 		if(type!==prevType){
 			//close previous span
-			if(prevType){
+			if(prevType)
 				html+="</span>";
-			}
 			//open new span
-			if(type){
+			if(type)
 				html+="<span class=\""+type+"\">";
-			}
 		}
 		html+=escapeHTML(value);
 		prevType=type;
 	}
-	
 	parse(tokenize(element.textContent),callback);
 	//close last span
-	if(prevType){
+	if(prevType)
 		html+="</span>";
-	}
 	element.innerHTML=html;
 }
-
+//.write?
