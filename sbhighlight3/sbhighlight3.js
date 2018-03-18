@@ -59,7 +59,7 @@ function parse(nextToken,callback){
 					}
 				break;case "VAR":
 					output("keyword");
-					if(peekToken("(","separator")){
+					if(readToken("(","separator")){
 						assert(readExpression(),"Missing var name");
 						assert(readToken(")","separator"),"missing )")
 						while(readToken("[","separator")){
