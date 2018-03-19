@@ -13,41 +13,47 @@ aaaaaaaaaaaaaa
 </textarea>
 <button onclick="test.textContent=input.value;applySyntaxHighlighting(test)">set</button>
 
+#ffffff text #f77bb5 numeric #a5ada5 string #7b7bf7 statement #7bb5f7 keyword #10bd42 comment #f7a500 label #000000 back 
+
 <style>
 	pre{
-		background-color:black;
-		color: white;
+		padding: 1rem;
+		border: 4px inset teal;
+		
 		-moz-tab-size: 1;
 		tab-size: 1;
 		display:table;
+		
+		color: white;
+		background-color:black;
 	}
 	.number{
-		color:magenta;
+		color:#F77BB5;
 	}
 	.string{
-		color:yellow;
+		color:#A5ADA5;
 	}
 	.function{
-		color:mediumpurple;
+		color:#7B7BF7;
 	}
 	.keyword{
-		color:skyblue;
+		color:#7BB5F7;
 		font-weight:bolder;
 	}
 	.variable{
-		color:lightgreen;
+		color:#FFDDEE;
 		font-style: italic;
 		margin-right: 0.1em;
 		margin-left: -0.1em;
 	}
 	.operator{
-		color:orange;
+		color:#FFFFBB;
 	}
 	.comment{
-		color:gray;
+		color:#10BD42;
 	}
 	.label{
-		color:lightgoldenrodyellow;
+		color:#F7A500;
 	}
 	.error{
 		background-color: maroon;

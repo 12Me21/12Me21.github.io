@@ -21,7 +21,7 @@ function parse(nextToken,callback){
 					output("keyword");
 					readList(readExpression);
 					if(readToken("OUT","keyword"))
-						readList(readExpression);
+						readList(readVariable);
 				//COMMON
 				break;case "COMMON":
 					output("keyword");
@@ -32,7 +32,7 @@ function parse(nextToken,callback){
 					assert(readList(readExpression,true),"Missing list");
 				break;case "DEC":case "INC":
 					output("keyword");
-					assert(readExpression(),"Missing INC/DEC variable");
+					assert(readVariable(),"Missing INC/DEC variable");
 					if(readToken(",","separator"))
 						assert(readExpression(),"Missing INC/DEC amount");
 				//DEF
@@ -57,8 +57,10 @@ function parse(nextToken,callback){
 							//read output list
 							readList(readArgument,true);
 					}
+				//VAR
 				break;case "VAR":
 					output("keyword");
+					//assignment form
 					if(readToken("(","separator")){
 						assert(readExpression(),"Missing var name");
 						assert(readToken(")","separator"),"missing )")
@@ -68,9 +70,10 @@ function parse(nextToken,callback){
 						}
 						assert(readToken("=","separator"),"missing =")
 						readExpression();
+					//normal form
 					}else
 						assert(readList(readDeclaration,true),"Missing variable list");
-				//DIM, VAR
+				//DIM
 				break;case "DIM":
 					output("keyword");
 					assert(readList(readDeclaration,true),"Missing variable list");
@@ -79,6 +82,7 @@ function parse(nextToken,callback){
 					output("keyword");
 					assert(readExpression(),"Missing IF condition");
 					assert(readToken("THEN","keyword")||readToken("GOTO","keyword"),"IF without THEN");
+					readToken("label","label");//optional
 				//END
 				break;case "END":
 					output("keyword");
@@ -91,7 +95,7 @@ function parse(nextToken,callback){
 				//FOR
 				break;case "FOR":
 					output("keyword");
-					assert(readExpression(),"Missing FOR variable");
+					assert(readVariable(),"Missing FOR variable");
 					assert(readToken("=","separator"),"Missing = in FOR");
 					readExpression();
 					assert(readToken("word") && text.toUpperCase().trimLeft()==="TO","Missing TO in FOR");
@@ -104,7 +108,7 @@ function parse(nextToken,callback){
 				//GOSUB GOTO RESTORE(?)
 				break;case "GOSUB":case "GOTO":case "RESTORE":
 					output("keyword");
-					if(!readToken("label"))
+					if(!readToken("label","label"))
 						assert(readExpression(),"Missing argument to keyword");
 				break;case "UNTIL":case "WHILE": //UNTIL WHILE
 					output("keyword");
@@ -175,7 +179,7 @@ function parse(nextToken,callback){
 						output("function");
 						readList(readExpression);
 						if(readToken("OUT","keyword"))
-							readList(readExpression);
+							readList(readVariable);
 					}
 				//label
 				break;case "label":
@@ -192,7 +196,7 @@ function parse(nextToken,callback){
 				//other
 				break;default:
 					output("error");
-					assert(false,"Invalid statement");
+					assert(false,"Expected statement, got "+type);
 			}
 		}catch(error){
 			if(error.name==="ParseError"){
@@ -243,7 +247,7 @@ function parse(nextToken,callback){
 		var ret=reader();
 		if(readToken(",","separator")){
 			assert(ret||!noNull,"Null value not allowed");
-			ret=1
+			ret=1;
 			do{
 				assert(reader()||!noNull,"Null value not allowed");
 			}while(readToken(",","separator"));;;
@@ -332,6 +336,27 @@ function parse(nextToken,callback){
 			return true;
 		}
 		return false;
+	}
+	
+	function readVariable(){
+		if(readToken("word","variable")){
+		}else if(readToken("var","keyword")){
+			//"function" form of VAR
+			if(readToken("(","separator")){
+				assert(readExpression(),"Missing VAR argument");
+				assert(readToken(")","separator"),"Missing \")\" in VAR()");
+			//normal VAR
+			}else{
+				assert(readList(readDeclaration,true),"Missing VAR list");
+				return false;
+			}
+		}else
+			return false;
+		while(readToken("[","separator")){
+			assert(readList(readExpression,true),"Missing array index");
+			assert(readToken("]","separator"),"Missing \"]\"");
+		}
+		return true;
 	}
 	
 	function assert(value,message){
