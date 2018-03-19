@@ -7,6 +7,7 @@ var keywords=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE"
 function parse(nextToken,callback){
 	var type,text;
 	var newType,newText;
+	var oldType,oldText;
 	var readNext=1;
 	var isDef=false;
 	var buffer=0;
@@ -25,7 +26,7 @@ function parse(nextToken,callback){
 				//COMMON
 				break;case "COMMON":
 					output("keyword");
-					//assert(peekToken("DEF"),"COMMON without DEF");
+					assert(peekToken("DEF"),"COMMON without DEF");
 				//DATA, DEC, INC, READ, SWAP
 				break;case "DATA":case "READ":case "SWAP":
 					output("keyword");
@@ -104,7 +105,8 @@ function parse(nextToken,callback){
 					if(readToken("word") && text.toUpperCase().trimLeft()==="STEP"){
 						output("keyword");
 						readExpression();
-					}
+					}else
+						readNext=0;
 				//GOSUB GOTO RESTORE(?)
 				break;case "GOSUB":case "GOTO":case "RESTORE":
 					output("keyword");
@@ -152,34 +154,26 @@ function parse(nextToken,callback){
 					output("error");
 					assert(false,"Illegal OUT/THEN");
 				//other words
-				break;case "word":
-					var die=0;
-					//check for variable access
-					if(peekToken("[")){
-						die=1;
-						output("variable");
-						readToken("[","separator");
-						assert(readList(readExpression,true),"Missing array index");
-						assert(readToken("]","separator"),"Missing \"]\"");
-						while(readToken("[","separator")){
-							assert(readList(readExpression,true),"Missing array index");
-							assert(readToken("]","separator"),"Missing \"]\"");
-						}
-					} //awful hack fix please!!!
-					//check for =
-					if(peekToken("=")){
-						if(!die)
-							output("variable");
-						readToken("=","separator");
-						readExpression();
-					//function
-					}else{
-						if(die)
-							assert(false,"Syntax error");
-						output("function");
-						readList(readExpression);
-						if(readToken("OUT","keyword"))
-							readList(readVariable);
+				break;case "word":case "(":
+					//var name=text;
+					readNext=readNext-1;
+					switch(readVariable(true)){
+						case true:
+							assert(readToken("=","equals"),"missing =");
+							readExpression();
+						break;case false:
+							alert("what");
+						break;default:
+							if(peekToken("=")){
+								output("variable");
+								readToken("=","equals");
+								readExpression();
+							}else{
+								output("function");
+								readList(readExpression);
+								if(readToken("OUT","keyword"))
+									readList(readVariable);		
+							}
 					}
 				//label
 				break;case "label":
@@ -225,10 +219,6 @@ function parse(nextToken,callback){
 		type=prevType;
 		text=prevText;
 		return newType===wantedType;
-	}
-	
-	function readLabel(){
-		
 	}
 	
 	function readToken(wantedType,outputType){ //add "output type" too!
@@ -338,25 +328,51 @@ function parse(nextToken,callback){
 		return false;
 	}
 	
-	function readVariable(){
-		if(readToken("word","variable")){
-		}else if(readToken("var","keyword")){
-			//"function" form of VAR
-			if(readToken("(","separator")){
-				assert(readExpression(),"Missing VAR argument");
-				assert(readToken(")","separator"),"Missing \")\" in VAR()");
-			//normal VAR
-			}else{
-				assert(readList(readDeclaration,true),"Missing VAR list");
+	//return values:
+	// false - bad
+	// true - definitely a variable
+	// string - single word (could be function call or variable)
+	// if true is passed to function, variable name will not be outputted when it might be a function call (for use in handling =)
+	function readVariable(noPrintVarName){
+		var ret=false;
+		next();
+		switch(type){
+			case "var":
+				output("keyword");
+				//"function" form of VAR
+				if(readToken("(","separator")){
+					assert(readExpression(),"Missing VAR argument");
+					assert(readToken(")","separator"),"Missing \")\" in VAR()");
+					ret=true;
+				//normal VAR
+				}else{
+					assert(false,"invalid VAR");
+				}
+			break;case "word":
+				if(!noPrintVarName){
+					output("variable");
+					ret=true;
+				}else
+					ret=text;
+			break;case "(":
+				output("separator");
+				assert(readVariable(),"missing variable");
+				assert(readToken(")","separator"),"missing )");
+				ret=true;
+			break;default:
+				readNext=0;
 				return false;
-			}
-		}else
-			return false;
-		while(readToken("[","separator")){
-			assert(readList(readExpression,true),"Missing array index");
-			assert(readToken("]","separator"),"Missing \"]\"");
 		}
-		return true;
+		if(peekToken("[")){
+			if(ret!==true && ret!==false)
+				output("variable");
+			while(readToken("[","separator")){
+				assert(readList(readExpression,true),"Missing array index");
+				assert(readToken("]","separator"),"Missing \"]\"");
+			}
+			ret=true;
+		}
+		return ret;
 	}
 	
 	function assert(value,message){
@@ -370,7 +386,7 @@ function parse(nextToken,callback){
 	
 	function output(type){
 		callback(type,text);
-		buffer--
+		buffer--;
 	}
 	
 	function next(){
@@ -405,6 +421,7 @@ function parse(nextToken,callback){
 
 function tokenize(code){
 	var i=-1,c,isAlpha,isDigit,whitespace;
+	code+="\n";
 	function next(){
 		i++;
 		c=code.charAt(i);
