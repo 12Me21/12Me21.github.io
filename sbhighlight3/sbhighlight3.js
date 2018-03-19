@@ -440,10 +440,12 @@ function tokenize(code){
 		prev=i;
 		var upper=code.substring(start+whitespace,i).toUpperCase();
 		var type;
-		if(upper=="NOT")
+		if(upper==="NOT")
 			type="unary";
-		if(upper==="DIV"||upper==="MOD"||upper==="AND"||upper==="OR"||upper==="XOR")
+		else if(upper==="DIV"||upper==="MOD"||upper==="AND"||upper==="OR"||upper==="XOR")
 			type="operator";
+		else if(upper==="TRUE"||upper==="FALSE")
+			type="number";
 		else if(keywords.indexOf(upper)!==-1)
 			type=upper;
 		else
