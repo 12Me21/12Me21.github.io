@@ -336,7 +336,9 @@ function parse(nextToken,callback){
 		next();
 		switch(type){
 			case "VAR":
+				console.log("found var in expression");
 				output("keyword");
+				console.log("outputted");
 				//"function" form of VAR
 				if(readToken("(","separator")){
 					assert(readExpression(),"Missing VAR argument");
@@ -344,6 +346,7 @@ function parse(nextToken,callback){
 					ret=true;
 				//normal VAR
 				}else{
+					console.log("was bad var");
 					assert(false,"invalid VAR");
 				}
 			break;case "word":
