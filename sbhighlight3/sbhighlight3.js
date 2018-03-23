@@ -257,17 +257,7 @@ function parse(nextToken,callback){
 		switch(type){
 			//VAR
 			case "VAR":
-				//"function" form of VAR
-				if(peekToken("(")){
-					output("keyword");
-					readToken("(","separator");
-					assert(readExpression(),"Missing VAR argument");
-					assert(readToken(")","separator"),"Missing \")\" in VAR()");
-				//bad VAR
-				}else{
-					output("keyword");
-					assert(false,"Invalid VAR");
-				}
+				readVar();
 			//function or variable
 			break;case "word":
 				if(peekToken("(")){
@@ -327,6 +317,21 @@ function parse(nextToken,callback){
 		return false;
 	}
 	
+	function readVar(){
+		//"function" form of VAR
+		if(peekToken("(")){
+			output("keyword");
+			readToken("(","separator");
+			assert(readExpression(),"Missing VAR argument");
+			assert(readToken(")","separator"),"Missing \")\" in VAR()");
+			ret=true;
+		//bad VAR
+		}else{
+			output("error");
+			assert(false,"invalid VAR");
+		}
+	}
+	
 	//return values:
 	// false - bad
 	// true - definitely a variable
@@ -337,18 +342,7 @@ function parse(nextToken,callback){
 		next();
 		switch(type){
 			case "VAR":
-				//"function" form of VAR
-				if(peekToken("(")){
-					output("keyword");
-					readToken("(","separator")
-					assert(readExpression(),"Missing VAR argument");
-					assert(readToken(")","separator"),"Missing \")\" in VAR()");
-					ret=true;
-				//bad VAR
-				}else{
-					output("keyword");
-					assert(false,"invalid VAR");
-				}
+				readVar();
 			break;case "word":
 				if(!noPrintVarName){
 					output("variable");
