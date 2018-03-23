@@ -1,0 +1,54 @@
+	pre{
+		padding: 1rem;
+		border: 4px inset teal;
+		
+		-moz-tab-size: 1;
+		tab-size: 1;
+		display:table;
+		
+		color: white;
+		background-color:black;
+	}
+	.number{
+		color:#F77BB5;
+	}
+	.string{
+		color:#A5ADA5;
+	}
+	.function{
+		color:#7B7BF7;
+	}
+	.keyword{
+		color:#7BB5F7;
+		font-weight:bolder;
+	}
+	.variable{
+		color:#FFDDEE;
+		font-style: italic;
+		margin-right: 0.1em;
+		margin-left: -0.1em;
+	}
+	.operator{
+		color:#FFFFBB;
+	}
+	.comment{
+		color:#10BD42;
+	}
+	.label{
+		color:#F7A500;
+	}
+	.error{
+		background-color: maroon;
+	}
+	.errormessage{
+		text-decoration:underline;
+		color: red;
+	}
+	.errormessage::before{
+		content: "[";
+		text-decoration:none;
+	}
+	.errormessage::after{
+		content: "]";
+		text-decoration:none;
+	}
