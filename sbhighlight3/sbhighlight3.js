@@ -263,11 +263,9 @@ function parse(nextToken,callback){
 					readToken("(","separator");
 					assert(readExpression(),"Missing VAR argument");
 					assert(readToken(")","separator"),"Missing \")\" in VAR()");
-				//normal VAR
+				//bad VAR
 				}else{
-					output("keyword");
-					assert(readList(readDeclaration,true),"Missing VAR list");
-					return false;
+					assert(false,"Invalid VAR");
 				}
 			//function or variable
 			break;case "word":
