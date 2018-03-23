@@ -265,6 +265,7 @@ function parse(nextToken,callback){
 					assert(readToken(")","separator"),"Missing \")\" in VAR()");
 				//bad VAR
 				}else{
+					output("keyword");
 					assert(false,"Invalid VAR");
 				}
 			//function or variable
@@ -336,17 +337,16 @@ function parse(nextToken,callback){
 		next();
 		switch(type){
 			case "VAR":
-				console.log("found var in expression");
-				output("keyword");
-				console.log("outputted");
 				//"function" form of VAR
-				if(readToken("(","separator")){
+				if(peekToken("(")){
+					output("keyword");
+					readToken("(","separator")
 					assert(readExpression(),"Missing VAR argument");
 					assert(readToken(")","separator"),"Missing \")\" in VAR()");
 					ret=true;
-				//normal VAR
+				//bad VAR
 				}else{
-					console.log("was bad var");
+					output("keyword");
 					assert(false,"invalid VAR");
 				}
 			break;case "word":
