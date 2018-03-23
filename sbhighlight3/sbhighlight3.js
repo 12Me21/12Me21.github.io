@@ -337,7 +337,7 @@ function parse(nextToken,callback){
 		var ret=false;
 		next();
 		switch(type){
-			case "var":
+			case "VAR":
 				output("keyword");
 				//"function" form of VAR
 				if(readToken("(","separator")){
