@@ -1,7 +1,5 @@
-//redefine NEXT function to pop from buffer, temporarily???
-
 //list of keywords
-//does not include OPERATORS (div xor etc.)
+//does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
 var keywords=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE","ELSEIF","END","ENDIF","EXEC","FOR","GOSUB","GOTO","IF","INC","INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE"];
 
 function parse(nextToken,callback){
@@ -11,7 +9,7 @@ function parse(nextToken,callback){
 	var readNext=1;
 	var isDef=false;
 	var buffer=0;
-	while(1){
+	while(1){ // <3
 		try{
 			next();
 			//alert();
@@ -39,7 +37,8 @@ function parse(nextToken,callback){
 				//DEF
 				break;case "DEF":
 					output("keyword");
-					isDef=1;
+					assert(!isDef,"Nested DEF");
+					isDef=true;
 					//read function name
 					assert(readToken("word","function"),"Missing DEF name");
 					//() form
@@ -112,7 +111,8 @@ function parse(nextToken,callback){
 					output("keyword");
 					if(!readToken("label","label"))
 						assert(readExpression(),"Missing argument to keyword");
-				break;case "UNTIL":case "WHILE": //UNTIL WHILE
+				//WHILE, UNTIL
+				break;case "UNTIL":case "WHILE": 
 					output("keyword");
 					assert(readExpression(),"Missing argument to keyword");
 				//INPUT
@@ -172,7 +172,7 @@ function parse(nextToken,callback){
 								output("function");
 								readList(readExpression);
 								if(readToken("OUT","keyword"))
-									readList(readVariable);		
+									readList(readVariable);
 							}
 					}
 				//label
@@ -384,6 +384,7 @@ function parse(nextToken,callback){
 		buffer--;
 	}
 	
+	//i forgot how this works lol
 	function next(){
 		if(readNext===1){
 			var items=nextToken();
@@ -399,15 +400,13 @@ function parse(nextToken,callback){
 			type=newType;
 			text=newText;
 			readNext=1;
-		}else if(readNext===-2){
+		}else if(readNext===-2)
 			readNext=-1;
-		}else{
+		else
 			readNext=1;
-		}
 	}
-	if(buffer!==0){
+	if(buffer!==0)
 		console.warn("oh no we missed something?")
-	}
 }
 
 //define a function that returns a function, which, when called, gives the next output value
@@ -472,8 +471,8 @@ function tokenize(code){
 			if(c==='#'||c==='%'||c==='$'){
 				next();
 				return push("word");
-			}else
-				return pushWord();
+			}
+			return pushWord();
 		//numbers
 		}else if(isDigit||c==='.'){
 			while(isDigit)
@@ -501,7 +500,7 @@ function tokenize(code){
 						next();
 				}else{
 					jump(ePos);
-					return push("text");
+					return push("error");
 				}
 			}
 			if(c==='#')
@@ -539,7 +538,7 @@ function tokenize(code){
 						return push("number");
 					}
 					jump(hPos);
-					return push("text");
+					return push("error");
 				break;case 'B':case 'b':
 					var bPos=i;
 					next();
@@ -550,9 +549,9 @@ function tokenize(code){
 						return push("number");
 					}
 					jump(bPos);
-					return push("text");
+					return push("error");
 				break;default:
-					return push("text");
+					return push("error");
 			}
 		//labels
 		break;case '@':
@@ -648,7 +647,7 @@ function escapeHTMLAttribute(text){
 }
 
 function applySyntaxHighlighting(element){
-	var html="",prevType=false;
+	var html="",prevType;
 	//this is called for each highlightable token
 	function callback(type,value){
 		//only make a new span if the CSS class has changed
@@ -667,6 +666,7 @@ function applySyntaxHighlighting(element){
 	//close last span
 	if(prevType)
 		html+="</span>";
+	//set html
 	element.innerHTML=html;
 }
 //.write?
