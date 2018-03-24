@@ -9,7 +9,7 @@ function load(url,callback){
 	xhr.send();
 }
 
-var hash=location.hash;
+var hash=unescape(location.hash);
 if(hash){
 	switch(hash.charAt(1)){
 		case "f":
