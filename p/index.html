@@ -1,0 +1,5 @@
+<body onload="var hash=window.location.hash;if(hash){document.write('<pre>'+atob(hash.substr(1)).replace(/&amp;/g,'&amp;').replace(/&lt;/g,'&lt;'))}">
+<textarea placeholder="text here" id="$input"></textarea><button onclick="$output.value='http://12Me21.github.io/p#'+btoa($input.value)">generate link</button>
+
+<textarea placeholder="output" id="$output"></textarea>
+</body>
