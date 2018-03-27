@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<script src="sbhighlight3.js"></script>
+		<script src="sbhighlight.js"></script>
 		<script defer src="onload.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
@@ -12,7 +12,7 @@ FOR TO=STEP TO TO STEP TO
  READ VAR("A")[0]
 NEXT</textarea>
 		<br>
-		<button id="$button" onclick="$code.textContent=$input.value;applySyntaxHighlighting($code)">set</button>
+		<button id="$button" onclick="$code.textContent = $input.value; applySyntaxHighlighting($code)">set</button>
 		<hr>
 		<pre id="$code"></pre>
 	<body>

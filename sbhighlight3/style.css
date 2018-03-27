@@ -6,6 +6,7 @@ pre{
 	tab-size: 1;
 	display:table;
 	
+	/* defaults */
 	color: white;
 	background-color:black;
 }
