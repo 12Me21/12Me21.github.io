@@ -7,7 +7,7 @@ var KEYWORDS=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE"
 //callback: output function
 function parse(nextToken,callback){
 	//current token
-	var type,text;
+	var type,text,word; //NOTE: word is only update right after next()ing. don't rely on it laaaaater
 	//stored tokens
 	var newType,newText;
 	var oldType,oldText;
@@ -127,10 +127,10 @@ function parse(nextToken,callback){
 					assert(readVariable(),"Missing FOR variable");
 					assert(readToken("=",""),"Missing = in FOR");
 					readExpression();
-					assert(readToken("word") && text.toUpperCase().trimLeft()==="TO","Missing TO in FOR");
+					assert(readToken("word") && word==="TO","Missing TO in FOR");
 					output("keyword");
 					readExpression();
-					if(readToken("word") && text.toUpperCase().trimLeft()==="STEP"){
+					if(readToken("word") && word==="STEP"){
 						output("keyword");
 						readExpression();
 					}else
@@ -186,6 +186,7 @@ function parse(nextToken,callback){
 				break;case "word":case "(":
 					//var name=text;
 					readNext=readNext-1;
+					var oldWord=word; //this is, the variable name! :D
 					switch(readVariable(true)){
 						case true:
 							assert(readToken("=","equals"),"missing =");
@@ -200,30 +201,30 @@ function parse(nextToken,callback){
 							}else{
 								//HORRIBLE STUPID FAKE KEYWORDS!!!
 								//XON/XOFF/OPTION
-								// I hate you!
-								switch(text.trimLeft().toUpperCase()){
+								// I hate you! :(
+								// not nice >:[
+								console.log(oldWord)
+								switch(oldWord){
 									case "XON":
 										output("keyword");
 										if(readToken("word")){
-											var option=text.trimLeft().toUpperCase();
-											assert(option==="MOTION"||option==="EXPAD"||option==="MIC"||option==="WIIU"||option=="COMPAT","invalid option")
+											assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word==="WIIU"||word=="COMPAT","invalid option")
 										}else{
 											//what the [heck] were you THINKING!?!??!
 											assert(readToken("number","keyword"),"invalid option");
-											assert(text.trimLeft()==="3","invalid option");
+											assert(word==="3","invalid option");
 											assert(readToken("word","keyword"),"invalid option");
-											assert(text.trimLeft().toUpperCase()==="DS","invalid option");
+											assert(word==="DS","invalid option");
 										}
 									break;case "XOFF":
 										output("keyword");
 										assert(readToken("word"));
-										var option=text.trimLeft().toUpperCase();
-										assert(option==="MOTION"||option==="EXPAD"||option==="MIC"||option=="COMPAT","invalid option")
+										assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word=="COMPAT","invalid option")
 									break;case "OPTION":
 										output("keyword");
 										assert(readToken("word","keyword"),"invalid option");
-										var option=text.trimLeft().toUpperCase();
-										assert(option==="STRICT"||option==="DEFINT"||option==="TOOL","invalid option");
+										console.log(word)
+										assert(word==="STRICT"||word==="DEFINT"||word==="TOOL","invalid option");
 									//return to sanity, normal function call!
 									break;default:
 										output("function");
@@ -473,6 +474,7 @@ function parse(nextToken,callback){
 			var items=nextToken();
 			type=items.type;
 			text=items.text;
+			word=items.word; //careful!
 		}else if(readNext===-1){
 			type=newType;
 			text=newText;
@@ -525,7 +527,7 @@ function tokenize(code){
 		//not a keyword
 		else
 			type="word";
-		return {type:type,text:code.substring(start,i)};
+		return {type:type,text:code.substring(start,i),word:upper};
 	}
 	
 	
