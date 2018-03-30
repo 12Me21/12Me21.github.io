@@ -10,6 +10,14 @@ pre{
 	color: white;
 	background-color:black;
 }
+[data-sbfont="true"]{
+	font-family: SMILEBASIC;
+}
+/*sb font doesn't work well when bold*/
+[data-sbfont="true"] *{
+	font-weight: normal !important;
+}
+
 .number{
 	color:#F77BB5;
 }

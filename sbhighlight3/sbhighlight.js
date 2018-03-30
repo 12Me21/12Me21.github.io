@@ -203,7 +203,6 @@ function parse(nextToken,callback){
 								//XON/XOFF/OPTION
 								// I hate you! :(
 								// not nice >:[
-								console.log(oldWord)
 								switch(oldWord){
 									case "XON":
 										output("keyword");
@@ -223,7 +222,6 @@ function parse(nextToken,callback){
 									break;case "OPTION":
 										output("keyword");
 										assert(readToken("word","keyword"),"invalid option");
-										console.log(word)
 										assert(word==="STRICT"||word==="DEFINT"||word==="TOOL","invalid option");
 									//return to sanity, normal function call!
 									break;default:
@@ -337,7 +335,7 @@ function parse(nextToken,callback){
 	function readExpression(){
 		next();
 		switch(type){
-			//VAR
+			//VAR()
 			case "VAR":
 				readVar();
 			//function or variable
@@ -349,6 +347,19 @@ function parse(nextToken,callback){
 					assert(readToken(")",""),"Missing \")\" in function call");
 				}else
 					output("variable");
+			//CALL()
+			break;case "CALL":
+				if(peekToken("(")){
+					output("keyword var");
+					readToken("(","");
+					readList(readExpression);
+					assert(readToken(")",""),"Missing \")\" in CALL()");
+					ret=true;
+				//bad VAR
+				}else{
+					output("error");
+					assert(false,"invalid CALL");
+				}
 			//literal value
 			break;case "number":case "string":case "label":
 				output(type);
@@ -487,9 +498,6 @@ function parse(nextToken,callback){
 	}
 }
 
-//define a function that returns a function, which, when called, gives the next output value
-//OR
-//define a function that takes a function as input which is called and the next output passed to it
 
 function tokenize(code){
 	var i=-1,c,isAlpha,isDigit,whitespace;
@@ -510,7 +518,7 @@ function tokenize(code){
 	function pushWord(){
 		var start=prev;
 		prev=i;
-		var upper=code.substring(start+whitespace,i).toUpperCase();
+		var upper=code.substring(whitespace,i).toUpperCase();
 		var type;
 		//bitwise not
 		if(upper==="NOT")
@@ -539,13 +547,11 @@ function tokenize(code){
 	
 	next();
 	return function(){
-		whitespace=0;
-		while(c===" "||c==="\t"){
-			whitespace++;
+		while(c===" "||c==="\t")
 			next();
-		}
 		if(c==='')
 			return push("eof");
+		whitespace=i;
 		//keywords, functions, variables
 		if(isAlpha||c==='_'){
 			next();

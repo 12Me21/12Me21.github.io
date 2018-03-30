@@ -5,6 +5,7 @@
 		<script src="sbhighlight.js"></script>
 		<script defer src="onload.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="http://12Me21.github.io/external/smilebasicfont.css">
 	</head>
 	<body>
 		<textarea id="$input">
@@ -13,6 +14,7 @@ FOR TO=STEP TO TO STEP TO
 NEXT</textarea>
 		<br>
 		<button id="$button" onclick="$code.textContent = $input.value; applySyntaxHighlighting($code)">set</button>
+		Use SB font:<input type="checkbox" autocomplete="off" onchange="$code.dataset.sbfont=this.checked"></input>
 		<hr>
 		<pre id="$code"></pre>
 	<body>
