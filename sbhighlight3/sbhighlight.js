@@ -243,9 +243,10 @@ function parse(nextToken,callback){
 					output("");
 					return;
 				//line break, colon
-				break;case "linebreak":case ":":
+				break;case ":":
 					output("");
-				//other
+				break;case "linebreak":
+					output("linebreak");
 				break;default:
 					output("error");
 					assert(false,"Expected statement, got "+type);
@@ -754,7 +755,7 @@ function applySyntaxHighlighting(element){
 
 //escape & and <
 function escapeHTML(text){
-	return text.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+	return text.replace(/&/g,"&amp;").replace(/</g,"&lt;");//.replace(/[\r\n]/g,"<br>");
 }
 //escape &, ", and '
 function escapeHTMLAttribute(text){

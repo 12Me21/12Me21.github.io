@@ -9,6 +9,7 @@ pre{
 	/* defaults */
 	color: white;
 	background-color:black;
+	
 }
 [data-sbfont="true"]{
 	font-family: SMILEBASIC;
@@ -17,6 +18,14 @@ pre{
 [data-sbfont="true"] *{
 	font-weight: normal !important;
 }
+
+/*
+you can use this to display line break symbols!
+.linebreak::before{
+	content: "J";
+	color: #0BF;
+}
+*/ 
 
 .number{
 	color:#F77BB5;
