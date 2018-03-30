@@ -1,0 +1,1881 @@
+END
+@INIT
+VAR imported$[0],debug%
+VAR head$,tail$
+VAR line%,tokens$[0]
+VAR curFile$,curModule$,curProto$,curLab$
+VAR mems$[0],vars$[0],varvals$[0],statics$[0]
+VAR inDec%,inEx%,inLab%,inMod%,inDef%,inTrc%,inDict%
+VAR hadRet%
+
+''
+' Usage
+''
+'The beginning of compilation
+'Imports go here
+COMMON DEF head
+  GOSUB "2:@INIT"
+  'PRG3 for temp
+  LOAD "PRG3:LOWERDASH",0
+  USE 3
+  GOSUB "3:@INIT"
+  PRGEDIT 3,-1:PRGDEL 2
+END
+
+COMMON DEF _debug
+  debug% = TRUE
+  PRGINS "_TRACE "+CHR$(34)+"_ BOOT"+CHR$(34),1
+END
+
+COMMON DEF import FILE$
+  FILE$ = ALLCAPS$(FILE$)
+  IF !contains(imported$, FILE$) THEN
+    process FILE$
+    PUSH imported$,FILE$
+  ENDIF
+END
+
+COMMON DEF hend
+  end_head
+  USE 3
+END
+
+COMMON DEF compile N$
+  end_head
+  SAVE "PRG3:"+N$
+  ?"FILE "+N$+" SAVED SUCCESSFULLY"
+  STOP
+END
+
+COMMON DEF compile_lib N$
+  VAR L%=PRGSIZE(3)+1
+  end_head
+  VAR S%=PRGSIZE(3)-1
+  VAR T$="'This library requires Lowerdash to use.    '"+CHR$(10)
+  T$=T$+ "'                                           '"+CHR$(10)
+  T$=T$+ "'Import this library in your 'head'                   '"+CHR$(10)
+  T$=T$+ "''"+CHR$(10)
+  FOR I% = L% TO S%
+    PRGEDIT 3,I%
+    T$=T$+PRGGET$()
+  NEXT
+  SAVE "TXT:"+N$+".LIB",T$
+  ?"FILE "+N$+".LIB SAVED SUCCESSFULLY"
+  STOP
+END
+
+''
+' DESUGAR TEMPLATES
+''
+DEF cerr MSG$
+  ?MSG$
+  ?"Error on "+curFile$+":"+STR$(line%)
+  STOP
+END
+
+
+DEF end_head
+  IF debug% THEN PRGINS "_UNTRACE",1
+  PRGINS "RETURN:'KLDCK",1
+END
+
+DEF process FILE$
+  line%=0
+  curFile$=FILE$
+  VAR T$ = LOAD("TXT:"+FILE$,0)
+  IF RIGHT$(FILE$,4)==".LIB" THEN
+    PRGINS T$,1
+  ELSE
+    VAR L$
+    HEAD$=""
+    TAIL$=""
+    WHILE LEN(T$)
+      INC line%
+      split$ T$,CHR$(10) OUT L$,T$
+      lex L$
+      flush
+    WEND
+    IF inDec% THEN INS HEAD$,sym()
+    inMod% = FALSE
+    inDef% = FALSE
+    inEx% = FALSE
+    inLab% = FALSE
+    inTrc% = FALSE
+    PRGINS HEAD$,1
+  ENDIF
+END
+
+DEF flush
+  IF LEN(tokens$) THEN
+    INS HEAD$,parseStmnt$()
+    aDel(tokens$)
+  ENDIF
+  IF LEN(TAIL$) THEN
+    INS HEAD$,TAIL$
+    TAIL$=""
+  ENDIF
+END
+
+DEF pre M$
+  INS HEAD$,M$
+END
+
+DEF post M$
+  INS TAIL$,M$
+END
+
+DEF token(type$,lex$)
+  VAR t$[2]
+  t$[0]=type$
+  t$[1]=lex$
+  RETURN t$
+END
+
+DEF pushToken type$, lexeme$
+  PUSH tokens$, type$
+  PUSH tokens$, lexeme$
+END
+
+DEF consume()
+  VAR T$[2]
+  IF EOL() THEN
+    CERR "Unexpected end of line"
+  ENDIF
+  T$[0] = SHIFT(tokens$)
+  T$[1] = SHIFT(tokens$)
+  RETURN T$
+END
+
+DEF consumeType(type$)
+  VAR T$[2]
+  T$=consume()
+  IF T$[0] != type$ THEN
+    CERR "Expected "+type$+" but found "+T$[0]+CHR$(10)+T$[1]+srest$()+CHR$(10)+"^"
+  ENDIF
+  RETURN T$
+END
+
+DEF lookAhead(i%)
+  VAR t$[2]
+  IF LEN(tokens$) THEN
+    i%=i%*2
+    t$[0] = tokens$[i%]
+    t$[1] = tokens$[i%+1]
+  ENDIF
+  RETURN t$
+END
+
+DEF nextIs(type$)
+  VAR t$[0]
+  t$=lookAhead(0)
+  RETURN t$[0]==type$
+END
+
+DEF EOL()
+  RETURN !LEN(tokens$)
+END
+
+DEF isSpaced(T$)
+  RETURN (T$=="ID" OR T$=="KEYWORD" OR T$=="OUT")
+END
+
+DEF rest$()
+  VAR T$,P$,I%,L%=LEN(tokens$)-1
+  IF L%>0 THEN
+  FOR I%=0 TO L% STEP 2
+    IF isSpaced(tokens$[I%]) THEN
+      IF (isSpaced(P$) OR !LEN(P$)) THEN
+        INC T$," "
+      ENDIF
+    ENDIF
+    P$ = tokens$[I%]
+    INC T$,tokens$[I%+1]
+  NEXT
+  ENDIF
+  aDel(tokens$)
+  RETURN T$
+END
+
+DEF srest$()
+  VAR T$=" ",I%,L%=LEN(tokens$)-1
+  FOR I%=1 TO L% STEP 2
+    INC T$,tokens$[I%]+" "
+  NEXT
+  RETURN T$
+END
+
+DEF UNEXPECTED t$[]
+  CERR "Unexpected "+t$[0]+": "+t$[1]
+END
+
+DEF printTokens
+  VAR t$[0]
+  VAR I%,L%=LEN(TOKENS$)/2-1
+  VAR S$="["
+  FOR I%=0 TO L%
+    t$=lookAhead(I%)
+    INC S$,"["+t$[0]+","+t$[1]+"]"
+  NEXT
+  INC S$,"]"
+  ?S$
+END
+
+DEF lex S$: VAR SP,EP
+ VAR P=SP,C,T$,ACT=0:EP=-1
+ @0
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-32 GOTO @1,@2,@3,@4,@E,@E,@5,@6,@7,@8,@9,@9,@10,@11,@12,@9,@13,@13,@13,@13,@13,@13,@13,@13,@13,@13,@14,@10,@15,@16,@17,@18,@19,@T20,@T20,@21,@22,@23,@24,@25,@T20,@26,@T20,@T20,@T20,@27,@28,@29,@30,@T20,@31,@32,@33,@T20,@34,@T20,@T20,@T20,@T20,@35,@T20,@36,@T20,@37,@T20,@T20,@T20,@21,@22,@23,@24,@25,@T20,@26,@T20,@T20,@T20,@27,@28,@29,@30,@T20,@31,@32,@33,@T20,@34,@T20,@T20,@T20,@T20,@T20,@38
+ GOTO @T20
+ @1
+ EP=P:ACT=37
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==32 GOTO @1
+ GOTO @E
+ @2
+ EP=P:ACT=22
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ @T2
+ IF C==61 GOTO @9
+ GOTO @E
+ @3
+ EP=P:ACT=24
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==10 GOTO @E
+ IF C==34 GOTO @39
+ GOTO @3
+ @4
+ EP=P:ACT=23
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ @T4
+ ON C-65 GOTO @40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@E,@E,@E,@E,@40,@E,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40
+ GOTO @E
+ @5
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==38 GOTO @9
+ IF C==66||C==98 GOTO @41
+ IF C==72||C==104 GOTO @42
+ GOTO @E
+ @6
+ EP=P:ACT=36
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==10 GOTO @E
+ GOTO @6
+ @7
+ EP=P:ACT=32
+ GOTO @E
+ @8
+ EP=P:ACT=33
+ GOTO @E
+ @9
+ EP=P:ACT=22
+ GOTO @E
+ @10
+ EP=P:ACT=34
+ GOTO @E
+ @11
+ EP=P:ACT=22
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==62 GOTO @43
+ GOTO @E
+ @12
+ EP=P:ACT=27
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ @T12
+ ON C-48 GOTO @44,@44,@44,@44,@44,@44,@44,@44,@44,@44
+ GOTO @E
+ @13
+ EP=P:ACT=23
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-46 GOTO @44,@T44,@13,@13,@13,@13,@13,@13,@13,@13,@13,@13
+ GOTO @T44
+ @14
+ EP=P:ACT=35
+ GOTO @E
+ @15
+ EP=P:ACT=22
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==60 GOTO @9
+ GOTO @T2
+ @16
+ EP=P:ACT=29
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T2
+ @17
+ EP=P:ACT=22
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==62 GOTO @9
+ GOTO @T2
+ @18
+ EP=P:ACT=25
+ GOTO @E
+ @19
+ EP=P:ACT=22
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==64 GOTO @46
+ GOTO @E
+ @20
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ @T20
+ ON C-35 GOTO @18,@18,@18,@E,@E,@E,@E,@E,@E,@E,@E,@E,@E,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@E,@E,@E,@E,@E,@E,@E,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@E,@E,@E,@E,@20,@E,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20,@20
+ GOTO @E
+ @21
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @47
+ GOTO @T20
+ @22
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @48
+ IF C==73||C==105 GOTO @49
+ IF C==79||C==111 GOTO @50
+ GOTO @T20
+ @23
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-76 GOTO @52,@T20,@53
+ ON C-108 GOTO @52,@T20,@53
+ IF C==65||C==97 GOTO @51
+ IF C==88||C==120 GOTO @54
+ GOTO @T20
+ @24
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @55
+ GOTO @T20
+ @25
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @56
+ GOTO @T20
+ @26
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-77 GOTO @58,@59
+ ON C-109 GOTO @58,@59
+ IF C==70||C==102 GOTO @57
+ GOTO @T20
+ @27
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @60
+ IF C==79||C==111 GOTO @61
+ GOTO @T20
+ @28
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @62
+ GOTO @T20
+ @29
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==85||C==117 GOTO @63
+ GOTO @T20
+ @30
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==82||C==114 GOTO @64
+ GOTO @T20
+ @31
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @65
+ GOTO @T20
+ @32
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @66
+ GOTO @T20
+ @33
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==72||C==104 GOTO @67
+ IF C==79||C==111 GOTO @68
+ GOTO @T20
+ @34
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==65||C==97 GOTO @69
+ GOTO @T20
+ @35
+ EP=P:ACT=30
+ GOTO @E
+ @36
+ EP=P:ACT=31
+ GOTO @E
+ @37
+ EP=P:ACT=20
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @38
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==124 GOTO @9
+ GOTO @E
+ @39
+ EP=P:ACT=24
+ GOTO @E
+ @40
+ EP=P:ACT=23
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-35 GOTO @4,@4,@4,@T4,@T4,@T4,@T4,@T4,@T4,@T4,@T4,@T4,@T4,@40,@40,@40,@40,@40,@40,@40,@40,@40,@40
+ GOTO @T4
+ @41
+ EP=P:ACT=23
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-48 GOTO @41,@41
+ GOTO @E
+ @42
+ EP=P:ACT=23
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ ON C-48 GOTO @42,@42,@42,@42,@42,@42,@42,@42,@42,@42,@E,@E,@E,@E,@E,@E,@E,@42,@42,@42,@42,@42,@42
+ ON C-97 GOTO @42,@42,@42,@42,@42,@42
+ GOTO @E
+ @43
+ EP=P:ACT=26
+ GOTO @E
+ @44
+ EP=P:ACT=23
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ @T44
+ IF C==35 GOTO @45
+ GOTO @T12
+ @45
+ EP=P:ACT=23
+ GOTO @E
+ @46
+ EP=P:ACT=28
+ GOTO @E
+ @47
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==77||C==109 GOTO @70
+ GOTO @T20
+ @48
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==70||C==102 GOTO @71
+ GOTO @T20
+ @49
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==67||C==99 GOTO @72
+ GOTO @T20
+ @50
+ EP=P:ACT=6
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @51
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==67||C==99 GOTO @73
+ GOTO @T20
+ @52
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==83||C==115 GOTO @74
+ GOTO @T20
+ @53
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==68||C==100 GOTO @75
+ GOTO @T20
+ @54
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==80||C==112 GOTO @76
+ GOTO @T20
+ @55
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==82||C==114 GOTO @77
+ GOTO @T20
+ @56
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @78
+ GOTO @T20
+ @57
+ EP=P:ACT=7
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @58
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==80||C==112 GOTO @79
+ GOTO @T20
+ @59
+ EP=P:ACT=14
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @60
+ EP=P:ACT=18
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==77||C==109 GOTO @80
+ GOTO @T20
+ @61
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==68||C==100 GOTO @81
+ GOTO @T20
+ @62
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==87||C==119 GOTO @82
+ GOTO @T20
+ @63
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @83
+ GOTO @T20
+ @64
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @84
+ GOTO @T20
+ @65
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @85
+ GOTO @T20
+ @66
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==65||C==97 GOTO @86
+ IF C==69||C==101 GOTO @87
+ GOTO @T20
+ @67
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @88
+ GOTO @T20
+ @68
+ EP=P:ACT=13
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @69
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==82||C==114 GOTO @80
+ GOTO @T20
+ @70
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==77||C==109 GOTO @89
+ GOTO @T20
+ @71
+ EP=P:ACT=17
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @72
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @90
+ GOTO @T20
+ @73
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==72||C==104 GOTO @77
+ GOTO @T20
+ @74
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @91
+ GOTO @T20
+ @75
+ EP=P:ACT=5
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @76
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @92
+ GOTO @T20
+ @77
+ EP=P:ACT=12
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @78
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @93
+ GOTO @T20
+ @79
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @94
+ GOTO @T20
+ @80
+ EP=P:ACT=4
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @81
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==85||C==117 GOTO @95
+ GOTO @T20
+ @82
+ EP=P:ACT=21
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @83
+ EP=P:ACT=16
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @84
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @96
+ GOTO @T20
+ @85
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==85||C==117 GOTO @97
+ GOTO @T20
+ @86
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @98
+ GOTO @T20
+ @87
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==80||C==112 GOTO @99
+ GOTO @T20
+ @88
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==78||C==110 GOTO @100
+ GOTO @T20
+ @89
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @101
+ GOTO @T20
+ @90
+ EP=P:ACT=2
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @91
+ EP=P:ACT=10
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==73||C==105 GOTO @102
+ GOTO @T20
+ @92
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==82||C==114 GOTO @103
+ GOTO @T20
+ @93
+ EP=P:ACT=11
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @94
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==82||C==114 GOTO @104
+ GOTO @T20
+ @95
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==76||C==108 GOTO @105
+ GOTO @T20
+ @96
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==79||C==111 GOTO @106
+ GOTO @T20
+ @97
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==82||C==114 GOTO @107
+ GOTO @T20
+ @98
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==73||C==105 GOTO @108
+ GOTO @T20
+ @99
+ EP=P:ACT=15
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @100
+ EP=P:ACT=8
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @101
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==78||C==110 GOTO @109
+ GOTO @T20
+ @102
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==70||C==102 GOTO @110
+ GOTO @T20
+ @103
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @109
+ GOTO @T20
+ @104
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==84||C==116 GOTO @111
+ GOTO @T20
+ @105
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==69||C==101 GOTO @90
+ GOTO @T20
+ @106
+ EP=P:ACT=19
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @107
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==78||C==110 GOTO @75
+ GOTO @T20
+ @108
+ EP=P:ACT=25
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ IF C==67||C==99 GOTO @109
+ GOTO @T20
+ @109
+ EP=P:ACT=3
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @110
+ EP=P:ACT=9
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @111
+ EP=P:ACT=1
+ IF P>=LEN(S$) GOTO @E
+ C=ASC(S$[P]):INC P
+ GOTO @T20
+ @E
+ IF !ACT THEN IF SP>=LEN(S$) THEN RETURN ELSE EP=SP+1:?S$[SP]:GOTO @A
+ T$=MID$(S$,SP,EP-SP):GOTO "@A"+STR$(ACT)
+ @A1:pushToken "KEYWORD",T$
+ GOTO @A
+ @A2:pushToken "KEYWORD",T$
+ GOTO @A
+ @A3:pushToken "KEYWORD",T$
+ GOTO @A
+ @A4:pushToken "KEYWORD",T$
+ GOTO @A
+ @A5:pushToken "KEYWORD",T$
+ GOTO @A
+ @A6:pushToken "KEYWORD",T$
+ GOTO @A
+ @A7:pushToken "IF",T$
+ GOTO @A
+ @A8:pushToken "THEN",T$
+ GOTO @A
+ @A9:pushToken "ELSEIF",T$
+ GOTO @A
+ @A10:pushToken "ELSE",T$
+ GOTO @A
+ @A11:pushToken "GOTO",T$
+ GOTO @A
+ @A12:pushToken "FOR",T$
+ GOTO @A
+ @A13:pushToken "TO",T$
+ GOTO @A
+ @A14:pushToken "IN",T$
+ GOTO @A
+ @A15:pushToken "STEP",T$
+ GOTO @A
+ @A16:pushToken "OUT",T$
+ GOTO @A
+ @A17:pushToken "DEF",T$
+ GOTO @A
+ @A18:pushToken "ME",T$
+ GOTO @A
+ @A19:pushToken "PROTO",T$
+ GOTO @A
+ @A20:pushToken "TYPE",T$
+ GOTO @A
+ @A21:pushToken "NEW",T$
+ GOTO @A
+ @A22:pushToken "OP",T$
+ GOTO @A
+ @A23:pushToken "NUMBER",T$
+ GOTO @A
+ @A24:pushToken "STRING",T$
+ GOTO @A
+ @A25:pushToken "ID",T$
+ GOTO @A
+ @A26:pushToken "TUPLE",T$
+ GOTO @A
+ @A27:pushToken "LOOKUP",T$
+ GOTO @A
+ @A28:pushToken "MLABEL",T$
+ GOTO @A
+ @A29:pushToken "ASSIGN",T$
+ GOTO @A
+ @A30:pushToken "LBRACE",T$
+ GOTO @A
+ @A31:pushToken "RBRACE",T$
+ GOTO @A
+ @A32:pushToken "LPAREN",T$
+ GOTO @A
+ @A33:pushToken "RPAREN",T$
+ GOTO @A
+ @A34:pushToken "SEP",T$
+ GOTO @A
+ @A35:flush
+ GOTO @A
+ @A36:'REMOVED
+ GOTO @A
+ @A37:'REMOVED
+ GOTO @A
+ @A:SP=EP:P=SP:EP=-1:ACT=0:GOTO @0
+END
+
+''
+'Parser
+'Scans tokens to insert a processed line
+'Uses Pratt Parse Algorithm
+'Skips the AST.
+'
+'  P% - OP PRECEDENCE TO IGNORE
+''
+VAR STMNT%
+DEF parseStmnt$()
+  STMNT% = 2
+  RETURN parse$(0)
+END
+
+DEF parse$(P%)
+  VAR SUB$,token$[0],L$
+  
+  IF STMNT% THEN DEC STMNT%
+  
+  token$ = consume()
+  
+  SUB$ = "parse_"+token$[0]+"$"
+  IF CHKCALL(SUB$) THEN
+    L$ = CALL(SUB$, token$)
+  ELSE
+    'NUM OR STRING OR UNRESERVED KW
+    L$ = parse_ID$(token$)
+  ENDIF
+  
+  'CONTINUE WHILE OOO APPLIES AND
+  ' LOOKAHEAD IS INFIX
+  WHILE P% < tokenP%()
+    token$ = consume()
+    
+    SUB$ = "parseIn_"+token$[0]+"$"
+    L$ = CALL(SUB$, L$, token$)
+  WEND
+  
+  RETURN L$
+END
+
+DEF parseExpList$()
+  VAR L$
+  REPEAT
+    IF nextIs("SEP") THEN
+      INC L$,consume()[1]
+    ELSE
+      INC L$, parse$(0)
+      IF nextIs("SEP") THEN
+        INC L$,consume()[1]
+      ELSE
+        RETURN L$
+      ENDIF
+    ENDIF
+  UNTIL EOL() OR nextIs("RPAREN")
+  RETURN L$
+END
+
+DEF tokenP%()
+  VAR token$[0],V$
+  token$ = lookAhead(0)
+  V$ = "prec_"+token$[0]+"%"
+  IF CHKVAR(V$) THEN
+    RETURN VAR(V$)
+  ELSE
+    'NOT INFIX
+    RETURN 0
+  ENDIF
+END
+
+DEF nextIsID()
+  VAR N$[2]
+  N$=lookahead(0)
+  RETURN N$[0]=="ID" OR N$[0]=="NEW"
+END
+
+DEF consumeID()
+  VAR N$[2]
+  N$=lookahead(0)
+  IF N$[0]=="ID" OR N$[0]=="NEW" THEN RETURN consume()
+  unexpected N$
+END
+
+''
+'Parselets
+''
+DEF parse_KEYWORD$(t$)
+  RETURN CALL("parse_KW_"+t$[1]+"$", t$)
+END
+
+DEF parse_KW_IMPORT$(t$)
+  VAR N$ = consumeType("STRING")[1]
+  IF !EOL() THEN UNEXPECTED t$
+  RETURN t_import(N$)
+END
+
+DEF parse_KW_COMMON$(t$)
+  RETURN t_common(parse$(0))
+END
+
+DEF parse_KW_DICT$(t$)
+  VAR N$ = consumeType("ID")[1]
+  IF !EOL() THEN UNEXPECTED t$
+  RETURN t_dict(N$)
+END
+
+DEF parse_KW_MODULE$(t$)
+  VAR N$ = consumeType("ID")[1]
+  IF nextIs("PROTO") THEN
+    EAT consume()
+    VAR P$ = consumeType("ID")[1]
+    RETURN t_module(N$, P$)
+  ELSEIF EOL() THEN
+    RETURN t_module(N$, "")
+  ELSE
+    UNEXPECTED lookAhead(0)
+  ENDIF
+END
+
+DEF parse_KW_VAR$(t$)
+  IF !STMNT% THEN RETURN parse_ID$(t$)
+  VAR ID$,IDs$[0],VAL$,VALs$[0],EX$,EXs$[0]
+  WHILE !EOL()
+    ID$ = consumeType("ID")[1]
+    VAL$=""
+    EX$=""
+    IF nextIs("ASSIGN") THEN
+      EAT consume()
+      VAL$ = t_var_assign(parse$(0))
+    ELSEIF nextIs("LBRACE") THEN
+      EAT consume()
+      IF nextIs("RBRACE") THEN
+        EAT consume()
+        VAR LITs$[0]
+        IF nextIs("ASSIGN") THEN
+          EAT consume()
+          EAT consumeType("LBRACE")
+          WHILE !nextIs("RBRACE")
+            PUSH LITS$, parse$(0)
+            IF !nextIs("RBRACE") THEN EAT consumeType("SEP")
+          WEND
+          EAT consume()
+        ENDIF
+        VAL$ = t_var_arrdim(STR$(LEN(LITs$)))
+        EX$ = t_var_arrlit(ID$, LITs$)
+      ELSE
+        VAL$ = t_var_arrdim(parseExpList$())
+        EAT consumeType("RBRACE")
+      ENDIF
+    ENDIF
+    PUSH IDs$, ID$
+    PUSH VALs$, VAL$
+    PUSH EXs$, EX$
+    IF !EOL() THEN EAT consumeType("SEP")
+  WEND
+  IF inDec% THEN
+    RETURN t_mvar(IDs$, VALs$, EXs$)
+  ELSE
+    RETURN t_var(IDs$, VALs$, EXs$)
+  ENDIF
+END
+
+DEF parse_KW_MEM$(t$)
+  VAR ids$[0]
+  WHILE !EOL()
+    PUSH ids$, consumeType("ID")[1]
+    IF !EOL() THEN
+      IF nextIs("LBRACE") THEN CERR "Members cannot be arrays"
+      EAT consumeType("SEP")
+    ENDIF
+  WEND
+  RETURN t_mem(ids$)
+END
+
+DEF parse_KW_STATIC$(t$)
+  EAT consumeType("DEF")
+  VAR N$ = consumeType("ID")[1]
+  RETURN t_staticdef(N$, rest$())
+END
+
+DEF parse_KW_EXPORT$(t$)
+  EAT consumeType("DEF")
+  VAR N$ = consumeID()[1]
+  RETURN t_exportdef(N$, rest$())
+END
+
+DEF parse_KW_END$(t$)
+  RETURN t_end()
+END
+
+DEF parse_KW_RETURN$(t$)
+  IF EOL() THEN
+    RETURN t_return()
+  ELSE
+    VAR R$ = parse$(0)
+    RETURN t_return_val(R$)
+  ENDIF
+END
+
+DEF parse_KW_DO$(t$)
+  VAR N$,A$
+  N$ = parse$(0)
+  IF !EOL() THEN
+    EAT consumeType("SEP")
+    A$ = parseExpList$()
+  ENDIF
+  RETURN t_do(N$,A$)
+END
+
+DEF parse_KW_EACH$(t$)
+  VAR ID$ = consumeType("ID")[1]
+  VAR SEP$[0]
+  'IN IS NOT RESERVED
+  SEP$ = consumeType("ID")
+  IF SEP$[1] == "IN" THEN
+   VAR L$ = parse$(0)
+   RETURN t_each(ID$, L$)
+  ENDIF
+  UNEXPECTED SEP$
+END
+
+DEF parse_DEF$(t$)
+  VAR N$ = consumeType("ID")[1]
+  RETURN t_def(N$, rest$())
+END
+
+DEF isCmd()
+  RETURN !nextIs("LOOKUP") AND !nextIs("TUPLE") AND !nextIs("ASSIGN") AND !nextIs("LBRACE")
+END
+
+DEF callHelp(I$)
+  VAR A$,O$
+  IF STMNT% AND isCmd()THEN
+    IF !EOL() AND !nextIs("OUT") THEN
+      A$ = parseExpList$()
+    ENDIF
+    IF nextIs("OUT") THEN
+      EAT consume()
+      O$ = parseExpList$()
+    ENDIF
+    RETURN t_cmd(I$,A$,O$)
+  ELSEIF nextIs("LPAREN") THEN
+    EAT consume()
+    IF !nextIs("RPAREN") THEN
+      A$ = parseExpList$()
+    ENDIF
+    EAT consumeType("RPAREN")
+    RETURN t_func(I$, A$)
+  ELSE
+    RETURN I$
+  ENDIF
+END
+
+DEF parse_PROTO$(t$)
+  VAR I$
+  IF nextIs("LPAREN") THEN
+    EAT consume()
+    IF nextIs("STRING") AND LOOKAHEAD(1)[0]=="RPAREN" THEN
+      I$ = consume()[1]
+    ELSE
+      I$ = parse$(0)
+    ENDIF
+    EAT consumeType("RPAREN")
+  ELSEIF nextIs("LOOKUP") THEN
+    EAT consume()
+    I$ = t_string(consumeID()[1])
+  ELSE
+    RETURN t_proto_ref()
+  ENDIF
+  I$ = t_proto_get(I$)
+  RETURN callHelp(I$)
+END
+
+DEF parse_ME$(t$)
+  VAR I$,L$,T%
+  IF nextIs("LPAREN") THEN
+    EAT consume()
+    IF nextIs("STRING") AND LOOKAHEAD(1)[0]=="RPAREN" THEN
+      'Not an expression
+      I$ = consume()[1]
+      L$ = t_unquote(I$)
+    ELSE
+      I$ = parse$(0)
+      L$ = ""
+    ENDIF
+    EAT consumeType("RPAREN")
+  ELSEIF nextIs("LOOKUP") THEN
+    EAT consume()
+    L$ = consumeID()[1]
+    I$ = t_string(L$)
+  ELSE
+    IF nextIs("ASSIGN") THEN CERR "Cannot re-assign me"
+    RETURN t_me_ref()
+  ENDIF
+  IF nextIs("ASSIGN") THEN
+    EAT consume()
+    RETURN t_me_set(I$,parse$(0))
+  ELSE
+    I$ = t_me_get(I$)
+    RETURN callHelp(I$)
+  ENDIF
+END
+
+DEF parse_TYPE$(t$)
+  VAR I$
+  IF nextIs("LPAREN") THEN
+    RETURN parse_ID$(token("ID",t$[1]))
+  ELSEIF nextIs("LOOKUP") THEN
+    EAT consume()
+    I$ = consumeID()[1]
+  ELSE
+    RETURN t_type_ref()
+  ENDIF
+  VAR S$ = t_static_get(I$)
+  IF LEN(S$) THEN
+    RETURN parse_ID$(token("ID",S$))
+  ENDIF
+  CERR "Module "+curModule$+" has no property named "+I$
+END
+
+DEF parse_ID$(t$)
+  IF STMNT% AND isCmd() THEN
+    VAR A$,O$
+    IF !EOL() AND !nextIs("OUT") THEN
+      A$ = parseExpList$()
+    ENDIF
+    IF nextIs("OUT") THEN
+      EAT consume()
+      O$ = parseExpList$()
+    ENDIF
+    RETURN t_command(t$[1], A$, O$)
+  ELSE
+    RETURN t$[1]
+  ENDIF
+END
+
+VAR prec_ID% = 3
+DEF parseIn_ID$(L$,t$)
+  RETURN t_op_ID(t$[1],L$,parse$(0))
+END
+
+DEF parse_NEW$(t$)
+  IF !nextIs("ID") THEN RETURN parse_ID$(t$)
+  VAR N$ = consume()[1]
+  EAT consumeType("LPAREN")
+  VAR A$ 
+  IF !nextIs("RPAREN") THEN A$ = parseExpList$()
+  EAT consumeType("RPAREN")
+  RETURN t_new(N$,A$)
+END
+
+DEF parse_MLABEL$(t$)
+  VAR N$= consumeType("ID")[1]
+  IF STMNT% THEN
+    RETURN t_mlabel_def(N$)
+  ELSE
+    RETURN t_mlabel_get(N$)
+  ENDIF
+END
+
+VAR prec_TUPLE% = 9 'HIGHEST, NOT IN EXP
+DEF parseIn_TUPLE$(L$,t$)
+  RETURN t_tuple(L$,parse$(0))
+END
+
+VAR prec_LOOKUP% = 8
+DEF parseIn_LOOKUP$(L$,t$)
+  VAR C% = 0
+  VAR Y$ = RIGHT$(L$,1)
+  IF  Y$ != "$" AND Y$ != ")" THEN L$=t_string(L$)
+  REPEAT
+    C%=0
+    N$ = consumeID()[1]
+    IF nextIs("ASSIGN") THEN
+      EAT consume()
+      L$ = t_lookup(L$,"_set"+N$)
+      RETURN t_cmd(L$,parse$(0),"")
+    ELSE
+      L$ = t_lookup(L$,N$)
+    ENDIF
+    IF nextIs("LOOKUP") THEN
+      EAT consume()
+      C% = 1
+    ENDIF
+  UNTIL !C%
+  RETURN callHelp(L$)
+END
+
+VAR prec_LPAREN% = 9
+DEF parseIn_LPAREN$(L$,t$)
+  VAR E$
+  IF !nextIs("RPAREN") THEN
+    E$ = parseExpList$()
+  ENDIF
+  EAT consumeType("RPAREN")
+  RETURN L$+"("+E$+")"
+END
+
+DEF parse_LPAREN$(t$)
+  VAR TMP%=STMNT%
+  VAR E$ = parse$(0)
+  STMNT%=TMP%
+  EAT consumeType("RPAREN")
+  RETURN t_group(E$)
+END
+
+VAR prec_LBRACE% = 9
+DEF parseIn_LBRACE$(L$,t$)
+  VAR E$ = parseExpList$()
+  EAT consumeType("RBRACE")
+  RETURN L$+"["+E$+"]"
+END
+
+VAR prec_ASSIGN% = 7
+DEF parseIn_ASSIGN$(L$,t$)
+  RETURN t_op(t$[1],L$,parse$(0))
+END
+
+DEF parse_OP$(t$)
+  RETURN t$[1]+parse$(0)
+END
+
+VAR prec_OP% = 3
+DEF parseIn_OP$(L$,t$)
+  RETURN t_op(t$[1],L$,parse$(0))
+END
+
+DEF parse_IF$(t$)
+  VAR C$,B$,E$
+  C$ = parse$(0)
+  IF nextIs("GOTO") THEN
+    EAT consume()
+    B$ = parse$(0)
+    IF !EOL() THEN
+      EAT consumeType("ELSE")
+      E$ = parse$(0)
+    ENDIF
+    RETURN t_branch(C$,B$,E$)  EAT consume()
+  ELSE
+    EAT consumeType("THEN")
+    IF !EOL() THEN
+      B$ = parseStmnt$()
+      IF !EOL() THEN
+        IF nextIs("ELSEIF") THEN
+          CERR "Inline ELSEIF not supported."
+        ELSE
+          EAT consumeType("ELSE")
+          E$ = parseStmnt$()
+        ENDIF
+      ENDIF
+    ENDIF
+    RETURN t_if(C$,B$,E$)
+  ENDIF
+END
+
+DEF parse_ELSEIF$(t$)
+  VAR C$,B$,E$
+  C$ = parse$(0)
+  EAT consumeType("THEN")
+  IF !EOL() THEN
+    B$ = parseStmnt$()
+    IF !EOL() THEN
+      IF nextIs("ELSEIF") THEN
+        CERR "Inline ELSEIF not supported."
+      ELSE
+          EAT consumeType("ELSE")
+          E$ = parseStmnt$()
+      ENDIF
+    ENDIF
+  ENDIF
+  RETURN t_elseif(C$,B$,E$)
+END
+
+DEF parse_FOR$(t$)
+  VAR E$,V$ = parse$(0)
+  IF nextIs("TO") THEN
+    EAT consume()
+    VAR S$
+    E$ = parse$(0)
+    IF nextIs("STEP") THEN
+      S$=parse$(0)
+    ENDIF
+    RETURN t_for(V$,E$,S$)
+  ELSEIF nextIs("IN") THEN
+    EAT consume()
+    E$ = parse$(0)
+    RETURN t_each(V$,E$)
+  ELSE
+    UNEXPECTED lookahead(0)
+  ENDIF
+END
+
+''
+'Template Helpers
+''
+DEF trace(M$)
+  inTrc%=TRUE
+  M$ = curModule$+"::"+M$
+  RETURN "_TRACE "+CHR$(34)+M$+(" "*MAX(28-LEN(M$),0))+" in "+curFile$+":"+STR$(line%)+CHR$(34)
+END
+
+DEF untrace()
+  RETURN "_UNTRACE"
+END
+
+DEF untracev(M$)
+  RETURN "_UNTRACEV("+M$+")"
+END
+
+DEF rstore()
+  RETURN "__RESTORE"
+END
+
+DEF rstorev(M$)
+  RETURN "__RESTOREV("+M$+")"
+END
+
+DEF dh(NAME$)
+  RETURN "DEF "+NAME$+"(K$)"+CHR$(10)
+END
+
+DEF db()
+  VAR T$="K$ = "+CHR$(34)+"@"+CHR$(34)+"+K$"+CHR$(10)
+  T$= T$+"IF !CHKLABEL(K$) THEN RETURN Nil$"+CHR$(10)
+  RETURN T$+"GOSUB K$"
+END
+
+DEF dbz()
+  VAR T$="VAR L$ = "+CHR$(34)+"@"+CHR$(34)+"+K$"+CHR$(10)
+  IF !LEN(curProto$) THEN
+    T$=T$+"IF !CHKLABEL(L$) THEN ERR "+CHR$(34)+curModule$+" has no member "+CHR$(34)+"+K$"+CHR$(10)
+    RETURN T$+"GOSUB L$"
+  ELSE
+    T$=T$+"IF !CHKLABEL(L$) THEN RETURN "+curProto$+"(K$)"+CHR$(10)
+    RETURN T$+"GOSUB L$"
+  ENDIF
+END
+
+DEF stmnt
+  IF inDec% THEN pre sym()
+END
+
+DEF sym()
+  VAR L% = LEN(mems$)
+  VAR L$ = STR$(L%)
+  VAR P% = LEN(curProto$)>0
+  VAR T$,mod$ = curModule$+"_"
+  VAR M$="@_type:RETURN "+CHR$(34)+curModule$+CHR$(34)+CHR$(10)
+  M$= M$+"@_size:RETURN "+L$+CHR$(10)'KLDCK'HUL
+  IF P% THEN
+    VAR PS$=curProto$+"("+CHR$(34)+"_tsize"+CHR$(34)+")"
+    M$= M$+"@_tsize:RETURN "+L$+"+"+PS$+CHR$(10)
+    M$= M$+"@_proto:RETURN "+CHR$(34)+curProto$+CHR$(34)+CHR$(10)'KLDCK'HUL
+  ELSE
+    M$= M$+"@_tsize:RETURN "+L$+CHR$(10)
+    M$= M$+"@_proto:RETURN Nil$"+CHR$(10)'KLDCK'HUL
+  ENDIF
+  M$= M$ +"@_members"+CHR$(10)+"VAR mems$["+L$+"]"+CHR$(10)
+  IF L% THEN
+    FOR I% = 0 TO L%-1
+      VAR mem$ = SHIFT(mems$)
+      VAR mt$ = RIGHT$(mem$,1)
+      VAR I$ = STR$(I%)
+      VAR R$
+      M$= M$+"mems$["+I$+"]="+CHR$(34)+mem$+CHR$(34)+CHR$(10)
+      INC T$,CHR$(10)+"COMMON DEF "+mod$+"___get"+mem$+"()"+CHR$(10)
+      R$= "__y"+mt$+"[ASC(__off$[0]["
+      IF P% THEN R$=R$+PS$+"+"
+      R$= R$+I$+"])]"
+      R$= rstorev(R$)
+      IF debug% THEN
+        T$= T$+trace("_get"+mem$)+CHR$(10)
+        R$= untracev(R$)+CHR$(10)
+      ENDIF
+      T$= T$+"RETURN "+R$+CHR$(10)
+      T$= T$+"END"+CHR$(10)
+      T$= T$+"COMMON DEF "+mod$+"___set"+mem$+" V"+CHR$(10)
+      R$= "__y"+mt$+"[ASC(__off$[0]["
+      IF P% THEN R$=R$+PS$+"+"      
+      R$= R$+I$+"])]=V"+CHR$(10)
+      IF debug% THEN
+        T$= T$+trace("_set"+mem$)+CHR$(10)
+        R$= R$+untrace()+CHR$(10)
+      ENDIF
+      T$= T$+R$+rstore()+CHR$(10)
+      T$= T$+"END"
+    NEXT
+  ENDIF
+  M$= M$+"RETURN mems$"+CHR$(10)
+  M$= M$+"END"
+  'ACCESSORS
+  M$= M$+T$
+  'VARS
+  L%=LEN(vars$)-1
+  FOR I% = 0 TO L%
+    VAR var$ = SHIFT(vars$)
+    VAR val$ = SHIFT(varvals$)
+    INC M$,CHR$(10)+"VAR "+mod$+var$+val$
+    M$= M$+CHR$(10)+"COMMON DEF "+mod$+"_set"+var$+" V"+CHR$(10)
+    M$= M$+mod$+var$+"=V"+CHR$(10)
+    M$= M$+"END"
+  NEXT
+  inDec%=FALSE
+  RETURN M$
+END
+
+''
+'Templates
+''
+DEF t_import(M$)
+  IF LEN(HEAD$) THEN CERR "Imports must be at the beginning of a file
+  M$ = t_unquote(M$)
+  VAR TMPFILE$=curFile$,TMPLINE%=line%
+  import M$
+  HEAD$=""
+  TAIL$=""
+  curFile$=TMPFILE$
+  line%=TMPLINE%
+  RETURN ""
+END
+
+DEF t_common(S$)
+  RETURN "COMMON "+S$
+END
+
+DEF t_dict(N$)
+  inDict% = TRUE
+  RETURN dh(N$)+db()
+END
+
+DEF t_tuple(N$,V$)
+  RETURN "@"+N$+":RETURN "+V$
+END
+
+DEF t_module(N$,P$)
+  VAR T$
+  IF inDec% THEN T$=sym()
+  curModule$ = N$
+  curProto$  = P$
+  VAR D$ = "COMMON "+dh(N$)
+  D$ = D$+"VAR M$ = "+CHR$(34)+N$+"_"+CHR$(34)+"+K$"+CHR$(10)
+  D$ = D$+"IF CHKCALL(M$) THEN RETURN M$"+CHR$(10)
+  D$ = D$+"IF CHKVAR(M$)  THEN RETURN VAR(M$)"+CHR$(10)
+  D$ = D$+dbz()
+  inDec% = TRUE
+  inMod% = TRUE
+  aDel statics$
+  RETURN T$+D$
+END
+
+DEF t_mem(Ms$[])
+  VAR I%,L%=LEN(Ms$)-1
+  FOR I%=0 TO L%
+    N$ = Ms$[I%]
+    T$ = RIGHT$(N$,1)
+    IF !(T$=="#" OR T$=="%" OR T$=="$") THEN CERR "Member must be typed: "+curModule$+"."+N$
+    PUSH mems$,N$
+  NEXT
+  RETURN ""
+END
+
+DEF t_var(IDs$[],VALs$[], EXs$[])
+  VAR L$,I%,L%=LEN(IDs$)-1
+  FOR I%=0 TO L%
+    VAR N$ = IDs$[I%]
+    VAR V$ = VALs$[I%]
+    IF I%>0 THEN INC L$,","
+    INC L$, N$+V$
+  NEXT
+  FOR I%=0 TO L%
+    VAR E$ = EXs$[I%]
+    INC L$, E$
+  NEXT
+  RETURN "VAR "+L$
+END
+
+DEF t_mvar(IDs$[],VALs$[], EXs$[])
+  VAR I%,L%=LEN(IDs$)-1
+  FOR I%=0 TO L%
+    VAR N$ = IDs$[I%]
+    VAR V$ = VALs$[I%]
+    VAR E$ = EXs$[I%]
+    PUSH vars$,N$
+    PUSH statics$,ALLCAPS$(N$)
+    PUSH varvals$,V$+E$
+  NEXT
+  RETURN ""
+END
+
+DEF t_var_assign(E$)
+  RETURN "="+E$
+END
+
+DEF t_var_arrdim(E$)
+  RETURN "["+E$+"]"
+END
+
+DEF t_var_arrlit(ID$,LITs$)
+  VAR V$,I%,L%=LEN(LITs$)-1
+  IF inDec% THEN ID$=curModule$+"_"+ID$
+  FOR I%=0 TO L%
+    INC V$, CHR$(10)+ID$+"["+STR$(I%)+"]="+LITs$[I%]
+  NEXT
+  RETURN V$
+END
+
+DEF t_mlabel_def(M$)
+  stmnt
+  VAR N$ = "@"+curModule$+"_"+M$
+  inLab%=TRUE
+  curLab$=N$
+  pre "GOTO "+N$+"___END"
+  RETURN N$
+END
+
+DEF t_mlabel_get(M$)
+  IF inDef% THEN
+    RETURN CHR$(34)+"3:@"+curModule$+"_"+M$+CHR$(34)
+  ELSE
+    RETURN "@"+curModule$+"_"+M$
+  ENDIF
+END
+
+'EVENTUALLY A$ COULD BE []
+'FOR SICK MACROS
+DEF t_def(N$,A$)
+  inDef% = TRUE
+  stmnt
+  IF debug% THEN post trace(N$)
+  RETURN "DEF "+N$+A$
+END
+
+DEF t_staticdef(N$,A$)
+  IF !inMod% THEN CERR "STATIC DEF outside MODULE"
+  stmnt
+  IF debug% THEN post trace(N$)
+  PUSH statics$,ALLCAPS$(N$)
+  inDef% = TRUE
+  RETURN "COMMON DEF "+curModule$+"_"+N$+A$
+END
+
+DEF t_exportdef(N$,A$)
+  IF !inMod% THEN CERR "EXPORT DEF outside MODULE"
+  stmnt
+  IF debug% THEN post trace(N$)
+  inEx% = TRUE
+  inDef%= TRUE
+  RETURN "COMMON DEF "+curModule$+"___"+N$+A$
+END
+
+DEF t_end()
+  IF inDec% THEN RETURN sym()
+  IF inDef% THEN
+    IF !hadRet% THEN
+      IF inEx%  THEN pre rstore()
+      IF inTrc% THEN pre untrace()
+    ENDIF
+    hadRet%= FALSE
+    inTrc%= FALSE
+    inEx%= FALSE
+    inDef% = FALSE
+    RETURN "END"
+  ELSEIF inMod% THEN 
+    inMod% = FALSE
+    curModule$ = ""
+    curProto$  = ""
+    RETURN ""
+  ENDIF
+  RETURN "END"
+END
+
+DEF t_return()
+  hadRet%=TRUE
+  IF inLab% THEN
+    inLab% = FALSE
+    RETURN "RETURN:"+curLab$+"___END"
+  ELSE
+    IF inEX%  THEN pre rstore()
+    IF inTrc% THEN pre untrace()
+    RETURN "RETURN"
+  ENDIF
+END
+
+DEF t_return_val(R$)
+  hadRet%=TRUE
+  IF inEx% THEN R$= rstorev(R$)
+  IF inTrc% THEN R$= untracev(R$)
+  RETURN "RETURN "+R$
+END
+
+DEF t_new(N$,A$)
+  VAR S$ = "CALL(new("+CHR$(34)+N$+CHR$(34)+")"
+  IF LEN(A$) THEN
+    INC S$,","+A$
+  ENDIF
+  INC S$,")"
+  RETURN S$
+END
+
+DEF t_static_get(I$)
+  IF contains(statics$,ALLCAPS$(I$)) THEN
+    RETURN curModule$+"_"+I$
+  ELSE
+    RETURN ""
+  ENDIF
+END
+
+DEF t_me_set(I$,V$)
+  stmnt
+  IF !inMod% THEN CERR "ME outside MODULE"
+  RETURN "me_set "+I$+","+V$
+END
+
+DEF t_me_get(I$)
+  IF !inMod% THEN CERR "ME outside MODULE"
+  IF !inEx% THEN CERR "ME outside EXPORT"
+  RETURN "me("+I$+")"
+END
+
+DEF t_me_ref()
+  IF !inMod% THEN CERR "ME outside MODULE"
+  IF !inEx% THEN CERR "ME outside EXPORT"
+  RETURN "__me$[0]"
+END
+
+DEF t_proto_get(I$)
+  IF !inMod% THEN CERR "PROTO outside MODULE"
+  IF inEx% THEN
+    IF !LEN(curProto$) THEN CERR curModule$+" has no prototype"
+    RETURN "proto("+CHR$(34)+curProto$+CHR$(34)+","+I$+")"
+  ELSE
+    RETURN curProto$+"("+I$+")"
+  ENDIF
+END
+
+DEF t_proto_ref()
+  RETURN curProto$
+END
+
+DEF t_type_ref()
+  RETURN CHR$(34)+curModule$+CHR$(34)
+END
+
+DEF t_do(N$,A$)
+  stmnt
+  VAR R$ = "eat CALL("+N$
+  IF LEN(A$) THEN INC R$,","+A$
+  INC R$,")"
+  RETURN R$
+END
+
+DEF t_if(C$,B$,E$)
+  stmnt
+  VAR R$
+  R$ = "IF "+C$+" THEN"
+  IF LEN(B$) THEN INC R$," "+B$
+  IF LEN(E$) THEN INC R$," ELSE "+E$
+  RETURN R$
+END
+
+DEF t_elseif(C$,B$,E$)
+  stmnt
+  VAR R$
+  R$ = "ELSEIF "+C$+" THEN"
+  IF LEN(B$) THEN INC R$," "+B$
+  IF LEN(E$) THEN INC R$," ELSE "+E$
+  RETURN R$
+END
+
+DEF t_branch(C$,B$,E$)
+  stmnt
+  VAR R$
+  R$ = "IF "+C$+" GOTO "+B$
+  IF LEN(E$) THEN INC R$," ELSE "+E$
+  RETURN R$
+END
+
+DEF t_for(V$,E$,S$)
+  stmnt
+  VAR R$
+  R$ = "FOR "+V$+" TO "+E$
+  IF LEN(S$) THEN INC R$," STEP "+S$
+  RETURN R$
+END
+
+DEF t_each(O$,ARR$)
+  stmnt
+  VAR I$="__I%"
+  M$=""
+  INC M$, "VAR "+O$+CHR$(10)
+  INC M$, "__L%=LEN("+ARR$+")-1"+CHR$(10)
+  INC M$, "FOR "+I$+"=0 TO __L%"+CHR$(10)
+  RETURN M$+O$+"="+ARR$+"["+I$+"]"
+END
+
+DEF t_op(O$,L$,R$)
+  RETURN L$+O$+R$
+END
+
+DEF t_op_ID(O$,L$,R$)
+  RETURN L$+" "+O$+" "+R$
+END
+
+DEF t_command(N$,A$,O$)
+  stmnt
+  VAR R$ = N$
+  IF LEN(A$) THEN INC R$," "+A$
+  IF LEN(O$) THEN INC R$," OUT "+O$
+  RETURN R$
+END
+
+DEF t_cmd(N$,A$,O$)
+  stmnt
+  VAR R$ = "CALL "+N$
+  IF LEN(A$) THEN INC R$,","+A$
+  IF LEN(O$) THEN INC R$," OUT "+O$
+  RETURN R$
+END
+
+DEF t_func(N$,A$)
+  VAR R$ = "CALL("+N$
+  IF LEN(A$) THEN INC R$,","+A$
+  INC N$,")"
+  RETURN N$
+END
+
+DEF t_lookup(L$,I$)
+  RETURN "_("+L$+","+CHR$(34)+I$+CHR$(34)+")"
+END
+
+DEF t_group(E$)
+  RETURN "("+E$+")"
+END
+
+DEF t_unquote(S$)
+  RETURN MID$(S$,1,LEN(S$)-2)
+END
+
+DEF t_string(S$)
+  RETURN CHR$(34)+S$+CHR$(34)
+END
+
+RETURN
+
+
