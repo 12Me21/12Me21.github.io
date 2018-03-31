@@ -5,7 +5,7 @@ var KEYWORDS=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE"
 //parser
 //nextToken: function that returns the next token
 //callback: output function
-function parse(nextToken,callback){
+function parse(nextToken,callback,showErrors){
 	//current token
 	var type,text,word; //NOTE: word is only update right after next()ing. don't rely on it laaaaater
 	//stored tokens
@@ -13,8 +13,9 @@ function parse(nextToken,callback){
 	var oldType,oldText;
 	//keep track of stored tokens
 	var readNext=1;
-	//inside def
+	//inside ()-type def
 	var inDef=false;
+	var noErrors=true;
 	
 	while(1){ // <3
 		try{
@@ -26,7 +27,7 @@ function parse(nextToken,callback){
 					output("keyword");
 				//CALL
 				break;case "CALL":
-					output("keyword");
+					output("keyword call");
 					//CALL SPRITE and CALL BG
 					if(peekWord("SPRITE")||peekWord("BG")){
 						readToken("word","keyword");
@@ -63,12 +64,11 @@ function parse(nextToken,callback){
 				//DEF
 				break;case "DEF":
 					output("keyword");
-					assert(!inDef,"Nested DEF");
-					inDef=true;
 					//read function name
 					assert(readToken("word","function"),"Missing DEF name");
 					//() form
 					if(readToken("(","")){
+						inDef=true;
 						//read argument list
 						readList(readArgument,true);
 						//read )
@@ -127,8 +127,7 @@ function parse(nextToken,callback){
 					assert(readVariable(),"Missing FOR variable");
 					assert(readToken("=",""),"Missing = in FOR");
 					readExpression();
-					assert(readToken("word") && word==="TO","Missing TO in FOR");
-					output("keyword");
+					assert(readToken("word","keyword") && word==="TO","Missing TO in FOR");
 					readExpression();
 					if(readToken("word") && word==="STEP"){
 						output("keyword");
@@ -254,6 +253,7 @@ function parse(nextToken,callback){
 		}catch(error){
 			//normal parsing error
 			if(error.name==="ParseError"){
+				foundError=true;
 				//read until the end of the line
 				while(1){
 					next();
@@ -262,9 +262,17 @@ function parse(nextToken,callback){
 					}
 					output("error");
 				}
+				if(type==="linebreak")
+					callback(text.slice(0,-1),"")
+				else
+					output("")
 				//show error message
-				callback(error.message,"errormessage");
-				output(""); //line break
+				if(showErrors)
+					callback(error.message,"errormessage");
+				else
+					callback("","errormessage");
+				if(type==="linebreak")
+					output("linebreak");
 			//bad error!!!
 			}else{
 				alert("real actual error!!! "+error);
@@ -351,7 +359,7 @@ function parse(nextToken,callback){
 			//CALL()
 			break;case "CALL":
 				if(peekToken("(")){
-					output("keyword var");
+					output("keyword call");
 					readToken("(","");
 					readList(readExpression);
 					assert(readToken(")",""),"Missing \")\" in CALL()");
@@ -729,7 +737,7 @@ function tokenize(code){
 
 //"Example" usage: applying syntax highlighting to an html element.
 //Uses the type for the css class name.
-function applySyntaxHighlighting(element){
+function applySyntaxHighlighting(element,showErrors){
 	var html="",prevType;
 	//this is called for each highlightable token
 	function callback(value,type){
@@ -745,7 +753,7 @@ function applySyntaxHighlighting(element){
 		html+=escapeHTML(value);
 		prevType=type;
 	}
-	parse(tokenize(element.textContent),callback);
+	parse(tokenize(element.textContent),callback,showErrors);
 	//close last span
 	if(prevType)
 		html+="</span>";
