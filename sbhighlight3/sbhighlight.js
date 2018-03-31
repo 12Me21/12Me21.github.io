@@ -1,6 +1,8 @@
 //list of keywords
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
 var KEYWORDS=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE","ELSEIF","END","ENDIF","EXEC","FOR","GOSUB","GOTO","IF","INC","INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE"];
+var BUILTINS=["ABS","ACCEL","ACLS","ACOS","ARYOP","ASC","ASIN","ATAN","ATTR","BACKCOLOR","BACKTRACE","BEEP","BGANIM","BGCHK","BGCLIP","BGCLR","BGCOLOR","BGCOORD","BGCOPY","BGFILL","BGFUNC","BGGET","BGHIDE","BGHOME","BGLOAD","BGMCHK","BGMCLEAR","BGMCONT","BGMPAUSE","BGMPLAY","BGMPRG","BGMPRGA","BGMSET","BGMSETD","BGMSTOP","BGMVAR","BGMVOL","BGOFS","BGPAGE","BGPUT","BGROT","BGSAVE","BGSCALE","BGSCREEN","BGSHOW","BGSTART","BGSTOP","BGVAR","BIN$","BIQUAD","BQPARAM","BREPEAT","BUTTON","CEIL","CHKCALL","CHKCHR","CHKFILE","CHKLABEL","CHKVAR","CHR$","CLASSIFY","CLIPBOARD","CLS","COLOR","CONTROLLER","COPY","COS","COSH","DEG","DELETE","DIALOG","DISPLAY","DLCOPEN","DTREAD","EFCOFF","EFCON","EFCSET","EFCWET","EXP","EXTFEATURE","FADE","FADECHK","FFT","FFTWFN","FILES","FILL","FLOOR","FONTDEF","FORMAT$","GBOX","GCIRCLE","GCLIP","GCLS","GCOLOR","GCOPY","GFILL","GLINE","GLOAD","GOFS","GPAGE","GPAINT","GPRIO","GPSET","GPUTCHR","GSAVE","GSPOIT","GTRI","GYROA","GYROSYNC","GYROV","HEX$","IFFT","INKEY$","INSTR","KEY","LEFT$","LEN","LOAD","LOCATE","LOG","MAX","MICDATA","MICSAVE","MICSTART","MICSTOP","MID$","MIN","MPEND","MPGET","MPNAME$","MPRECV","MPSEND","MPSET","MPSTART","MPSTAT","OPTION","PCMCONT","PCMSTOP","PCMSTREAM","PCMVOL","POP","POW","PRGDEL","PRGEDIT","PRGGET$","PRGINS","PRGNAME$","PRGSET","PRGSIZE","PROJECT","PUSH","RAD","RANDOMIZE","RENAME","RGB","RGBREAD","RIGHT$","RINGCOPY","RND","RNDF","ROUND","RSORT","SAVE","SCROLL","SGN","SHIFT","SIN","SINH","SNDSTOP","SORT","SPANIM","SPCHK","SPCHR","SPCLIP","SPCLR","SPCOL","SPCOLOR","SPCOLVEC","SPDEF","SPFUNC","SPHIDE","SPHITINFO","SPHITRC","SPHITSP","SPHOME","SPLINK","SPOFS","SPPAGE","SPROT","SPSCALE","SPSET","SPSHOW","SPSTART","SPSTOP","SPUNLINK","SPUSED","SPVAR","SQR","STICK","STICKEX","STR$","SUBST$","TALK","TALKCHK","TALKSTOP","TAN","TANH","TMREAD","TOUCH","UNSHIFT","VAL","VISIBLE","VSYNC","WAIT","WAVSET","WAVSETA","WIDTH","XOFF","XON","XSCREEN"];
+var SYSTEMVARS=["CALLIDX","CSRX","CSRY","CSRZ","DATE$","ERRLINE","ERRNUM","ERRPRG","FREEMEM","HARDWARE","MAINCNT","MICPOS", "MICSIZE","MILLISEC","MPCOUNT","MPHOST","MPLOCAL","PCMPOS","PRGSLOT","RESULT","SYSBEEP","TABSTEP","TIME$","VERSION"];
 
 //parser
 //nextToken: function that returns the next token
@@ -9,8 +11,8 @@ function parse(nextToken,callback,showErrors){
 	//current token
 	var type,text,word; //NOTE: word is only update right after next()ing. don't rely on it laaaaater
 	//stored tokens
-	var newType,newText;
-	var oldType,oldText;
+	var newType,newText,newWord;
+	var oldType,oldText,oldWord;
 	//keep track of stored tokens
 	var readNext=1;
 	//inside ()-type def
@@ -65,7 +67,7 @@ function parse(nextToken,callback,showErrors){
 				break;case "DEF":
 					output("keyword");
 					//read function name
-					assert(readToken("word","function"),"Missing DEF name");
+					assert(readToken("word","declaration function"),"Missing DEF name");
 					//() form
 					if(readToken("(","")){
 						inDef=true;
@@ -87,7 +89,7 @@ function parse(nextToken,callback,showErrors){
 				break;case "VAR":
 					//assignment form
 					if(peekToken("(")){
-						output("keyword var");
+						output("var function");
 						readToken("(","");
 						assert(readExpression(),"Missing var name");
 						assert(readToken(")",""),"missing )")
@@ -283,25 +285,29 @@ function parse(nextToken,callback,showErrors){
 	
 	//check if next token is of a specific type
 	function peekToken(wantedType){
-		var prevType=type,prevText=text;
+		var prevType=type,prevText=text,prevWord=word;
 		next();
 		readNext=-1;
 		newType=type;
 		newText=text;
+		newWord=word
 		type=prevType;
 		text=prevText;
+		word=prevWord;
 		return newType===wantedType;
 	}
 	//check if next token is of a specific type
 	function peekWord(wantedWord){
-		var prevType=type,prevText=text;
+		var prevType=type,prevText=text,prevWord=word;
 		next();
 		readNext=-1;
 		newType=type;
 		newText=text;
+		newWord=word;
 		type=prevType;
 		text=prevText;
-		return newType==="word" && newText.trimLeft().toUpperCase()===wantedWord;
+		word=prevWord;
+		return newType==="word" && newWord.trimLeft().toUpperCase()===wantedWord;
 	}
 	
 	//Try to read a specific token
@@ -424,7 +430,7 @@ function parse(nextToken,callback,showErrors){
 	function readVar(){
 		//"function" form of VAR
 		if(peekToken("(")){
-			output("keyword var");
+			output("var function");
 			readToken("(","");
 			assert(readExpression(),"Missing VAR argument");
 			assert(readToken(")",""),"Missing \")\" in VAR()");
@@ -485,7 +491,18 @@ function parse(nextToken,callback,showErrors){
 	}
 	
 	function output(type){
-		callback(text,type);
+		if(type==="function"){
+			if(BUILTINS.indexOf(word)>=0)
+				callback(text,"builtin function");
+			else
+				callback(text,type);
+		}else if(type==="variable"){
+			if(SYSTEMVARS.indexOf(word)>=0)
+				callback(text,"builtin variable");
+			else
+				callback(text,type);
+		}else
+			callback(text,type);
 	}
 	
 	//I forgot how this works...
@@ -494,10 +511,11 @@ function parse(nextToken,callback,showErrors){
 			var items=nextToken();
 			type=items.type;
 			text=items.text;
-			word=items.word; //careful!
+			word=items.word;
 		}else if(readNext===-1){
 			type=newType;
 			text=newText;
+			word=newWord;
 			readNext=1;
 		//I don't think this ever happens?
 		}else if(readNext===-2)

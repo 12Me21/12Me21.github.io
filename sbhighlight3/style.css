@@ -34,7 +34,7 @@ you can use this to display line break symbols!
 	color:#A5ADA5;
 }
 .function{
-	color:#7B7BF7;
+	color:#BC7BFB;
 }
 .keyword{
 	color:#7BB5F7;
@@ -42,9 +42,9 @@ you can use this to display line break symbols!
 }
 .variable{
 	color:#FFDDEE;
-	font-style: italic;
-	margin-right: 0.1em;
-	margin-left: -0.1em;
+	font-style:italic;
+	margin-right:0.1em;
+	margin-left:-0.1em;
 }
 .operator{
 	color:#FFFFBB;
@@ -69,4 +69,13 @@ you can use this to display line break symbols!
 .errormessage::after{
 	content: "]";
 	text-decoration:none;
+}
+
+.builtin.variable{
+	color:#DDDDFF;
+	font-weight:bold;
+}
+.builtin.function{
+	color:#7B7BF7;
+	font-weight:bold;
 }
