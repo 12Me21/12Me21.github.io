@@ -1,0 +1,366 @@
+'/-----------------
+'| Structs Library |
+'|Allows  creation,|
+'|read / write, and|
+'|load / store   of|
+'|structs  with  no|
+'|extra libs.      |
+'|   Version 1.1   |
+'|  ©∞ Alex Craik  |
+'|     "snail_"    |
+'-----------------/
+COMMON DEF STRUCT(N$)
+ VAR I%,LABEL$
+ VAR T$,F$,MSG$,C$
+ DIM OUT$[0]
+ 
+ 'Search for structs
+ IF !CHKLABEL(@STRUCT_+N$,1) THEN
+  FOR I%=0 TO 3
+   LABEL$=FORMAT$("%D:@STRUCT_%S",I%,N$)
+   IF CHKLABEL(LABEL$,1) THEN BREAK
+  NEXT
+  IF I%==4 THEN
+   MSG$=FORMAT$("No struct definition %S found",N$)
+   _ERROR MSG$,OUT$
+   RETURN OUT$
+  ENDIF
+ ELSE
+  LABEL$=@STRUCT_+N$
+ ENDIF
+ 
+ RESTORE LABEL$
+ 
+ REPEAT
+  READ T$
+  IF T$=="END" THEN
+   CONTINUE
+  ELSEIF T$=="INT" THEN
+   C$=";%00000000"
+  ELSEIF T$=="FLOAT" THEN
+   C$=";#000000000000000000000000.00000000000000000"
+  ELSEIF T$=="STRING" THEN
+   C$=";$"
+  ELSE
+   MSG$=FORMAT$("Unknown type name %S",T$)
+   _ERROR MSG$,OUT$
+   RETURN OUT$
+  ENDIF
+  
+  READ F$
+  IF !_IV(F$) THEN
+   MSG$=FORMAT$("Invalid field name %S",F$)
+   _ERROR MSG$,S
+  ENDIF
+  PUSH OUT$,F$+C$
+ UNTIL T$=="END"
+ 
+ SORT OUT$
+ UNSHIFT OUT$,N$
+ RETURN OUT$
+END
+
+COMMON DEF INSTANCEOF(A[],N$)
+ IF !LEN(A) THEN
+  RETURN #FALSE
+ ELSE
+  RETURN A[0]==N$
+ ENDIF
+END
+
+COMMON DEF STYPE$(A[])
+ IF !LEN(A) THEN
+  _ERROR "Not a struct.",A
+  RETURN ""
+ ENDIF
+ RETURN A[0]
+END
+
+COMMON DEF FIELD(A[],N$)
+ VAR I%,F$,T$
+ 
+ I%=_FIDX(A,N$)
+ 
+ T$=_T$(A[I%])
+ IF T$=="%" THEN
+  RETURN VAL("&H"+RIGHT$(A[I%],8))
+ ELSEIF T$=="#" THEN
+  RETURN VAL(RIGHT$(A[I%],42))
+ ELSEIF T$=="$" THEN
+  RETURN MID$(A[I%],LEN(N$)+2,2147483647)
+ ELSE
+  MSG$="Field "+N$+" has invalid typecode"
+  _ERROR MSG$,A
+ ENDIF
+END
+
+COMMON DEF SET A[],N$,V
+ VAR I%,T$,MSG$
+ 
+ I%=_FIDX(A,N$)
+ 
+ T$=_T$(A[I%])
+ IF T$=="%" THEN
+  A[I%]=FORMAT$("%S;%%%08X",N$,V)
+ ELSEIF T$=="#" THEN
+  A[I%]=FORMAT$("%S;#%042.17F",N$,V)
+ ELSEIF T$=="$" THEN
+  A[I%]=N$+";$"+V
+ ELSE
+  RETURN
+ ENDIF
+END
+
+COMMON DEF TYPEOF$(S[],N$)
+ VAR I%,T$,MSG$
+ 
+ I%=_FIDX(S,N$)
+ 
+ T$=_T$(S[I%])
+ IF T$=="%" THEN
+  RETURN "INT"
+ ELSEIF T$=="#" THEN
+  RETURN "FLOAT"
+ ELSEIF T$=="$" THEN
+  RETURN "STRING"
+ ELSE
+  MSG$="Field "+N$+" has invalid typecode"
+  _ERROR MSG$,A
+ ENDIF
+END
+
+'TODO: Redo for better safety
+COMMON DEF TOSTRING$(A[])
+ VAR S$=CHR$(10)
+ VAR O$="STRUCT"+S$+"11"+S$
+ VAR A$,B$,I%,D%
+ 
+ INC O$,A[0]+S$
+ FOR I%=1 TO LEN(A)-1
+  IF _T$(A[I%])=="$" THEN
+   D%=INSTR(A[I%],";")
+   A$=LEFT$(A[I%],D%+1)
+   B$=RIGHT$(A[I%],LEN(A[I%])-LEN(A$))
+   INC O$,A$+_E$(B$)+S$
+  ELSE
+   INC O$,A[I%]+S$
+  ENDIF
+ NEXT
+ RETURN O$
+END
+
+COMMON DEF PARSE(I$)
+ VAR S$=CHR$(10)
+ VAR IDX%,PIDX%
+ VAR V%,I%,P%
+ 'look at my
+ VAR D%,A$,B$
+ DIM L$[0]
+ DIM O$[0]
+ 
+ 'split I$ at S$
+ REPEAT
+  I%=INSTR(P%,I$,S$)
+  IF I%<0 THEN CONTINUE
+  PUSH L$,MID$(I$,P%,I%-P%)
+  P%=I%+1
+ UNTIL I%<0
+ 
+ IF L$[0]!="STRUCT" THEN
+  _ERROR "String does not encode struct.",O$
+  RETURN O$
+ ENDIF
+ 'get version; not yet used
+ V%=VAL("&H"+L$[0])
+ 
+ FOR I%=2 TO LEN(L$)-1
+  IF _T$(L$[I%])=="$" THEN
+   D%=INSTR(L$[I%],";")
+   A$=LEFT$(L$[I%],D%+1)
+   B$=RIGHT$(L$[I%],LEN(L$[I%])-LEN(A$))
+   PUSH O$,A$+_U$(B$)
+  ELSE
+   PUSH O$,L$[I%]
+  ENDIF
+ NEXT
+ 
+ RETURN O$
+END
+
+'Library helper functs
+'DON'T USE THESE
+'
+'Is Valid name
+DEF _IV(N$)
+ VAR IV$=";%#$"'+CHR$(10)
+ RETURN INSTR(N$,IV$)<0
+END
+
+DEF _T$(F$)
+ RETURN F$[INSTR(F$,";")+1]
+END
+
+'ERROR dialog
+DEF _ERROR MSG$,S$[]
+ VAR OX%=CSRX
+ VAR OY%=CSRY
+ VAR OZ%=CSRZ
+ VAR B%
+ 
+ B%=DIALOG(FORMAT$(_D$(@_ERR),CHR$(34)+MSG$+CHR$(34)),-5,"Structs Library Error")
+ 
+ IF B%==128 THEN
+  STOP
+ ELSEIF B%==129 THEN
+  'do l8r
+  STOP
+ ELSEIF B%==136 THEN
+  'do l8r
+  STOP
+ ELSEIF B%==137 THEN
+  IF DIALOG(_D$(@_CONF),1,"Return to program?")   THEN STOP ELSE RETURN
+ ELSE
+  'oup
+ ENDIF
+ 
+ RETURN
+ 
+ @_ERR
+ DATA "An error has occurred."
+ DATA "%S"
+ DATA "If you are a user of this program and"
+ DATA "NOT the developer, it is recommended"
+ DATA "that you export the error log and send"
+ DATA "it to them so they can sort it out."
+ DATA ""
+ DATA "bort"
+ DATA "Deug"
+ DATA "Save og"
+ DATA "eturn"
+ DATA "/end/"
+
+ @_CONF
+ DATA "Returning from an error is not"
+ DATA "safe and the program will probably"
+ DATA "not work properly. It could also cause"
+ DATA "additional errors that wouldn't occur"
+ DATA "otherwise."
+ DATA "Continue?"
+ DATA "/end/"
+END
+
+'Field InDeX
+DEF _FIDX(A[],N$)
+ VAR I%,LO%,HI%
+ VAR C$,L%=LEN(N$)
+ 
+ 'binary search
+ LO%=1
+ HI%=LEN(A)-1
+ WHILE LO%<=HI%
+  I%=LO%+((HI%-LO%) DIV 2)
+  C$=LEFT$(A[I%],L%)
+  IF C$>N$ THEN
+   HI%=I%-1
+  ELSEIF C$<N$ THEN
+   LO%=I%+1
+  ELSE
+   RETURN I%
+  ENDIF
+ WEND
+ 
+ MSG$=FORMAT$("No field named %S exists",N$)
+ _ERROR MSG$,S
+ RETURN 0
+END
+
+DEF _D$(L$)
+ VAR S$,O$
+ RESTORE L$
+  
+ REPEAT
+  READ S$
+  IF S$=="" THEN
+   INC O$, CHR$(10)
+   CONTINUE
+  ENDIF
+  IF S$=="/end/" THEN BREAK
+  IF S$[LEN(S$)-1]!="" THEN
+   INC S$,CHR$(10)
+  ELSE
+   S$[LEN(S$)-1]=""
+  ENDIF
+  INC O$,S$
+ UNTIL S$=="/end/"
+ 
+ RETURN O$
+END
+
+'Escape string
+DEF _E$(IN$)
+ VAR U$=""+CHR$(10)+CHR$(13)+CHR$(34)
+ VAR E$="nrq"
+ VAR NEW$=IN$
+ VAR IDX%,I%
+ 
+ FOR I%=0 TO 3
+  IDX%=0
+  REPEAT
+   IDX%=INSTR(IDX%,NEW$,U$[I%])
+   IF IDX%!=-1 THEN
+    NEW$[IDX%]=""+E$[I%]
+    INC IDX%,2
+   ENDIF
+  UNTIL IDX%==-1
+ NEXT
+ RETURN NEW$
+END
+
+'Unescape string
+DEF _U$(IN$)
+ VAR IDX%
+ VAR C$
+ VAR H$
+ VAR NEW$=IN$
+ 
+ IDX%=INSTR(NEW$,"")
+ WHILE IDX%!=-1
+  NEW$[IDX%]=""
+  C$=NEW$[IDX%]
+  IF C$=="n" THEN
+   NEW$[IDX%]=CHR$(10)
+  ELSEIF C$=="s" THEN
+   'Do nothing
+  ELSEIF C$=="r" THEN
+   NEW$[IDX%]=CHR$(13)
+  ELSEIF C$=="q" THEN
+   NEW$[IDX%]=CHR$(34)
+  ELSEIF C$=="x" THEN
+   NEW$[IDX%]=""
+   H$=""
+   WHILE LEN(NEW$)>IDX%&&INSTR("0123456789abcdefABCDEF",NEW$[IDX%])>-1&&LEN(H$)<4
+    PUSH H$,NEW$[IDX%]
+    NEW$[IDX%]=""
+   WEND
+   IF !LEN(H$) THEN
+    BEEP 2
+    ?"Invalid escape sequence"
+    STOP
+   ELSE
+    IF IDX%==LEN(NEW$) THEN
+     PUSH NEW$,CHR$(VAL("&H"+H$))
+    ELSE
+     NEW$[IDX%]=CHR$(VAL("&H"+H$))+NEW$[IDX%]
+    ENDIF
+   ENDIF
+  ELSE
+   BEEP 2
+   ?"Invalid escape sequence"
+   STOP
+  ENDIF
+  IDX%=INSTR(IDX%+1,NEW$,"")
+ WEND
+ 
+ RETURN NEW$
+END
+
