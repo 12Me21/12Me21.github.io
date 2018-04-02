@@ -365,7 +365,7 @@ function parse(nextToken,callback,showErrors){
 			//CALL()
 			break;case "CALL":
 				if(peekToken("(")){
-					output("keyword call");
+					output("function call");
 					readToken("(","");
 					readList(readExpression);
 					assert(readToken(")",""),"Missing \")\" in CALL()");
