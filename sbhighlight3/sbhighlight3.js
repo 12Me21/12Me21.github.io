@@ -1,3 +1,8 @@
+//IMPORTANT:
+//This is an old version, use sbhighlight.js instead
+//
+
+
 //list of keywords
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
 var keywords=["BREAK","CALL","COMMON","CONTINUE","DATA","DEC","DEF","DIM","ELSE","ELSEIF","END","ENDIF","EXEC","FOR","GOSUB","GOTO","IF","INC","INPUT","LINPUT","NEXT","ON","OUT","PRINT","READ","REM","REPEAT","RESTORE","RETURN","STOP","SWAP","THEN","UNTIL","USE","VAR","WEND","WHILE"];
