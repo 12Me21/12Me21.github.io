@@ -1,3 +1,6 @@
+**DEPRECATED** 
+**please use 12Me21.github.io/sbhighlight2/ instead**
+
 ### Usage:
 ```javascript
 applySyntaxHighlighting(codeElement);
