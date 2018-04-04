@@ -1,4 +1,4 @@
-**DEPRICATED**
+**DEPRECATED** 
 **please use 12Me21.github.io/sbhighlight/ instead**
 
 sbhighlight.js - highlighter
