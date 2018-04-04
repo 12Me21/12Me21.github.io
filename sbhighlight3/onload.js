@@ -26,7 +26,7 @@ if(hash){
 		//fixes yen and backslash
 		case "t":
 			load(hash.substr(2),function(text){
-				$input.value=text.replace(/\\/g,"¥").replace(/\u00FF/g,"\\");
+				$input.value=text.replace(/\\/g,"¥").replace(/\u007F/g,"\\");
 				$button.click();
 			});
 		break;
