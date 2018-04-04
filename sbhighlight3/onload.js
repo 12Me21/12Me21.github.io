@@ -22,5 +22,13 @@ if(hash){
 			$input.value=hash.substr(2);
 			$button.click();
 		break;
+		//SB file mode.
+		//fixes yen and backslash
+		case "t":
+			load(hash.substr(2),function(text){
+				$input.value=text.replace(/\\/g,"¥").replace(/\u00FF/g,"\\");
+				$button.click();
+			});
+		break;
 	}
 }
