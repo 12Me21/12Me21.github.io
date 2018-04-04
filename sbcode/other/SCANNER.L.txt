@@ -1,0 +1,45 @@
+%option case-insensitive
+%{
+DEF SCNEXT
+ IF SCTYPE==T_EOF THEN RETURN
+ SCCOL=SCCOL+LEN(SCTOK$)
+ 
+ '次の 行を よむ
+ IF SCTYPE==T_EOL THEN
+  IF SCROW>=SCROWMAX THEN
+   SCTYPE=T_EOF
+   SCTOK$=""
+   RETURN
+  ENDIF
+  INC SCROW
+  SCCOL=0
+  SCREST$=TOUPPER$(PRGGET$())
+ ENDIF
+ 
+ SCNEXTIMPL SCREST$,SCCOL OUT SCCOL
+END
+
+%}
+%YY_DECL DEF SCNEXTIMPL S$,PSP OUT SP:VAR EP:SP=PSP
+%%
+[*/]|DIV|MOD    SCTYPE=0:SCTOK$=T$:RETURN
+[+-]            SCTYPE=1:SCTOK$=T$:RETURN
+<<|>>           SCTYPE=2:SCTOK$=T$:RETURN
+==|!=|<|<=|>|>= SCTYPE=3:SCTOK$=T$:RETURN
+AND|OR|XOR      SCTYPE=4:SCTOK$=T$:RETURN
+&&|"||"         SCTYPE=5:SCTOK$=T$:RETURN
+NOT|IF|ELSEIF|ELSE|ENDIF|FOR|ON|COMMON|DEF|VAR|DIM|PRINT|INPUT|LINPUT|THEN|OUT                              SCTYPE=T_KEY:SCTOK$=T$:RETURN
+n              SCTYPE=T_EOL:SCTOK$=T$:RETURN
+x22[^x22n]*x22?                                           SCTYPE=T_STR:SCTOK$=T$:RETURN
+@[_A-Z0-9]*     SCTYPE=T_LBL:SCTOK$=T$:IF EP-SP<2 THEN SCTYPE=T_ERR:CALL ERR$,SCROW,SP,1,"ラベルに あやまりが あります":ENDIF:RETURN
+#[_A-Z0-9]*     SCTYPE=T_CST:SCTOK$=T$:IF EP-SP<2 THEN SCTYPE=T_ERR:CALL ERR$,SCROW,SP,1,"ていすうに あやまりが あります":ENDIF:RETURN
+[0-9]+(.[0-9]*)?#?|.[0-9]*#?                                SCTYPE=T_NUM:SCTOK$=T$:RETURN
+&H[0-9A-F]*     SCTYPE=T_NUM:SCTOK$=T$:IF EP-SP<2 THEN SCTYPE=T_ERR:CALL ERR$,SCROW,SP,1,"16しんすうに あやまりが あります":ENDIF:RETURN
+&B[01]*         SCTYPE=T_NUM:SCTOK$=T$:IF EP-SP<2 THEN SCTYPE=T_ERR:CALL ERR$,SCROW,SP,1,"2しんすうに あやまりが あります":ENDIF:RETURN
+[][,:;()?!=]   SCTYPE=T_SYM:SCTOK$=T$:RETURN
+REM([^_A-Z0-9n].*)? 
+'.*                  
+[ ]                  
+[_A-Z][_A-Z0-9]*[%$#]?                                        SCTYPE=T_LIT:SCTOK$=T$:RETURN
+[^][_A-Z0-9+*/,:;()?.!@& '#nx22-]+                         SCTYPE=T_ERR:SCTOK$=T$:CALL ERR$,SCROW,SP,LEN(T$),T$+" という 記号は つかえません"
+%%

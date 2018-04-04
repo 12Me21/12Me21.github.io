@@ -1,0 +1,1132 @@
+OPTION STRICT
+OPTION DEFINT
+
+VAR RXOPT_IC=1
+
+VAR BEGIN$=CHR$(&HFFFD)
+VAR END$  =CHR$(&HFFFE)
+VAR ALL$  =CHR$(&HFFFF)
+VAR NONE=&HFFFF
+
+VAR CTLC$="nrt"
+DIM CTLN[LEN(CTLC$)]
+COPY CTLN,@CTLN
+@CTLN
+DATA 10,13,9
+
+VAR KVSSEP$=CHR$(0)
+
+'GOTO @TEST
+
+'---
+'メイン
+'---
+VAR FILE$
+FILE$=SELECTUI("変換するLEXファイル名",LEXFILES$(),14)
+COLOR #TWHITE,0:CLS
+IF FILE$=="" THEN END
+?"変換中……"
+LOAD "PRG2:"+FILE$,FALSE
+LEX2PRG 2,3
+FILE$=DIALOG(LEFT$(FILE$,10)+".PRG","出力ファイル名")
+IF RESULT>=0 THEN SAVE"PRG3:"+FILE$
+END
+
+'----------
+'LEXファイル 一覧
+'----------
+DEF LEXFILES$()
+ VAR I:DIM F$[0]
+ FILES "TXT:",F$
+ FOR I=LEN(F$)-1 TO 0 STEP -1
+  IF RIGHT$(F$[I],2)==".L" THEN
+   F$[I]=DELLEFT$(F$[I],1)
+  ELSE
+   IF I!=LEN(F$)-1 THEN
+    COPY F$,I,F$,I+1,LEN(F$)-I-1
+   ENDIF
+   IGNORE POP(F$)
+  ENDIF
+ NEXT
+ RETURN F$
+END
+
+'--
+'選択
+'--
+DEF SELECTUI(TITLE$,F$[],L)
+ VAR I,CP=0,TP=0
+ VAR POS=(48-L) DIV 2
+ VAR SIZE=MIN(25,LEN(F$))
+ 
+ COLOR 15,0:CLS
+ ?" "*POS;"";""*L;""
+ ?" "*POS;"";TITLE$;" "*(L-LEN(TITLE$));""
+ ?" "*POS;"";""*L;""
+ FOR I=1 TO SIZE
+  ?" "*POS;"";" "*L;""
+ NEXT
+ ?" "*POS;"";""*L;""
+ ?" "*POS;" :選択  :キャンセル";
+ 
+ BREPEAT 0,15,4
+ BREPEAT 1,15,4
+ WHILE TRUE
+  VAR B=BUTTON(1)
+  IF B==#UP&&CP>0 THEN DEC CP
+  IF B==#DOWN&&CP<LEN(F$)-1 THEN INC CP
+  IF B==#A THEN RETURN F$[CP]
+  IF B==#B THEN RETURN ""
+  IF CP-TP<2&&TP>0 THEN TP=MAX(0,CP-2)
+  IF CP-TP>SIZE-3&&TP<LEN(F$)-SIZE THEN
+   TP=MIN(LEN(F$)-SIZE,CP-SIZE+3)
+  ENDIF
+  FOR I=TP TO MIN(TP+SIZE,LEN(F$))-1
+   IF I==CP THEN COLOR #TWHITE,#TBLUE ELSE COLOR #TWHITE,0
+   LOCATE POS+1,I-TP+3
+   ?F$[I];" "*(L-LEN(F$[I]))
+  NEXT
+  VSYNC
+ WEND
+END
+
+'---------------
+'LEXを プログラムに 変換
+'---------------
+DEF LEX2PRG SL1,SL2
+ DIM PREV$[0],DEF$[0],RULE$[0],NEXT$[0]
+ VAR I,LINE$,IC=FALSE,IN=FALSE
+ VAR DECL$="COMMON DEF YYLEX S$,SP OUT EP"
+ PRGEDIT SL1
+ WHILE TRUE
+  LINE$=PRGGET$()
+  IF LINE$=="" THEN BREAK
+  LINE$=DELRIGHT$(LINE$,1)
+  IF LINE$=="%%" THEN BREAK
+  IF LINE$=="%{" THEN IN=TRUE:CONTINUE
+  IF LINE$=="%}" THEN IN=FALSE:CONTINUE
+  IF LEFT$(LINE$,8)=="%option " THEN
+   IC=INSTR(DELLEFT$(LINE$,7)+" "," case-insensitive ")>=0
+   CONTINUE
+  ENDIF
+  IF LEFT$(LINE$,9)=="%YY_DECL " THEN
+   DECL$=DELLEFT$(LINE$,9)
+   CONTINUE
+  ENDIF
+  IF IN THEN
+   PUSH PREV$,LINE$
+  ELSE
+   I=INSTR(LINE$," ")
+   IF I>0 THEN KVSSET DEF$,LEFT$(LINE$,I),TRIMLEFT$(DELLEFT$(LINE$,I))
+  ENDIF
+ WEND
+ WHILE TRUE
+  LINE$=PRGGET$()
+  IF LINE$=="" THEN BREAK
+  LINE$=DELRIGHT$(LINE$,1)
+  IF LINE$=="%%" THEN BREAK
+  IF LINE$=="" THEN CONTINUE
+  PUSH RULE$,LINE$
+ WEND
+ WHILE TRUE
+  LINE$=PRGGET$()
+  IF LINE$=="" THEN BREAK
+  PUSH NEXT$,DELRIGHT$(LINE$,1)
+ WEND
+ 
+ PRGEDIT SL2
+ PRGDEL -1
+ FOR I=0 TO LEN(PREV$)-1
+  PRGSET PREV$[I]
+ NEXT
+ RULE2PRG RULE$,DEF$,IC,DECL$
+ FOR I=0 TO LEN(NEXT$)-1
+  PRGSET NEXT$[I]
+ NEXT
+END
+
+'---------------
+'正規表現を プログラムに 変換
+'---------------
+DEF RULE2PRG R$[],D$[],IC,DECL$
+ DIM NFA$[0],ACT$[LEN(R$)]
+ VAR I,SS$,ES$
+ FOR I=0 TO LEN(R$)-1
+  SS$=SS$+CHR$(LEN(NFA$))
+  VAR P=DIVRX(R$[I])
+  RE2NFA NFA$,LEFT$(R$[I],P),D$,IC
+  ACT$[I]=TRIMLEFT$(DELLEFT$(R$[I],P))
+  ES$=ES$+CHR$(LEN(NFA$)-1)
+ NEXT
+ PUSH NFA$,"E"+SS$
+ DIM DC$[0],DS$[0],DE[0]
+ NFA2DFA NFA$,ES$,DC$,DS$,DE
+ DIM OC$[0],OS$[0],OE[0]
+ DFAOPT DC$,DS$,DE,OC$,OS$,OE
+ DIM REF[LEN(OC$)]
+ DFAREF OC$,OS$,REF
+ DFA2PRG OC$,OS$,OE,REF,ACT$,DECL$
+END
+
+'正規表現を 分離
+DEF DIVRX(R$)
+ VAR I,L=LEN(R$)-1,IN=0
+ FOR I=0 TO L
+  VAR C$=R$[I]
+  IF C$==""&&I!=L THEN
+   INC I
+  ELSEIF C$==" "&&IN==0 THEN
+   BREAK
+  ELSEIF C$=="["&&IN==0 THEN
+   IN=2
+  ELSEIF C$=="]"&&IN==2 THEN
+   IN=0
+  ELSEIF C$==CHR$(34)&&IN<=1 THEN
+   IN=!IN
+  ENDIF
+ NEXT
+ RETURN I
+END
+
+'-------------
+'正規表現を NFAに 変換
+'-------------
+DEF RE2NFA NFA$[],R$,D$[],OPT
+ VAR ISEND=FALSE
+ NEWST NFA$
+ IF R$!=""&&R$[0]=="^" THEN
+  R$=DELLEFT$(R$,1)
+  NFA$[LEN(NFA$)-1]="W"+CHR$(LEN(NFA$))+"^"
+  NEWST NFA$
+ ENDIF
+ IF R$!=""&&R$[LEN(R$)-1]=="$" THEN
+  R$=DELRIGHT$(R$,1)
+  ISEND=TRUE
+ ENDIF
+ R$=REOR(NFA$,R$,D$)
+ IF ISEND THEN
+  NFA$[LEN(NFA$)-1]="W"+CHR$(LEN(NFA$))+"$"
+  NEWST NFA$
+ ENDIF
+ IF !(OPT AND RXOPT_IC) THEN RETURN
+ VAR I,J
+ FOR I=LEN(NFA$)-1 TO 0 STEP -1
+  IF INSTR("TN",NFA$[I][0])<0 THEN CONTINUE
+  VAR S$=DELLEFT$(NFA$[I],2)
+  FOR J=LEN(S$)-1 TO 0 STEP -1
+   VAR C$=S$[J]
+   IF "A"<=C$&&C$<="Z" THEN
+    PUSH S$,CHR$(ASC(C$)+32)
+   ELSEIF "a"<=C$&&C$<="z" THEN
+    PUSH S$,CHR$(ASC(C$)-32)
+   ENDIF
+  NEXT
+  NFA$[I]=LEFT$(NFA$[I],2)
+  INC NFA$[I],STRUNIQ$(STRSORT$(S$))
+ NEXT
+END
+
+'"|"を 変換
+DEF REOR(NFA$[],R$,D$[])
+ VAR S=LEN(NFA$)-1,S1,E1,S2,E2
+ R$=RENEXT(NFA$,R$,D$)
+ WHILE R$!=""&&R$[0]=="|"
+  R$=DELLEFT$(R$,1)
+  SWAPST NFA$,S OUT S1,E1,S2
+  R$=RENEXT(NFA$,R$,D$)
+  E2=LEN(NFA$)-1
+  INC NFA$[S],CHR$(S1)+CHR$(S2)
+  INC NFA$[E1],CHR$(E2)
+ WEND
+ RETURN R$
+END
+
+'文字の ならびを 変換
+DEF RENEXT(NFA$[],R$,D$[])
+ R$=REANY(NFA$,R$,D$)
+ WHILE R$!=""&&INSTR(")|",R$[0])<0
+  R$=REANY(NFA$,R$,D$)
+ WEND
+ RETURN R$
+END
+
+'"?","*","+","{}"を 変換
+DEF REANY(NFA$[],R$,D$[])
+ VAR S=LEN(NFA$)-1
+ VAR NR$=RETOK(NFA$,R$,D$)
+ WHILE NR$!=""
+  '? = {0,1}
+  IF NR$[0]=="?" THEN
+   REANY2 NFA$,"",D$,0,1,S
+   NR$=DELLEFT$(NR$,1)
+  '* = {0,}
+  ELSEIF NR$[0]=="*" THEN
+   REANY2 NFA$,"",D$,0,-1,S
+   NR$=DELLEFT$(NR$,1)
+  '+ = {1,}
+  ELSEIF NR$[0]=="+" THEN
+   REANY2 NFA$,"",D$,1,-1,S
+   NR$=DELLEFT$(NR$,1)
+  '{N1,N2}
+  ELSEIF NR$[0]=="{" THEN
+   IF LEN(NR$)<3||!(NR$[1]==","||"0"<=NR$[1]&&NR$[1]<="9") THEN BREAK
+   VAR P1=INSTR(NR$,",")
+   IF P1<0 THEN P1=LEN(NR$)
+   VAR P2=INSTR(NR$,"}")
+   IF P2<0 THEN P2=LEN(NR$)
+   VAR N1,N2
+   IF P1>=P2 THEN
+    N1=MAX(0,VAL(MID$(NR$,1,P2-1))):N2=N1
+   ELSE
+    N1=MAX(0,VAL(MID$(NR$,1,P1-1)))
+    IF P2==P1+1 THEN
+     N2=-1
+    ELSE
+     N2=MAX(0,VAL(MID$(NR$,P1+1,P2-P1-1)))
+    ENDIF
+   ENDIF
+   REANY2 NFA$,DELRIGHT$(R$,LEN(NR$)),D$,N1,N2,S
+   NR$=DELLEFT$(NR$,P2+1)
+  ELSE
+   BREAK
+  ENDIF
+ WEND
+ RETURN NR$
+END
+
+'{N1,N2}を 変換
+DEF REANY2 NFA$[],R$,D$,N1,N2,S
+ VAR I,E,S1,E1
+ '{N1,}(上限 なしの くりかえし)
+ IF N2<0 THEN
+  S=REANY3(NFA$,R$,D$,MAX(0,N1-1),S)
+  SWAPST NFA$,S OUT S1,E1,E
+  INC NFA$[S],CHR$(S1)
+  INC NFA$[E1],CHR$(S1)+CHR$(E)
+  IF N1==0 THEN INC NFA$[S],CHR$(E)
+ '{N1,N1}(指定回数)
+ ELSEIF N1>=N2 THEN
+  S=REANY3(NFA$,R$,D$,MAX(0,N1-1),S)
+  IF N1==0 THEN
+   NFA$[S]="E"+CHR$(E1)
+  ENDIF
+ '{N1,N2}(上限 ありの くりかえし)
+ ELSE
+  S=REANY3(NFA$,R$,D$,MAX(0,N1-1),S)
+  DIM SS[0]
+  IF N1==0 THEN
+   PUSH SS,S
+   SWAPST NFA$,S OUT S1,E1,E
+   INC NFA$[S],CHR$(S1)
+   INC NFA$[E1],CHR$(E)
+   N1=1
+  ENDIF
+  FOR N2=N2-N1 TO 1 STEP -1
+   S=LEN(NFA$)-1
+   PUSH SS,S
+   INC NFA$[S],CHR$(S+1)
+   NEWST NFA$
+   VAR TR$=REANY(NFA$,R$,D$)
+  NEXT
+  E=LEN(NFA$)-1
+  FOR I=LEN(SS)-1 TO 0 STEP -1
+   INC NFA$[SS[I]],CHR$(E)
+  NEXT
+ ENDIF
+END
+
+'必要なだけ パターンを つなげる
+DEF REANY3(NFA$[],R$,D$[],N3,S)
+ FOR N3=N3 TO 1 STEP -1
+  S=LEN(NFA$)-1
+  VAR TR$=REANY(NFA$,R$,D$)
+ NEXT
+ RETURN S
+END
+
+'1文字変換
+DEF RETOK(NFA$[],R$,D$[])
+ VAR S=LEN(NFA$)-1,E,I
+ '空文字
+ IF R$==""||INSTR(")?*+|",R$[0])>=0 THEN
+  RETURN R$
+ ENDIF
+ VAR C$=R$[0]:R$=DELLEFT$(R$,1)
+ '()
+ IF C$=="(" THEN
+  R$=REOR(NFA$,R$,D$)
+  IF R$!=""&&R$[0]==")" THEN
+   R$=DELLEFT$(R$,1)
+  ENDIF
+  RETURN R$
+ '[]
+ ELSEIF C$=="[" THEN
+  RETURN RESEL(NFA$,R$)
+ '{}
+ ELSEIF C$=="{" THEN
+  I=INSTR(R$,"}")
+  IF I>=0 THEN
+   VAR S$=KVSGET$(D$,LEFT$(R$,I),"")
+   IF S$!="" THEN
+    IGNORE REOR(NFA$,S$,D$)
+    RETURN DELLEFT$(R$,I+1)
+   ENDIF
+  ENDIF
+ '.
+ ELSEIF C$=="." THEN
+  E=S+1
+  NEWST NFA$
+  NFA$[S]="N"+CHR$(E)+CHR$(10)
+  RETURN R$
+ '
+ ELSEIF C$==""&&R$!="" THEN
+  REESC R$ OUT R$,C$
+ '"
+ ELSEIF C$==CHR$(34) THEN
+  RETURN REDQ(NFA$,R$)
+ ENDIF
+ '通常文字
+ E=S+1
+ NEWST NFA$
+ NFA$[S]="T"+CHR$(E)+C$
+ RETURN R$
+END
+
+'"を 変換
+DEF REDQ(NFA$,R$)
+ VAR I,L=LEN(R$)-1
+ FOR I=0 TO L
+  VAR C$=R$[I]
+  IF C$==CHR$(34) THEN INC I:BREAK
+  IF C$==""&&I!=L THEN INC I:C$=R$[I]
+  VAR S=LEN(NFA$)-1,E=S+1
+  NEWST NFA$
+  NFA$[S]="T"+CHR$(E)+C$
+ NEXT
+ RETURN DELLEFT$(R$,I)
+END
+
+'"[]"を 変換
+DEF RESEL(NFA$,R$)
+ VAR S=LEN(NFA$)-1,E=S+1,S$
+ NEWST NFA$
+ NFA$[S]="T"+CHR$(E)
+ VAR ISHEAD=TRUE
+ WHILE R$!=""
+  VAR I,C$=R$[0]:R$=DELLEFT$(R$,1)
+  ']
+  IF C$=="]" THEN
+   BREAK
+  '^(先頭のみ)
+  ELSEIF C$=="^"&&ISHEAD&&NFA$[S][0]=="T"THEN
+   NFA$[S][0]="N"
+   CONTINUE
+  '-(前後に 文字が あるときのみ)
+  ELSEIF C$=="-"&&!ISHEAD&&R$!=""&&R$[0]!="]" THEN
+   VAR C1$=POP(S$)
+   C$=R$[0]:R$=DELLEFT$(R$,1)
+   IF C$==""&&R$!="" THEN
+    REESC R$ OUT R$,C$
+   ENDIF
+   FOR I=ASC(C1$) TO ASC(C$)
+    PUSH S$,CHR$(I)
+   NEXT
+   CONTINUE
+  '
+  ELSEIF C$==""&&R$!="" THEN
+   REESC R$ OUT R$,C$
+  ENDIF
+  '通常文字
+  PUSH S$,C$
+  ISHEAD=FALSE
+ WEND
+ INC NFA$[S],STRUNIQ$(STRSORT$(S$))
+ RETURN R$
+END
+
+'エスケープ
+DEF REESC PR$ OUT R$,C$
+ C$=PR$[0]:R$=DELLEFT$(PR$,1)
+ VAR I=INSTR(CTLC$,C$)
+ IF I>=0 THEN
+  C$=CHR$(CTLN[I])
+ ELSEIF C$=="x" THEN
+  C$=CHR$(VAL("&H"+LEFT$(R$,2)))
+  R$=DELLEFT$(R$,2)
+ ELSEIF C$=="u" THEN
+  C$=CHR$(VAL("&H"+LEFT$(R$,4)))
+  R$=DELLEFT$(R$,4)
+ ENDIF
+END
+
+'状態追加して入口変更
+DEF SWAPST NFA$,S OUT S1,E1,E
+ S1=LEN(NFA$)
+ E1=S1-1
+ NEWST NFA$
+ SWAP NFA$[S],NFA$[S1]
+ E=LEN(NFA$)
+ NEWST NFA$
+END
+
+'新状態追加
+DEF NEWST NFA$
+ PUSH NFA$,"E"
+END
+
+'------------
+'NFAを DFAに 変換
+'------------
+DEF NFA2DFA NFA$[],ES$,DC$[],DS$[],DE[]
+ 'ある状態から 空遷移で 移動できる 範囲を 求める
+ DIM NE$[0],DN$[0]
+ NE$=COLEMPTY$(NFA$)
+ '初期状態から 移動先を 追加していく
+ VAR S=LEN(NFA$)-1
+ PUSH DC$,""
+ PUSH DS$,""
+ PUSH DN$,NE$[S]
+ VAR I,J
+ FOR I=0 TO LEN(DC$)-1
+  ADDNEXT I,NFA$,NE$,DC$,DS$,DN$
+ NEXT
+ '最終状態か
+ FOR I=0 TO LEN(DN$)-1
+  PUSH DE,0
+  FOR J=0 TO LEN(ES$)-1
+   IF INSTR(DN$[I],ES$[J])>=0 THEN
+    DE[LEN(DE)-1]=J+1
+    BREAK
+   ENDIF
+  NEXT
+ NEXT
+END
+
+'ある状態から 空遷移で 移動できる 範囲を 求める
+DEF COLEMPTY$(NFA$[])
+ VAR I,IL=LEN(NFA$)-1
+ DIM R$[IL+1],P$[IL+1]
+ FOR I=0 TO IL
+  R$[I]=CHR$(I)
+ NEXT
+ FOR I=0 TO IL
+  VAR N$=NFA$[I]
+  IF N$[0]!="E" THEN CONTINUE
+  VAR J,JL=LEN(N$)-1
+  FOR J=1 TO JL
+   VAR S=ASC(N$[J])
+   P$[S]=MERGE$(STRSORT$(P$[S]+CHR$(I)),P$[I])
+   VAR K,KL=LEN(P$[S])-1
+   FOR K=0 TO KL
+    VAR T=ASC(P$[S][K])
+    R$[T]=MERGE$(R$[T],R$[S])
+   NEXT
+  NEXT
+ NEXT
+ RETURN R$
+END
+
+'ある状態の 移動先を 求める
+DEF ADDNEXT DONE,NFA$[],NE$[],DC$[],DS$[],DN$[]
+ DIM KVS$[0]
+ VAR S$=DN$[DONE],I,IL=LEN(S$)-1,T$
+ VAR SBEGIN$="",SEND$="",SALL$=""
+ '状態を なめて 移動先を まとめる
+ FOR I=0 TO IL
+  VAR N$=NFA$[ASC(S$[I])]
+  GOTO "@"+N$[0]
+  @W
+  IF N$[2]=="^" THEN
+   SBEGIN$=SBEGIN$+N$[1]
+   SEND$=SEND$+S$[I]
+  ELSE
+   SBEGIN$=SBEGIN$+S$[I]
+   SEND$=SEND$+N$[1]
+  ENDIF
+  CONTINUE
+  @T
+  KVS$=MERGEKVS$(N$,KVS$,SALL$,N$[1],"")
+  GOTO @E
+  @N
+  KVS$=MERGEKVS$(N$,KVS$,SALL$,"",N$[1])
+  SALL$=SALL$+N$[1]
+  @E
+  SBEGIN$=SBEGIN$+S$[I]
+  SEND$=SEND$+S$[I]
+ NEXT
+ 'それぞれの 文字の 移動先
+ IL=LEN(KVS$)-1
+ FOR I=0 TO IL
+  PUSH DC$[DONE],KVS$[I][0]
+  PUSH DS$[DONE],CHR$(GETSTATE(ECLOSURE$(NE$,DELLEFT$(KVS$[I],2)),DC$,DS$,DN$))
+ NEXT
+ '^の 移動先
+ IF S$!=SBEGIN$ THEN
+  T$=ECLOSURE$(NE$,SBEGIN$)
+  IF S$!=T$ THEN
+   PUSH DC$[DONE],BEGIN$
+   PUSH DS$[DONE],CHR$(GETSTATE(T$,DC$,DS$,DN$))
+  ENDIF
+ ENDIF
+ '$の 移動先
+ IF S$!=SEND$ THEN
+  T$=ECLOSURE$(NE$,SEND$)
+  IF S$!=T$ THEN
+   PUSH DC$[DONE],END$
+   PUSH DS$[DONE],CHR$(GETSTATE(T$,DC$,DS$,DN$))
+  ENDIF
+ ENDIF
+ 'それ以外の 移動先
+ IF SALL$!="" THEN
+  PUSH DC$[DONE],ALL$
+  PUSH DS$[DONE],CHR$(GETSTATE(ECLOSURE$(NE$,SALL$),DC$,DS$,DN$))
+ ENDIF
+END
+
+'文字による 移動先 追加
+DEF MERGEKVS$(N$,KVS$[],SALL$,N1$,N2$)
+ DIM NKVS$[0]
+ VAR J=2,JL=LEN(N$)
+ VAR K=0,KL=LEN(KVS$)
+ WHILE J<JL&&K<KL
+  IF N$[J]<KVS$[K][0] THEN
+   PUSH NKVS$,N$[J]+KVSSEP$+SALL$+N1$
+   INC J
+  ELSEIF N$[J]>KVS$[K][0] THEN
+   PUSH NKVS$,KVS$[K]+N2$
+   INC K
+  ELSE
+   PUSH NKVS$,KVS$[K]+N1$
+   INC J:INC K
+  ENDIF
+ WEND
+ FOR J=J TO JL-1
+  PUSH NKVS$,N$[J]+KVSSEP$+SALL$+N1$
+ NEXT
+ FOR K=K TO KL-1
+  PUSH NKVS$,KVS$[K]+N2$
+ NEXT
+ RETURN NKVS$
+END
+
+'状態の 集合から 空遷移で 移動できる 範囲を 求める
+DEF ECLOSURE$(NE$,S$)
+ IF S$=="" THEN RETURN ""
+ VAR I,IL=LEN(S$)-1,R$=NE$[ASC(S$[0])]
+ FOR I=1 TO IL
+  R$=MERGE$(R$,NE$[ASC(S$[I])])
+ NEXT
+ RETURN R$
+END
+
+'同じ 状態が あれば それを 返す(なければ 追加)
+DEF GETSTATE(S$,DC$[],DS$[],DN$[])
+ IF S$=="" THEN RETURN NONE
+ VAR I
+ FOR I=0 TO LEN(DN$)-1
+  IF DN$[I]==S$ THEN RETURN I
+ NEXT
+ PUSH DC$,""
+ PUSH DS$,""
+ PUSH DN$,S$
+ RETURN LEN(DN$)-1
+END
+
+'--------
+'DFAを 最適化
+'--------
+DEF DFAOPT DC$[],DS$[],DE[],OC$[],OS$[],OE[]
+ VAR I,J,L=LEN(DC$),PC
+ DIM NC$[L],NS$[L],NT[L],NT2[L],NF[MAX(DE)+1]
+ FOR I=0 TO L-1:NT[I]=DE[I]:NEXT
+ REPEAT
+  FOR I=0 TO L-1
+   NEWSTATE DC$[I],DS$[I],NT OUT NC$[I],NS$[I]
+  NEXT
+  PC=LEN(NF):NF=EMPTY()
+  FOR I=0 TO L-1
+   FOR J=0 TO LEN(NF)-1
+    IF NC$[I]==NC$[NF[J]]&&NS$[I]==NS$[NF[J]]&&NT[I]==NT[NF[J]] THEN BREAK
+   NEXT
+   NT2[I]=J
+   IF J>=LEN(NF) THEN PUSH NF,I
+  NEXT
+  SWAP NT,NT2
+ UNTIL PC>=LEN(NF)
+ FOR I=0 TO LEN(NT2)-1
+  NF[NT2[I]]=I
+ NEXT
+ FOR I=0 TO LEN(NF)-1
+  PUSH OC$,NC$[NF[I]]
+  PUSH OS$,NS$[NF[I]]
+  PUSH OE,DE[NF[I]]
+ NEXT
+END
+
+'状態を Tで 変換
+DEF NEWSTATE C$,S$,T[] OUT NC$,NS$
+ NC$="":NS$=""
+ VAR I,L=LEN(S$)-1,ALL=ALLSTATE(C$,S$)
+ IF ALL!=NONE THEN ALL=T[ALL]
+ FOR I=0 TO L
+  VAR C=ASC(S$[I])
+  IF C!=NONE THEN C=T[C]
+  IF C==ALL&&C$[I]<BEGIN$ THEN CONTINUE
+  PUSH NC$,C$[I]
+  PUSH NS$,CHR$(C)
+ NEXT
+END
+
+'----------
+'似たものを みつける
+'----------
+DEF DFAREF C$[],S$[],R[]
+ DIM CND[LEN(C$)],DF[LEN(C$)]
+ VAR I,J,M,N,NDF
+ FOR I=0 TO LEN(C$)-1
+  CND[I]=CONDLEN(C$[I],S$[I])
+  R[I]=-1:DF[I]=LASTCHR(C$[I])
+ NEXT
+ FOR I=0 TO LEN(C$)-2
+  FOR J=I+1 TO LEN(C$)-1
+   IF ALLSTATE(C$[I],S$[I])!=ALLSTATE(C$[J],S$[J]) THEN CONTINUE
+   NDF=DIFFLEN(C$[I],S$[I],C$[J],S$[J])
+   IF CND[I]>CND[J] THEN N=I:M=J ELSE N=J:M=I
+   IF DF[N]<NDF THEN CONTINUE
+   IF DF[N]==NDF&&R[N]>=0&&CND[R[N]]<=CND[M] THEN CONTINUE
+   R[N]=M:DF[N]=NDF
+  NEXT
+ NEXT
+END
+
+'条件式の 長さを 数値化
+DEF CONDLEN(C$,S$)
+ VAR L=LASTCHR(C$)
+ IF L<0 THEN RETURN 0
+ RETURN ASC(C$[L])-ASC(C$[0])+1+LEN(STRUNIQ$(STRSORT$(LEFT$(S$,L+1))))
+END
+
+'異なる 文字数
+DEF DIFFLEN(C1$,S1$,C2$,S2$)
+ VAR NC$,NS$
+ DIFFTBL C1$,S1$,C2$,S2$ OUT NC$,NS$
+ RETURN LEN(NC$)
+END
+
+'異なる 文字の テーブル 作成
+DEF DIFFTBL C1$,S1$,C2$,S2$ OUT NC$,NS$
+ NC$="":NS$=""
+ VAR I=0,J=0,AS$=CHR$(ALLSTATE(C1$,S1$))
+ VAR L1=LASTCHR(C1$),L2=LASTCHR(C2$)
+ WHILE I<=L1&&J<=L2
+  VAR C1I$=C1$[I],C2J$=C2$[J]
+  IF C1I$<C2J$ THEN
+   INC NC$,C1I$:INC NS$,S1$[I]:INC I
+  ELSEIF C1I$>C2J$ THEN
+   INC NC$,C2J$:INC NS$,AS$:INC J
+  ELSE
+   IF S1$[I]!=S2$[J] THEN
+    INC NC$,C1I$:INC NS$,S1$[I]
+   ENDIF
+   INC I:INC J
+  ENDIF
+ WEND
+ IF I>L1 THEN
+  INC NC$,MID$(C2$,J,L2+1-J)
+  INC NS$,AS$*(L2+1-J)
+ ELSE
+  INC NC$,MID$(C1$,I,L1+1-I)
+  INC NS$,MID$(S1$,I,L1+1-I)
+ ENDIF
+END
+
+'デフォルト 遷移先
+DEF ALLSTATE(C$,S$)
+ VAR L=LEN(C$)-1
+ IF L<0||C$[L]!=ALL$ THEN RETURN NONE
+ RETURN ASC(S$[L])
+END
+
+'通常文字の 最後
+DEF LASTCHR(C$)
+ VAR L=LEN(C$)-1
+ WHILE L>=0&&C$[L]>=BEGIN$:DEC L:WEND
+ RETURN L
+END
+
+'--------------
+'DFAを プログラムに 変換
+'--------------
+DEF DFA2PRG C$[],S$[],E[],REF[],ACT$[],DECL$
+ PRGSET DECL$
+ PRGSET " VAR P=SP,C,T$,ACT=0:EP=-1"
+ VAR I,J
+ FOR I=0 TO LEN(C$)-1
+  PRGSET " @"+STR$(I)
+  IF E[I] THEN PRGSET " EP=P:ACT="+STR$(E[I])
+  IF S$[I]=="" THEN
+   PRGSET " GOTO @E"
+   CONTINUE
+  ENDIF
+  J=INSTR(C$[I],END$)
+  IF J>=0 THEN
+   PRGSET " IF P>=LEN(S$)||ASC(S$[P])==10 GOTO "+PRGGOTO$(ASC(S$[I][J]))
+  ELSE
+   PRGSET " IF P>=LEN(S$) GOTO @E"
+  ENDIF
+  J=INSTR(C$[I],BEGIN$)
+  IF J>=0 THEN PRGSET " IF P<=0||ASC(S$[P-1])==10 GOTO "+PRGGOTO$(ASC(S$[I][J]))
+  IF INSTR(BEGIN$+END$,C$[I])>=0 THEN
+   PRGSET " GOTO @E"
+   CONTINUE
+  ENDIF
+  PRGSET " C=ASC(S$[P]):INC P"
+  IF CONTAINS(REF,I) THEN PRGSET " @T"+STR$(I)
+  VAR NC$,NS$,ALL$
+  IF REF[I]>=0 THEN
+   DIFFTBL C$[I],S$[I],C$[REF[I]],S$[REF[I]] OUT NC$,NS$
+   ALL$="@T"+STR$(REF[I])
+  ELSE
+   J=LASTCHR(C$[I])
+   NC$=LEFT$(C$[I],J+1):NS$=LEFT$(S$[I],J+1)
+   ALL$=PRGGOTO$(ALLSTATE(C$[I],S$[I]))
+  ENDIF
+  PRGONGOTO NC$,NS$,ALL$ OUT NC$,NS$
+  PRGIF NC$,NS$
+  PRGSET " GOTO "+ALL$
+ NEXT
+ PRGSET " @E"
+ PRGSET " IF !ACT THEN IF SP>=LEN(S$) THEN RETURN ELSE EP=SP+1:?S$[SP]:GOTO @A"
+ PRGSET " T$=MID$(S$,SP,EP-SP):GOTO "+CHR$(34)+"@A"+CHR$(34)+"+STR$(ACT)"
+ FOR I=1 TO LEN(ACT$)
+  PRGSET " @A"+STR$(I)+":"+ACT$[I-1]
+  PRGSET " GOTO @A"
+ NEXT
+ PRGSET " @A:SP=EP:P=SP:EP=-1:ACT=0:GOTO @0"
+ PRGSET "END"
+END
+
+'ONGOTO文 作成
+DEF PRGONGOTO C$,S$,ALL$ OUT NC$,NS$
+ NC$="":NS$=""
+ IF C$=="" THEN RETURN
+ VAR I,J=0,LINE$="",L=LEN(C$)
+ IF L==1 THEN NC$=C$:NS$=S$:RETURN
+ VAR S=ASC(C$[0]),E=ASC(C$[L-1])
+ IF E-S+1>=L*2 THEN
+  VAR D,M=0,NC1$,NS1$,NC2$,NS2$
+  FOR I=1 TO L-1
+   D=ASC(C$[I])-ASC(C$[I-1])
+   IF M<D THEN M=D:J=I
+  NEXT
+  PRGONGOTO LEFT$(C$,J),LEFT$(S$,J),ALL$ OUT NC1$,NS1$
+  PRGONGOTO RIGHT$(C$,L-J),RIGHT$(S$,L-J),ALL$ OUT NC2$,NS2$
+  NC$=NC1$+NC2$:NS$=NS1$+NS2$
+  RETURN
+ ENDIF
+ FOR I=S TO E
+  IF I<ASC(C$[J]) THEN
+   LINE$=LINE$+","+ALL$
+  ELSE
+   LINE$=LINE$+","+PRGGOTO$(ASC(S$[J]))
+   INC J
+  ENDIF
+ NEXT
+ PRGSET " ON C-"+STR$(ASC(C$[0]))+" GOTO "+DELLEFT$(LINE$,1)
+END
+
+'IF文 作成
+DEF PRGIF C$,S$
+ VAR I,L=LEN(C$),P=0
+ IF L<=0 THEN RETURN
+ DIM C[L],S[L]
+ FOR I=0 TO L-1
+  C[I]=ASC(C$[I])
+  S[I]=ASC(S$[I])<<16 OR C[I]
+ NEXT
+ SORT S,C
+ FOR I=0 TO L-1
+  IF I==L-1||S[I]>>16!=S[I+1]>>16 THEN
+   PRGSET " IF "+PRGCOND$(C,P,I)+" GOTO "+PRGGOTO$(S[I]>>16 AND &HFFFF)
+   P=I+1
+  ENDIF
+ NEXT
+END
+
+'条件式 作成
+DEF PRGCOND$(C[],S,E)
+ VAR I,R$=""
+ FOR I=S TO E
+  IF R$!="" THEN R$=R$+"||"
+  R$=R$+"C=="+STR$(C[I])
+ NEXT
+ RETURN R$
+END
+
+'ジャンプ命令 作成
+DEF PRGGOTO$(S)
+ IF S==NONE THEN
+  RETURN "@E"
+ ELSE
+  RETURN "@"+STR$(S)
+ ENDIF
+END
+
+'-------
+'ユーティリティ
+'-------
+
+'文字列の ソート
+DEF STRSORT$(S$)
+ IF LEN(S$)<=1 THEN RETURN S$
+ VAR I
+ DIM A[LEN(S$)]
+ FOR I=0 TO LEN(A)-1
+  A[I]=ASC(S$[I])
+ NEXT
+ SORT A
+ S$=""
+ FOR I=0 TO LEN(A)-1
+  PUSH S$,CHR$(A[I])
+ NEXT
+ RETURN S$
+END
+
+'文字列の 重複 削除
+DEF STRUNIQ$(S$)
+ VAR I,R$="",C$=""
+ FOR I=0 TO LEN(S$)-1
+  IF S$[I]!=C$ THEN
+   INC R$,C$
+   C$=S$[I]
+  ENDIF
+ NEXT
+ INC R$,C$
+ RETURN R$
+END
+
+'2つの ソート済み 文字列を マージ
+DEF MERGE$(A$,B$)
+ VAR I=0,J=0,R$="",C$,D$
+ WHILE I<LEN(A$)&&J<LEN(B$)
+  C$=A$[I]:D$=B$[J]
+  IF C$==D$ THEN
+   INC R$,C$:INC I:INC J
+  ELSE IF C$<D$ THEN
+   INC R$,C$:INC I
+  ELSE
+   INC R$,D$:INC J
+  ENDIF ENDIF
+ WEND
+ IF I<LEN(A$)THEN INC R$,DELLEFT$(A$,I)
+ IF J<LEN(B$)THEN INC R$,DELLEFT$(B$,J)
+ RETURN R$
+END
+
+'空配列(数字)
+DEF EMPTY()
+ DIM E[0]:RETURN E
+END
+
+'空配列(文字)
+DEF EMPTY$()
+ DIM E$[0]:RETURN E$
+END
+
+'左の 空白 削除
+DEF TRIMLEFT$(A$)
+ VAR I
+ FOR I=0 TO LEN(A$)-1
+  IF A$[I]!=" " THEN BREAK
+ NEXT
+ RETURN DELLEFT$(A$,I)
+END
+
+'引数 無視
+DEF IGNORE I
+END
+
+'配列に 要素が ふくまれるか
+DEF CONTAINS(A[],E)
+ VAR I
+ FOR I=LEN(A)-1 TO 0 STEP -1
+  IF A[I]==E THEN RETURN TRUE
+ NEXT
+ RETURN FALSE
+END
+
+DEF DELLEFT$(S$,L)
+ RETURN RIGHT$(S$,LEN(S$)-L)
+END
+
+DEF DELRIGHT$(S$,L)
+ RETURN LEFT$(S$,LEN(S$)-L)
+END
+
+'以下の ページの コードを 一部改変して お借りしています
+'https://twitter.com/bucchigiri/status/553797988720467968
+DEF KVSSET D$,K$,V$
+ K$=K$+KVSSEP$
+ VAR L=0,R=LEN(D$)-1
+ IF L>R THEN PUSH D$,K$+V$:RETURN
+ WHILE L<R
+  VAR I=L+R>>1
+  IF K$>D$[I] THEN L=I+1 ELSE R=I
+ WEND
+ IF K$==LEFT$(D$[L],LEN(K$)) THEN
+  D$[L]=K$+V$
+ ELSE
+  PUSH D$,K$+V$
+  SORT D$
+ ENDIF
+END
+
+DEF KVSGET$(D$,K$,DFLT$)
+ K$=K$+KVSSEP$
+ VAR KN=LEN(K$),L=0,R=LEN(D$)-1
+ IF L>R THEN RETURN DFLT$
+ WHILE L<R
+  VAR I=L+R>>1
+  IF K$>D$[I] THEN L=I+1 ELSE R=I
+ WEND
+ IF K$==LEFT$(D$[L],KN) THEN
+  RETURN RIGHT$(D$[L],LEN(D$[L])-KN)
+ ELSE
+  RETURN DFLT$
+ ENDIF
+END
+
+'以下の ページの テストコードを お借りしています
+'正規表現ライブラリ
+'http://d.hatena.ne.jp/eidaht/20150105/1420484771
+@TEST
+VAR CASE=0,OK=0
+?"TEST"
+?TEST$(RXINSTR("ABC","BC")==1)
+?TEST$(RXINSTR("ABC","A.C")==0)
+?TEST$(RXINSTR("AC", "A.C")==-1)
+?TEST$(RXINSTR("ABBBBC","AB")==0)
+?TEST$(RXINSTR("ABBBBC","BC")==4)
+?TEST$(RXINSTR("ABBBBC","BB")==1)
+?TEST$(RXINSTR("ABBBBC","ABC")==-1)
+?TEST$(RXINSTR("ABC","A[ABC]C")==0)
+?TEST$(RXINSTR("ADC","A[ABC]C")==-1)
+?TEST$(RXINSTR("BD","[AB][CD]")==0)
+?TEST$(RXINSTR("CB","[AB][CD]")==-1)
+?TEST$(RXINSTR("ABCDEF","^ABC")==0)
+?TEST$(RXINSTR("DEFABC","^ABC")==-1)
+?TEST$(RXINSTR("XYZABC","ABC$")==3)
+?TEST$(RXINSTR("ABCXYZ","ABC$")==-1)
+?TEST$(RXINSTR("ABBBBC","^AB*C$")==0)
+?TEST$(RXINSTR("AC",    "^AB*C$")==0)
+?TEST$(RXINSTR("ABC",  "^AB+C$")==0)
+?TEST$(RXINSTR("ABBBC","^AB+C$")==0)
+?TEST$(RXINSTR("AC",  "AB+C")==-1)
+?TEST$(RXINSTR("ABBD","AB+C")==-1)
+?TEST$(RXINSTR("ABCCBBCD","A[BC]+D")==0)
+?TEST$(RXINSTR("ABECD",   "A[BC]+D")==-1)
+?TEST$(RXINSTR("ABCCBBCD","A[BC]+E")==-1)
+?TEST$(RXINSTR("[]*+.","[]*+.")==0)
+?TEST$(RXINSTR("()|","()|")==0)
+?TEST$(RXINSTR("^$","^$")==0)
+?TEST$(RXINSTR(CHR$(10)+CHR$(13)+CHR$(9),"nrt")==0)
+?TEST$(RXINSTR("AB","(AB|CD)")==0)
+?TEST$(RXINSTR("CD","(AB|CD)")==0)
+?TEST$(RXINSTR("BC","(AB|CD)")==-1)
+?TEST$(RXINSTR("EF","(AB|CD|EF)")==0)
+?TEST$(RXINSTR("XA","([AB]|[CD])")==1)
+?TEST$(RXINSTR("Y", "([AB]|[CD])")==-1)
+?TEST$(RXINSTR("XA","(A|B|C|D)")==1)
+?TEST$(RXINSTR("Y", "(A|B|C|D)")==-1)
+?TEST$(RXINSTR("ABE","([AB]+|[CD])E")==0)
+?TEST$(RXINSTR("A","[B-D]")==-1)
+?TEST$(RXINSTR("B","[B-D]")==0)
+?TEST$(RXINSTR("D","[B-D]")==0)
+?TEST$(RXINSTR("E","[B-D]")==-1)
+?TEST$(RXINSTR("$","x24")==0)
+?TEST$(RXINSTR("","uE2F0")==0)
+?TEST$(RXINSTR("A",  "^A{2,}$")==-1)
+?TEST$(RXINSTR("AA", "^A{2,}$")==0)
+?TEST$(RXINSTR("AAA","^A{2,}$")==0)
+?TEST$(RXINSTR("A",  "^A{2}$")==-1)
+?TEST$(RXINSTR("AA", "^A{2}$")==0)
+?TEST$(RXINSTR("AAA","^A{2}$")==-1)
+?TEST$(RXINSTR("A",   "^A{2,3}$")==-1)
+?TEST$(RXINSTR("AA",  "^A{2,3}$")==0)
+?TEST$(RXINSTR("AAA", "^A{2,3}$")==0)
+?TEST$(RXINSTR("AAAA","^A{2,3}$")==-1)
+?TEST$(RXINSTR("A[BC]",CHR$(34)+"A[BC]"+CHR$(34))==0)
+VAR RX$
+RX$=REGEX("A",0)
+?TEST$(ROINSTR("a",RX$)==-1)
+?TEST$(ROINSTR("A",RX$)==0)
+RX$=REGEX("A",RXOPT_IC)
+?TEST$(ROINSTR("a",RX$)==0)
+?TEST$(ROINSTR("A",RX$)==0)
+RX$=REGEX("x41",RXOPT_IC)
+?TEST$(ROINSTR("a",RX$)==0)
+?TEST$(ROINSTR("A",RX$)==0)
+RX$=REGEX("[A]",RXOPT_IC)
+?TEST$(ROINSTR("a",RX$)==0)
+?TEST$(ROINSTR("A",RX$)==0)
+RX$=REGEX("[A-C]",RXOPT_IC)
+?TEST$(ROINSTR("b",RX$)==0)
+?TEST$(ROINSTR("B",RX$)==0)
+RX$=REGEX(".",0)
+?TEST$(ROINSTR(CHR$(10),RX$)==-1)
+RX$=REGEX("^A$",0)
+?TEST$(ROINSTR("A"+CHR$(10),RX$)==0)
+?TEST$(ROINSTR(CHR$(10)+"A"+CHR$(10)+"B",RX$)==1)
+DIM R[0]
+R=ROMATCHAT(0,"AAAB",REGEX("^AAA(BB)?",0))
+?TEST$(R[0]==0)
+?TEST$(R[1]==3)
+PRGEDIT 2
+PRGDEL -1
+PRGSET "DIGIT [0-9]"
+PRGSET "%%"
+PRGSET "{DIGIT}+ RETURN"
+PRGSET ".|n EP=-1:RETURN"
+LEX2PRG 2,3
+USE 3
+?TEST$(YYLEX("23",0)==2)
+?"OK=";OK;"/";CASE:END
+
+DEF TEST$(EXP)
+ INC CASE
+ ?"CASE"+FORMAT$("%3D",CASE)+":";
+ IF EXP==0 THEN RETURN "NG"
+ INC OK
+ RETURN "OK"
+END
+
+DEF RXINSTR(S$,R$)
+ RETURN ROINSTR(S$,REGEX(R$,0))
+END
+
+DEF REGEX(R$,IC)
+ PRGEDIT 2
+ PRGDEL -1
+ IF IC THEN PRGSET"%option case-insensitive"
+ PRGSET "%%"
+ PRGSET R$+" RETURN"
+ PRGSET ".|n EP=-1:RETURN"
+ LEX2PRG 2,3
+ USE 3
+ RETURN "YYLEX"
+END
+
+DEF ROINSTR(S$,RX$)
+ VAR I
+ FOR I=0 TO LEN(S$)
+  IF CALL(RX$,S$,I)>=0 THEN RETURN I
+ NEXT
+ RETURN -1
+END
+
+DEF ROMATCHAT(P,S$,RX$)
+ DIM R[2]
+ R[0]=P
+ R[1]=CALL(RX$,S$,P)
+ RETURN R
+END
