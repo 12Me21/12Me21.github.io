@@ -1,0 +1,19 @@
+'                                    
+' massive starfield for 3DS AND WiiU 
+'                                    
+OPTION STRICT
+'detect system type, get screen center pos.
+VAR IF_3DS=HARDWARE!=2,CX=IIF(IF_3DS,200,427),CY=IIF(IF_3DS,120,240),I,SPD,ANG,R
+'set up screen mode.
+ACLS:IF IF_3DS THEN XSCREEN 0,512,4 ELSE PRGEDIT 3:PRGDEL -1:PRGSET "XON WiiU":EXEC 3:XSCREEN 6,6,6,4096,4
+
+FOR I=0 TO IIF(IF_3DS,511,4095)
+ 'pause once a while to prevent sync problem.
+ IF I MOD IIF(IF_3DS,8,64)==0 THEN VSYNC 1
+ 'bunch of SPANIMs.
+ SPSET I,226:SPHOME I,8,8:SPANIM I,"R",-60,360,0:SPOFS I,CX,CY,1024:SPD=40+RND(60):ANG=RAD(RND(360)):R=SQR(CX*CX+CY*CY)+(128-96*IF_3DS):SPANIM I,"XY",-SPD,CX+COS(ANG)*R,CY+SIN(ANG)*R,0:SPANIM I,"Z",-SPD,-256,0:SPCOLOR I,#BLACK:SPANIM I,"C",-SPD,#WHITE,0:IF IF_3DS THEN SPANIM I,"S",-SPD,4,4,0 ELSE SPANIM I,"S",-SPD,8,8,0
+NEXT
+'main does nothing. SPANIM does all the work.
+WHILE 1:VSYNC:WEND
+'some useful function.
+DEF IIF (A,B,C):IF A THEN RETURN B ELSE RETURN C ENDIF:END
