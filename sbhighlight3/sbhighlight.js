@@ -14,12 +14,10 @@ function parse(nextToken,callback,showErrors){
 	var type,text,word; //NOTE: word is only update right after next()ing. don't rely on it laaaaater
 	//stored tokens
 	var newType,newText,newWord;
-	var oldType,oldText,oldWord;
 	//keep track of stored tokens
 	var readNext=1;
 	//inside ()-type def
 	var inDef=false;
-	var noErrors=true;
 	
 	while(1){ // <3
 		try{
@@ -94,7 +92,7 @@ function parse(nextToken,callback,showErrors){
 						output("var function");
 						readToken("(","");
 						assert(readExpression(),"Missing var name");
-						assert(readToken(")",""),"missing )")
+						assert(readToken(")",""),"missing )");
 						while(readToken("[","")){
 							assert(readList(readExpression,true),"Missing array index");
 							assert(readToken("]",""),"Missing \"]\"");
@@ -190,7 +188,7 @@ function parse(nextToken,callback,showErrors){
 					//var name=text;
 					readNext=readNext-1;
 					var oldWord=word; //this is, the variable name! :D
-					switch(readVariable(true)){
+          switch(readVariable(true)){
 						case true:
 							assert(readToken("=","equals"),"missing =");
 							readExpression();
@@ -210,7 +208,7 @@ function parse(nextToken,callback,showErrors){
 									case "XON":
 										output("keyword");
 										if(readToken("word")){
-											assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word==="WIIU"||word=="COMPAT","invalid option")
+											assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word==="WIIU"||word=="COMPAT","invalid option");
 										}else{
 											//what the [heck] were you THINKING!?!??!
 											assert(readToken("number","keyword"),"invalid option");
@@ -221,7 +219,7 @@ function parse(nextToken,callback,showErrors){
 									break;case "XOFF":
 										output("keyword");
 										assert(readToken("word"));
-										assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word=="COMPAT","invalid option")
+										assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word=="COMPAT","invalid option");
 									break;case "OPTION":
 										output("keyword");
 										assert(readToken("word","keyword"),"invalid option");
@@ -257,7 +255,6 @@ function parse(nextToken,callback,showErrors){
 		}catch(error){
 			//normal parsing error
 			if(error.name==="ParseError"){
-				foundError=true;
 				//read until the end of the line
 				while(1){
 					next();
@@ -267,9 +264,9 @@ function parse(nextToken,callback,showErrors){
 					output("error");
 				}
 				if(type==="linebreak")
-					callback(text.slice(0,-1),"")
+					callback(text.slice(0,-1),"");
 				else
-					output("")
+					output("");
 				//show error message
 				if(showErrors)
 					callback(error.message,"errormessage");
@@ -292,7 +289,7 @@ function parse(nextToken,callback,showErrors){
 		readNext=-1;
 		newType=type;
 		newText=text;
-		newWord=word
+		newWord=word;
 		type=prevType;
 		text=prevText;
 		word=prevWord;
@@ -342,7 +339,6 @@ function parse(nextToken,callback,showErrors){
 	
 	//read list of PRINT arguments
 	function readPrintList(reader){
-		var ret=false;
 		if(!reader())
 			return;
 		while((readToken(",","")||readToken(";",""))&&reader());
@@ -350,7 +346,8 @@ function parse(nextToken,callback,showErrors){
 	
 	//read normal expression
 	function readExpression(){
-		next();
+		var ret=false;
+    next();
 		switch(type){
 			//VAR()
 			case "VAR":
@@ -430,13 +427,12 @@ function parse(nextToken,callback,showErrors){
 	
 	//read function VAR()
 	function readVar(){
-		//"function" form of VAR
+    //"function" form of VAR
 		if(peekToken("(")){
 			output("var function");
 			readToken("(","");
 			assert(readExpression(),"Missing VAR argument");
 			assert(readToken(")",""),"Missing \")\" in VAR()");
-			ret=true;
 		//bad VAR
 		}else{
 			output("error");
@@ -527,13 +523,17 @@ function parse(nextToken,callback,showErrors){
 	}
 }
 
-
+//TOKENIZER STREAM GENERATOR
+//input: code (string)
+//output: function that returns the next token when called
 function tokenize(code){
 	var i=-1,c,isAlpha,isDigit,whitespace;
 	
 	function next(){
 		i++;
 		c=code.charAt(i);
+		//woah woah calm down don't worry I'm not some idiot who uses apostrophe strings...
+		//These are single CHARACTERS (that is, in a language that has a char type, these should be chars and not strings)
 		isAlpha=(c>='A'&&c<='Z'||c>='a'&&c<='z');
 		isDigit=(c>='0'&&c<='9');
 	}
@@ -576,12 +576,15 @@ function tokenize(code){
 	
 	next();
 	return function(){
+		//read whitespace
 		while(c===" "||c==="\t")
 			next();
+		//if this is the end, push a special ending token
 		if(c==='')
 			return push("eof");
+		//store the start of the non-whitespace
 		whitespace=i;
-		//keywords, functions, variables
+		//"word" (keywords, functions, variables)
 		if(isAlpha||c==='_'){
 			next();
 			while(isAlpha||isDigit||c==='_')
@@ -752,11 +755,12 @@ function tokenize(code){
 			next();
 			return push("text");
 		}
-	}
+	};
 }
 
-//"Example" usage: applying syntax highlighting to an html element.
+//"Example" usage: Applying syntax highlighting to an html element.
 //Uses the type for the css class name.
+//note: This assumes that the type will not contain " or &.
 function applySyntaxHighlighting(element,showErrors){
 	var html="",prevType;
 	//this is called for each highlightable token
