@@ -276,7 +276,7 @@ function parse(nextToken,callback,showErrors){
 					output("linebreak");
 			//bad error!!!
 			}else{
-				alert("real actual error!!! "+error);
+				throw error;
 				return;
 			}
 		}
