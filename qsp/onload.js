@@ -19,7 +19,7 @@ var lookup=({0:[0,0],9:[9,0],10:[13,0],13:[13,0],32:[32,0],33:[33,0],34:[34,0],3
 
 
 
-var x,y,line,width,height,bw=4;
+var x,y,line,width,height,fullWidth,fullHeight,charSize=8,bw=4;
 
 function switchSize(qsp){
 	fullWidth=50
@@ -31,8 +31,8 @@ function switchSize(qsp){
 	width=fullWidth-4
 	height=fullHeight-1
 	
-	editor.width=fullWidth*8
-	editor.height=fullHeight*8
+	editor.width=fullWidth*charSize
+	editor.height=fullHeight*charSize
 }
 
 switchSize(false);
@@ -87,7 +87,7 @@ function putcode(code){
 	y=0;
 	line=1;
 	screenContext.fillStyle="black";
-	screenContext.fillRect(0,0,200,120);
+	screenContext.fillRect(0,0,fullWidth*charSize,fullHeight*charSize);
 	startline(line);
 	parse(tokenize(code),putpart)
 	if(x>=width){
@@ -121,16 +121,14 @@ function put(x,y,pos,color){
 	//screenContext.fillStyle="black"
 	//screenContext.fillRect(x*8,y*8,8,8);
 	//draw symbol
-	screenContext.drawImage(fontimage,pos[0]*8,pos[1]*8,8,8,x*8,y*8,8,8);
+	screenContext.drawImage(fontimage,pos[0]*8,pos[1]*8,8,8,x*charSize,y*charSize,charSize,charSize);
 	//set color
 	screenContext.fillStyle=color;
 	//draw color in multiply mode
 	screenContext.globalCompositeOperation="multiply";
-	screenContext.fillRect(x*8,y*8,8,8);
+	screenContext.fillRect(x*charSize,y*charSize,charSize,charSize);
 	screenContext.globalCompositeOperation="source-over";
 }
-
-
 
 //Inside closure so that the inner functions don't need regeneration on every call.
 const getCssClasses = (function () {
