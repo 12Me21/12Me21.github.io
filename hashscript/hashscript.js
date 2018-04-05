@@ -1,3 +1,6 @@
+function rh(){
+	runHash(decodeURIComponent(window.location.hash.substr(1)));
+}
 function runHash(hash){
 	if(hash){
 		//split on ~, but ~~ is an escape sequence for ~.
