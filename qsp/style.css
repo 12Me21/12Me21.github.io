@@ -45,6 +45,7 @@ you can use this to display line break symbols!
 	font-style:italic;
 	margin-right:0.1em;
 	margin-left:-0.1em;
+	font-weight:normal;
 }
 .operator{
 	color:#FFFFBB;

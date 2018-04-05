@@ -7,7 +7,9 @@
 
 
 <textarea id="input">WHILE 1</textarea>
-<button onclick="putcode(input.value)">SET</button>QSP:<input autocomplete=false type="checkbox" onclick="switchSize(this.checked);putcode(input.value)"></input>
+<button onclick="putcode(input.value)">SET</button>
+QSP:<input autocomplete=false type="checkbox" onclick="switchSize(this.checked);putcode(input.value)"></input>
+bold keywords:<input autocomplete=false type="checkbox" onclick="switchBold(this.checked);putcode(input.value)"></input>
 <hr>
 <canvas id="editor" width="200" height="120"></canvas>
 <img hidden id="fontimage" src="font.png">
