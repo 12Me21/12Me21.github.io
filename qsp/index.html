@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script src="http://12me21.github.io/sbhighlight3/sbhighlight3.js"></script>
+<script src="http://12me21.github.io/sbhighlight3/sbhighlight.js"></script>
 <script defer src="onload.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
 
+
+
+<textarea id="input">WHILE 1</textarea>
+<button onclick="putcode(input.value)">SET</button>QSP:<input autocomplete=false type="checkbox" onclick="switchSize(this.checked);putcode(input.value)"></input>
+<hr>
 <canvas id="editor" width="200" height="120"></canvas>
 <img hidden id="fontimage" src="font.png">
-
-<form id="colors">
-	Number: <input name="number" value="#F77BB5"></input></br>
-	String: <input name="string" value="#A5ADA5"></input></br>
-	Function: <input name="function" value="#7B7BF7"></input></br>
-	Keyword: <input name="keyword" value="#7BB5F7"></input></br>
-	Variable: <input name="variable" value="#FFDDEE"></input></br>
-	Operator: <input name="operator" value="#FFFFBB"></input></br>
-	Comment: <input name="comment" value="#10BD42"></input></br>
-	Label: <input name="label" value="#F7A500"></input></br>
-	Error: <input name="error" value="maroon"></input></br>
-	Text2: <input name="separator" value="white"></input></br>
-	Text1: <input name="text" value="white"></input></br>
-	Equals: <input name="equals" value="white"></input></br>
-</form>
-<textarea id="input">WHILE 1</textarea>
-<button onclick="putcode(input.value)">SET</button>
-

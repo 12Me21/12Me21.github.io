@@ -1,0 +1,81 @@
+pre{
+	padding: 1rem;
+	border: 4px inset teal;
+	
+	-moz-tab-size: 1;
+	tab-size: 1;
+	display:table;
+	
+	/* defaults */
+	color: white;
+	background-color:black;
+	
+}
+[data-sbfont="true"]{
+	font-family: SMILEBASIC;
+}
+/*sb font doesn't work well when bold*/
+[data-sbfont="true"] *{
+	font-weight: normal !important;
+}
+
+/*
+you can use this to display line break symbols!
+.linebreak::before{
+	content: "J";
+	color: #0BF;
+}
+*/ 
+
+.number{
+	color:#F77BB5;
+}
+.string{
+	color:#A5ADA5;
+}
+.function{
+	color:#BC7BFB;
+}
+.keyword{
+	color:#7BB5F7;
+	font-weight:bolder;
+}
+.variable{
+	color:#FFDDEE;
+	font-style:italic;
+	margin-right:0.1em;
+	margin-left:-0.1em;
+}
+.operator{
+	color:#FFFFBB;
+}
+.comment{
+	color:#10BD42;
+}
+.label{
+	color:#F7A500;
+}
+.error{
+	background-color: maroon;
+}
+.errormessage{
+	text-decoration:underline;
+	color: red;
+}
+.errormessage::before{
+	content: "[";
+	text-decoration:none;
+}
+.errormessage::after{
+	content: "]";
+	text-decoration:none;
+}
+
+.builtin.variable{
+	color:#DDDDFF;
+	font-weight:bold;
+}
+.builtin.function{
+	color:#7B7BF7;
+	font-weight:bold;
+}
