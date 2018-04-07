@@ -12,7 +12,7 @@
 				//must be innerText since contentedible and textContent are too dumb to understand linebreaks
 				//contenteditable adds <br>s which textContent ignores
 				//whyyyyy
-				applySyntaxHighlighting($code);
+				applySyntaxHighlighting($code,true);
 			}
 			
 			function setCaretPosition(elem,caretPos){
@@ -32,10 +32,6 @@
 			}
 		</script>
 		<style>
-			.errormessage::before{
-				content:"[error";
-			}
-			
 			#editcontainer{
 				position: absolute;
 			}
