@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <script src="parsesb.js"></script>
+	<head>
+		<meta charset="utf-8">
+		<script src="parsesb.js"></script>
 		<script src="runsb.js"></script>
-    </head>
-    <body>
-        <textarea id="$input">
-FOR I=1 TO 10
- PRINT I
+	</head>
+	<body>
+		<textarea id="$input">
+FOR TO=STEP TO TO STEP TO
+ READ VAR("A")[0]
 NEXT</textarea>
-        <br>
-		  <button id="$button2" onclick="run(parse(tokenize($input.value)))">run</button>
-        <hr>
-        <textarea id="$output"></textarea>
-		<textarea id="$console"></textarea>
-    <body>
+		<br>
+		<button id="$button2" onclick="var x=parse(tokenize($input.value));$console.value='';if(x.constructor===String)$console.value='ERROR: '+x;else run(x)">run</button>
+		<hr>
+		Console:
+		<br>
+		<textarea id="$console" rows=30 cols=50></textarea>
+	<body>
 </html>
