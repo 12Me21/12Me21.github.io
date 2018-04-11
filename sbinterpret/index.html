@@ -11,8 +11,7 @@ FOR I=1 TO 10
  PRINT I
 NEXT</textarea>
         <br>
-        <button id="$button" onclick="$output.value=parse(tokenize($input.value)).toSource();">set</button>
-		<button id="$button2" onclick="run(eval($output.value))">set</button>
+		  <button id="$button2" onclick="run(parse(tokenize($input.value)))">run</button>
         <hr>
         <textarea id="$output"></textarea>
 		<textarea id="$console"></textarea>
