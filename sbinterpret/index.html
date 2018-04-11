@@ -7,8 +7,8 @@
 	</head>
 	<body>
 		<textarea id="$input">
-FOR TO=STEP TO TO STEP TO
- READ VAR("A")[0]
+FOR I=0 TO 10
+ PRINT I
 NEXT</textarea>
 		<br>
 		<button id="$button2" onclick="var x=parse(tokenize($input.value));$console.value='';if(x.constructor===String)$console.value='ERROR: '+x;else run(x)">run</button>
