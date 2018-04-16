@@ -2,12 +2,15 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<script src="https://12Me21.github.io/hashscript/hashscript.js"></script>
+		<script src="value.js"></script>
+		<script src="operations.js"></script>
 		<script src="parsesb.js"></script>
 		<script src="runsb.js"></script>
 	</head>
-	<body>
+	<body onload="rh()">
 		<textarea id="$input">
-FOR I=0 TO 10
+FOR I=1 TO 10
  PRINT I
 NEXT</textarea>
 		<br>
@@ -15,6 +18,6 @@ NEXT</textarea>
 		<hr>
 		Console:
 		<br>
-		<textarea id="$console" rows=30 cols=50></textarea>
-	<body>
+		<textarea id="$console" rows="30" cols="50"></textarea>
+		</body>
 </html>

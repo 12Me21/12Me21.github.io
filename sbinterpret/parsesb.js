@@ -36,7 +36,7 @@ function parse(nextToken){
 		var block=currentBlocks.pop();
 		defs[block.name]=block;
 	}
-	
+		
 	var expr=[];
 	
 	current.type="main";
@@ -221,11 +221,15 @@ function parse(nextToken){
 			//GOSUB GOTO RESTORE(?)
 			break;case "GOSUB":
 				current.type="GOSUB";
-				if(!(current.label=readToken("label")))
-					assert(current.label=readExpression(),"Missing argument to GOSUB");				
+				if(readToken("label"))
+					current.label=word;
+				else
+					assert(current.label=readExpression(),"Missing argument to GOSUB");
 			break;case "GOTO":
 				current.type="GOTO";
-				if(!(current.label=readToken("label")))
+				if(readToken("label"))
+					current.label=word;
+				else
 					assert(current.label=readExpression(),"Missing argument to GOTO");
 			break;case "RESTORE":
 				current.type="RESTORE";
@@ -300,7 +304,7 @@ function parse(nextToken){
 								current.feature=word;
 							}else{
 								//what the [heck] were you THINKING!?!??!
-								assert(readToken("number"),"invalid option");
+								assert(readToken("integer"),"invalid option");
 								assert(word==="3","invalid option");
 								assert(readToken("word"),"invalid option");
 								assert(word==="DS","invalid option");
@@ -462,7 +466,9 @@ function parse(nextToken){
 				case "||":
 					return 1
 			}
-		assert(false,"error prec")
+		console.log(token);
+		throw new Error("HECK")
+		assert(false,"error prec "+token.name);
 	}
 	function left(token){
 		return 0
@@ -473,12 +479,13 @@ function parse(nextToken){
 		for(var i=0;i<expr.length;i++){
 			var token=expr[i];
 			switch(token.type){
-				case "literal":case "variable":case "function":case "index":
+				case "integer":case "float":case "string":case "variable":case "function":case "index":
 					rpn.push(token);
 				break;case "operator":case "unary":
 					while(stack.length){
 						var top=stack[stack.length-1]
-						if((prec(top)>prec(token) || (prec(top)==prec(token) && left(token)))&&top.type!="("){
+						console.log(top)
+						if(top.type!="("&&(prec(top)>=prec(token) || (prec(top)==prec(token) && left(token)))){
 							rpn.push(stack.pop());
 						}else{
 							break;
@@ -531,10 +538,12 @@ function parse(nextToken){
 				expr.push({type:"call",args:x.length});
 				assert(readToken(")"),"Missing \")\" in CALL()");
 				ret=true;
-			//literal value
-			break;case "number":case "string":case "label":
-				expr.push({type:"literal",value:word});
-				//literal
+			//number literals
+			break;case "integer":case "float":
+				expr.push({type:type,value:word});
+			//string/label
+			break;case "string":case "label":
+				expr.push({type:"string",value:word});
 			//operator (unary)
 			break;case "unary":case "minus":
 				//unary op
@@ -665,7 +674,7 @@ function parse(nextToken){
 //input: code (string)
 //output: function that returns the next token when called
 function tokenize(code){
-	var i=-1,c,isAlpha,isDigit,whitespace;
+	var i=-1,c,isAlpha,isDigit,whitespace,prev=0;
 	
 	function next(){
 		i++;
@@ -676,16 +685,18 @@ function tokenize(code){
 		isDigit=(c>='0'&&c<='9');
 	}
 	
+	function getWord(startSkip,endSkip){
+		return code.substring(startSkip?whitespace+startSkip:whitespace,endSkip?i-endSkip:i);
+	}
+	
 	function jump(pos){
 		i=pos-1;
 		next();
 	}
 	
-	var prev=0;
 	function pushWord(){
-		var start=prev;
 		prev=i;
-		var upper=code.substring(whitespace,i).toUpperCase();
+		var upper=getWord().toUpperCase();
 		var type;
 		//bitwise not
 		if(upper==="NOT")
@@ -694,10 +705,14 @@ function tokenize(code){
 		else if(upper==="DIV"||upper==="MOD"||upper==="AND"||upper==="OR"||upper==="XOR")
 			type="operator";
 		//true/false
-		else if(upper==="TRUE"||upper==="FALSE")
-			type="number";
+		else if(upper==="TRUE"){
+			type="integer";
+			upper="1"
+		}else if(upper==="FALSE"){
+			type="integer";
+			upper="0";
 		//other keyword
-		else if(KEYWORDS.indexOf(upper)!==-1)
+		}else if(KEYWORDS.indexOf(upper)!==-1)
 			type=upper;
 		//not a keyword
 		else
@@ -706,10 +721,9 @@ function tokenize(code){
 	}
 	
 	
-	function push(type){
-		var start=prev;
+	function push(type,word){
 		prev=i;
-		return {type:type,word:code.substring(whitespace,i)};
+		return {type:type,word:word||getWord()};
 	}
 	
 	next();
@@ -732,9 +746,12 @@ function tokenize(code){
 			return pushWord();
 		//numbers
 		}else if(isDigit||c==='.'){
-			while(isDigit)
+			while(isDigit){
 				next();
+			}
+			var integer=true;
 			if(c==='.'){
+				integer=false;
 				next();
 				if(isDigit){
 					next();
@@ -743,10 +760,11 @@ function tokenize(code){
 				}else{
 					if(c==='#')
 						next();
-					return push("number");
+					return push("float",getWord()+"0");
 				}
 			}
 			if(c==='E'||c==='e'){
+				integer=false;
 				var ePos=i;
 				next();
 				if(c==='+'||c==='-')
@@ -760,18 +778,26 @@ function tokenize(code){
 					return push("error");
 				}
 			}
-			if(c==='#')
+			if(c==='#'){
+				integer=false;
 				next();
-			return push("number");
+			}
+			if(integer)
+				return push("integer");
+			else
+				return push("float");
 		}else switch(c){
 		//strings
 		case '"':
 			next();
 			while(c && c!=='"' && c!=='\n' && c!=='\r')
 				next();
-			if(c==='"')
+			var endQuote=0;
+			if(c==='"'){
+				endQuote=1;
 				next();
-			return push("string");
+			}
+			return push("string",code.substring(whitespace+1,i-endQuote));
 		//comments
 		break;case '\'':
 			next();
@@ -792,7 +818,7 @@ function tokenize(code){
 						next();
 						while(isDigit||c>='A'&&c<='F'||c>='a'&&c<='f')
 							next();
-						return push("number");
+						return push("integer",parseInt(getWord(2),16));
 					}
 					jump(hPos);
 					return push("error");
@@ -802,8 +828,8 @@ function tokenize(code){
 					if(c==='0'||c==='1'){
 						next();
 						while(c==='0'||c==='1')
-							next();
-						return push("number");
+							next(); //convert hex/bin literals plz
+						return push("integer",parseInt(getWord(2),2));
 					}
 					jump(bPos);
 					return push("error");
@@ -827,7 +853,7 @@ function tokenize(code){
 				next();
 				while(isDigit||isAlpha)
 					next();
-				return push("number");
+				return push("integer"); //eval constants
 			}
 			return push("error");
 		//logical or
