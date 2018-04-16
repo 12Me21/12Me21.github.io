@@ -78,7 +78,10 @@ function runHash(hash){
 	}
 	
 	function assert(condition){
-		if(!condition)
-			throw "Assertion failed";
+		if(!condition){
+			var error=new Error();
+			error.message="Assertion failed";
+			throw error;
+		}
 	}
 }
