@@ -22,7 +22,7 @@ function runHash(hash){
 		//run each command
 		hash.forEach(function(part){
 			//regex matching...
-			part=part.match(/^(.)(.*?)(?:(?:;(.*))?;(.*))?$/);
+			part=part.match(/^([^])([^]*?)(?:(?:;([^]*))?;([^]*))?$/);
 			assert(part);
 			console.log(part);
 			var elem=document.querySelector(part[2]); 
