@@ -38,6 +38,10 @@ function runHash(hash){
 						case "S":
 							data=data.replace(/\\/g,"¥").replace(/\u007F/g,"\\");
 							break;
+						case "P": //hacked together paste.ee loader
+							data=JSON.parse(syncLoad(data+"https://api.paste.ee/v1/pastes/"+data+"&key=agEhowbhiShxMFYgezNWDUxEbhW3gLFwhWbv7lYhm"));
+							assert(data.success && data.paste && data.paste.sections && data.paste.sections[0] && data.paste.sections[0].content,"paste.ee load failed")
+							data=data.paste.sections[0].content;
 						default:
 							assert(false);
 					}
