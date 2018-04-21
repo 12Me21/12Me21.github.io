@@ -80,10 +80,10 @@ function runHash(hash){
 	return xhr.responseText;
 	}
 	
-	function assert(condition){
+	function assert(condition,message){
 		if(!condition){
 			var error=new Error();
-			error.message="Assertion failed";
+			error.message=message||"Assertion failed";
 			throw error;
 		}
 	}
