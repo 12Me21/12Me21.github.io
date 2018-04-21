@@ -38,7 +38,8 @@ function runHash(hash){
 							data=data.replace(/\\/g,"¥").replace(/\u007F/g,"\\");
 						break;case "P": //hacked together paste.ee loader
 							data=JSON.parse(syncLoad("https://api.paste.ee/v1/pastes/"+data+"&key=agEhowbhiShxMFYgezNWDUxEbhW3gLFwhWbv7lYhm"));
-							assert(data.success && data.paste && data.paste.sections && data.paste.sections[0] && data.paste.sections[0].content,"paste.ee load failed")
+							assert(data.success,"paste.ee load failed "+data.error);
+							assert(data.paste && data.paste.sections && data.paste.sections[0] && data.paste.sections[0].content,"too complex");
 							data=data.paste.sections[0].content;
 						break;default:
 							assert(false);
