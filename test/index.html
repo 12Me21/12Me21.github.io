@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>Enter "STOP" to end loop.</title>
 		<script>
-			while ((input = prompt()) != "STOP") {
+			while ((input = prompt("code to run ('STOP' to end)")) != "STOP") {
 				try {
 					alert(eval(input));
 				} catch (error) {
-					alert(error);
+					alert("ERROR: " + error.name + " " + error.message);
 				}
 			}
 		</script>
