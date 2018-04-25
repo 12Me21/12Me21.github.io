@@ -41,8 +41,20 @@ function runHash(hash){
 							assert(data.success,"paste.ee load failed "+data.error);
 							assert(data.paste && data.paste.sections && data.paste.sections[0] && data.paste.sections[0].contents,"too complex");
 							data=data.paste.sections[0].contents;
+						break;case "E": //hacked together PPCG SE loader
+							data=JSON.parse(syncLoad("https://api.stackexchange.com/2.2/answers/"+data+"?site=codegolf&filter=withbody"));
+							assert(data.items && data.items[0] && data.items[0].body,"SE load failed.");
+							data=data.items[0].body;
+							console.log(data);
+						break;case "C": //get contents of <code> tag
+							var element=document.createElement("div");
+							element.innerHTML=data;
+							data=element.getElementsByTagName("code")[0];
+							assert(data,"code not found");
+							data=data.textContent;
+							element=undefined;
 						break;default:
-							assert(false);
+							assert(false,"invalid action "+process);
 					}
 				});
 			}
