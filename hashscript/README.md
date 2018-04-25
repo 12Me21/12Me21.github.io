@@ -34,6 +34,8 @@ List of operations to perform on the data. Multiple operations can be used, and 
 
 `S` - Convert from SB unicode (backslash -> yen, \x7F -> backslash)
 
+`P` - Load from paste.ee paste code
+
 ## Data
 
 A string
