@@ -27,6 +27,7 @@ function parse(nextToken){
 	
 	function startBlock(){
 		current.code=[];
+		current.line=lineNumber;
 		currentBlocks.push(current);
 		current={};
 	}
@@ -38,7 +39,9 @@ function parse(nextToken){
 		var block=currentBlocks.pop();
 		defs[block.name]=block;
 	}
-		
+	
+	var ifThisLine=false,codeAfterThen;
+	
 	var expr=[];
 	
 	current.type="main";
@@ -49,7 +52,7 @@ function parse(nextToken){
 			readStatement();
 		}catch(error){
 			if(error.name==="ParseError"){
-				return error.message;
+				return error.message+" on line "+lineNumber;
 			//bad error!!!
 			}else{
 				throw error;
@@ -61,6 +64,8 @@ function parse(nextToken){
 	//read a "line" of code
 	function readStatement(){
 		next();
+		if(ifThisLine&&type!="linebreak")
+			codeAfterThen=true;
 		switch(type){
 			//keywords with no arguments
 			case "BREAK":
@@ -70,13 +75,42 @@ function parse(nextToken){
 				current.type="CONTINUE";
 				current.levels=readExpression();
 			break;case "ELSE":
-				assert(currentBlock().type=="IF"||currentBlock().type=="ELSEIF","ELSE without IF");
+				var currentType=currentBlock().type
+				if(currentType==="CASE"){
+					endBlock();
+					current.type="CASE";
+					startBlock();
+				}else{
+					assert(currentBlock().type==="IF"||currentBlock().type==="ELSEIF","ELSE without IF");
+					endBlock();
+					current.type="ELSE";
+					startBlock();
+				}
+			break;case "ENDSWITCH":
+				var currentType=currentBlock().type
+				if(currentType==="CASE")
+					endBlock();
+				else
+					assert(currentType==="SWITCH","ENDSW without SWITCH");
 				endBlock();
-				current.type="ELSE";
-				startBlock();
 			break;case "ENDIF":
-				assert(currentBlock().type=="IF","WEND without WHILE");
+				var currentType=currentBlock().type
+				assert(currentType==="IF" || currentType==="ELSE" || currentType==="ELSEIF","ENDIF without IF");
 				endBlock();
+				ifThisLine=false;
+			break;case "SWITCH":
+				current.type="SWITCH"
+				assert(current.condition=readExpression(),"Missing argument to keyword");
+				startBlock();
+			break;case "CASE":
+				var currentType=currentBlock().type
+				if(currentType==="CASE")
+					endBlock();
+				else
+					assert(currentType==="SWITCH","invalid CASE");
+				current.type="CASE"
+				assert(current.condition=readExpression(),"Missing argument to keyword");
+				startBlock();
 			break;case "STOP":
 				current.type="STOP";
 			break;case "REPEAT":
@@ -97,14 +131,15 @@ function parse(nextToken){
 				endBlock();
 				current.type="ELSEIF"
 				current.condition=readExpression();
+				assert(readToken("THEN"),"ELSEIF without THEN");
 				startBlock();
 			break;case "IF":
 				current.type="IF"
 				assert(current.condition=readExpression(),"Missing IF condition");
-				assert(readToken("THEN")||readToken("GOTO"),"IF without THEN");
-				//check goto vs then
-				readToken("label");//optional
+				assert(readToken("THEN"),"IF without THEN");
 				startBlock();
+				ifThisLine=true;
+				codeAfterThen=false;
 			//FOR
 			break;case "FOR":
 				current.type="FOR";
@@ -131,7 +166,7 @@ function parse(nextToken){
 			//INPUT
 			break;case "INPUT":
 				current.type="INPUT";
-				current.inputs=readList(readExpression);
+				current.inputs=readList(readVariable);
 			//NEXT
 			break;case "NEXT":
 				assert(currentBlock().type=="FOR","NEXT without FOR");
@@ -174,10 +209,18 @@ function parse(nextToken){
 			//line break, colon
 			break;case ":":
 			break;case "linebreak":
+				if(ifThisLine){
+					ifThisLine=false;
+					if(codeAfterThen){
+						endBlock();
+						console.log("ended single line IF");
+					}
+				}
 			break;default:
 				assert(false,"Expected statement, got "+type);
 		}
 		if(current.type){
+			current.line=lineNumber;
 			currentBlocks[currentBlocks.length-1].code.push(current)//push to current block!
 			current={}
 		}
@@ -274,13 +317,12 @@ function parse(nextToken){
 					return 4;
 				case "|":
 					return 3;
-				case "and":
+				case "AND":
 					return 2;
-				case "or":
+				case "OR":
 					return 1;
 			}
 		console.log(token);
-		throw new Error("HECK")
 		assert(false,"error prec "+token.name);
 	}
 	function left(token){

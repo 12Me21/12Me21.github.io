@@ -1,10 +1,14 @@
+var lineNumber;
+
 //=>==>==>==>==>==>=//
 //12-BASIC tokenizer//
 //=>==>==>==>==>==>=//
 
 //list of keywords
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
-var KEYWORDS=["BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","INPUT","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
+var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","INPUT","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
+
+var constants={"#PI":Math.PI,"#VERSION":0.063}
 
 //TOKENIZER STREAM GENERATOR
 //input: code (string)
@@ -19,6 +23,8 @@ function tokenize(code){
 		//These are single CHARACTERS (that is, in a language that has a char type, these should be chars and not strings)
 		isAlpha=(c>='A'&&c<='Z'||c>='a'&&c<='z');
 		isDigit=(c>='0'&&c<='9');
+		if(c==="\n")
+			lineNumber++;
 	}
 	
 	function getWord(startSkip,endSkip){
@@ -61,7 +67,7 @@ function tokenize(code){
 		prev=i;
 		return {type:type,word:word!==undefined ? word : getWord()};
 	}
-	
+	lineNumber=1;
 	next();
 	return function(){
 		//read whitespace
@@ -123,7 +129,12 @@ function tokenize(code){
 				next();
 				while(isAlpha||isDigit||c==='_')
 					next();
-				return push("number"); //eval constants
+				var constName=getWord();
+				var constValue=constants[constName];
+				if(constValue!==undefined)
+					return push("number",constValue);
+				else
+					return push("error");
 			}
 			return push("error");
 		//less than, less than or equal, left shift

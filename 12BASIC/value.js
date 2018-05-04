@@ -3,8 +3,11 @@ function Value(type,value){
 	this.type=type;
 	if(value===undefined)
 		this.value=defaultValue(type);
-	else
+	else{
+		//if(type==="number")
+		//	value=parseFloat("0"+value)||0;
 		this.value=value;
+	}
 }
 
 Value.prototype.toString=function(base){

@@ -4,10 +4,9 @@
 {
 var defint=false;
 
-var ip,block,ast,variables=[{TABSTEP:{value:4}}],functions={};
+var ip,block,ast,variables=[{TABSTEP:{value:4}}],functions={},ifs,switches;
 var stopped=true,interval;
-
-var memory=[];
+var inputs=[];
 
 var steps=100,stepDelay=1
 
@@ -15,14 +14,20 @@ function run(astIn,fastMode){
 	ast=astIn;
 	ip=[-1];
 	block=[ast[0]];
+	ifs=[];
+	switches=[];
 	functions=ast[1];
 	variables=[{}];
 	stopped=false;
+	inputs=$input.value.split(",");
 	if(fastMode)
 		while(!stopped)
 			step();
 	else
-		interval=window.setInterval(function(){for(var i=0;i<steps;i++)step();},stepDelay);
+		interval=window.setInterval(function(){
+			for(var i=0;i<steps;i++)
+				step();
+		},stepDelay);
 }
 
 function stop(error){
@@ -42,11 +47,15 @@ function enterBlock(into){
 	block.push(into||current(block).code[current(ip)]);
 	ip[ip.length-1]=current(ip)+1;
 	ip.push(-1);
+	ifs.push(0);
+	switches.push(undefined);
 }
 
 function leaveBlock(){
 	block.pop();
 	ip.pop();
+	ifs.pop();
+	switches.pop();
 }
 
 function current(stack){
@@ -56,7 +65,7 @@ function current(stack){
 function callFunction(name,args){
 	assert(builtins[name] && builtins[name][args.length],"Undefined function: \""+name+"\"")
 	//if(builtins[name] && builtins[name][args.length]){
-	return builtins[name][args.length](...args);
+	return builtins[name][args.length].apply(null,args);
 	/*}else{
 		var x=functions[name][args.length];
 		assert(x,"undefined function "+name);
@@ -67,7 +76,7 @@ function callFunction(name,args){
 
 function expr(n){
 	assert(n.constructor===Array,"internal error: invalid expression");
-	console.log("expression",n);
+	//console.log("expression",n);
 	var stack=[];
 	for(var i=0;i<n.length;i++){
 		//console.log("stack",stack.toSource(),n[i])
@@ -144,7 +153,7 @@ function step(){
 			break;case "main":
 				stop();
 				return;
-			break;case "IF":
+			break;case "IF":case "ELSE":case "ELSEIF":case "CASE":case "SWITCH":
 				leaveBlock();
 			break;default:
 				throw "bad block"+now.type
@@ -166,17 +175,39 @@ function step(){
 			print(printString+"\n");
 		break;case "FOR":
 			var value=expr(now.start);
-			assert(value.isNumber(),"type mismatch");
+			value.expect("number");
 			assignVar(now.variable.name,value);
-			var value=expr(now.end);
-			assert(value.isNumber(),"type mismatch");
+			value=expr(now.end);
+			value.expect("number");
 			if(getVar(now.variable.name).value<=value.value);
 				enterBlock();
+		break;case "EXIT":
+			var levels=now.levels
+			if(levels){
+				levels=expr(now.levels);
+				levels.expect("number");
+				levels=levels.value;
+				assert(levels>=1,"domain error");
+			}else
+				levels=1;
+			while(1){
+				var x=current(block);
+				if(x.type==="main"){
+					break;
+				}else{
+					levels--;
+					if(!levels){
+						leaveBlock();
+						break;
+					}
+				}
+				leaveBlock();
+			}
 		break;case "BREAK": //M U L T I - L E V E L   B R E A K !
 			var levels=now.levels
 			if(levels){
 				levels=expr(now.levels);
-				assert(levels.type=="number","tym");
+				levels.expect("number");
 				levels=levels.value;
 				assert(levels>=1,"domain error");
 			}else
@@ -198,17 +229,48 @@ function step(){
 			stop();
 			return;
 		break;case "function":
-			throw "functions are not supported yet!";
+			assert(false,"Tried to call function \""+now.name+"\". Subroutine-type functions are not supported yet");
+		break;case "INPUT":
+			for(var i=0;i<now.inputs.length;i++){
+				var x=getNextInputValue();
+				assert(x,"Out of input");
+				if(typeFromName(now.inputs[i].name)==="number")
+					x=new Value("number",parseFloat("0"+x.value))
+				assignVar(now.inputs[i].name,x);
+			}
 		break;case "assignment":
 			assignVar(now.variable.name,expr(now.value));
 		break;case "IF":
-			var condition=expr(now.condition)
-			assert(condition.isNumber(),"type mismatch")
-			if(condition.value!==0){
+			var condition=expr(now.condition);
+			condition.expect("number");
+			condition=condition.truthy()
+			if(condition){
+				ifs[ifs.length-1]=true;
+				enterBlock();
+			}else
+				ifs[ifs.length-1]=false;
+		break;case "ELSE":
+			if(!ifs[ifs.length-1])
+				enterBlock();
+		break;case "ELSEIF":
+			if(!ifs[ifs.length-1]){
+				ifs[ifs.length-1]=true;
 				enterBlock();
 			}
+		break;case "SWITCH":
+			var condition=expr(now.condition);
+			enterBlock();
+			switches[switches.length-1]=condition;
+		break;case "CASE":
+			if(now.condition){
+				console.log(switches)
+				var condition=expr(now.condition);
+				if(equal(switches[switches.length-1],condition).truthy())
+					enterBlock();
+			}else
+				enterBlock();
 		break;default:
-			throw "unsupported instruction"+now.type;
+			assert(false,"unsupported instruction "+now.type);
 	}
 	//window.requestAnimationFrame(step);
 }
@@ -224,6 +286,12 @@ function step(){
 		createVar(x.inputs[i],expr(now.inputs[i]));
 	}
 }*/
+
+function getNextInputValue(){
+	var x=inputs.shift();
+	if(x!==undefined)
+		return new Value("string",x);
+}
 
 //get variable from name
 function getVar(name){
@@ -281,6 +349,8 @@ function defaultValue(type){
 
 function assert(condition,message){
 	if(!condition){
+		console.log(current(block).code[current(ip)])
+		message+=" on line "+current(block).code[current(ip)].line;
 		stop(message);
 		console.log(message);
 		//var error=new Error(message);
