@@ -142,3 +142,11 @@ function lcase(a){
 	a.expect("string");
 	return new Value("string",a.value.toLowerCase());
 }
+
+function clearScreen(){
+	$console.value="";
+}
+
+function vsync(){
+	doVsync=true;
+}

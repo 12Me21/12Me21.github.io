@@ -148,9 +148,9 @@ function parse(nextToken){
 				current.start=readExpression();
 				assert(readToken("word") && word==="TO","Missing TO in FOR");
 				current.end=readExpression();
-				if(readToken("word") && word==="STEP"){
+				if(readToken("word") && word==="STEP")
 					current.step=readExpression();
-				}else
+				else
 					readNext=0; //heck
 				startBlock();
 			//WHILE <condition>
@@ -271,9 +271,9 @@ function parse(nextToken){
 			if(!x)
 				ret.push(x);
 			assert(x||!noNull,"Null value not allowed");
-			do{
+			do
 				assert(ret.push(reader())||!noNull,"Null value not allowed");
-			}while(readToken(","));;;
+			while(readToken(","));;;
 		}
 		return ret;
 	}
@@ -348,20 +348,18 @@ function parse(nextToken){
 				break;case ")":
 					while(1){
 						var top=stack[stack.length-1]
-						if(top.type!="("){
+						if(top.type!="(")
 							rpn.push(stack.pop());
-						}else{
+						else
 							break;
-						}
 					}
 					stack.pop();
 				break;default:
 				assert(false,"error typ")
 			}
 		}
-		while(stack.length){
+		while(stack.length)
 			rpn.push(stack.pop());
-		}
 		return rpn;
 	}
 	

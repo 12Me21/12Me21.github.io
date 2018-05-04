@@ -20,14 +20,23 @@ function run(astIn,fastMode){
 	variables=[{}];
 	stopped=false;
 	inputs=$input.value.split(",");
-	if(fastMode)
-		while(!stopped)
-			step();
-	else
-		interval=window.setInterval(function(){
-			for(var i=0;i<steps;i++)
-				step();
-		},stepDelay);
+	stepLevel2();
+}
+
+function stepLevel2(){
+	if(!stopped)
+		interval=window.setInterval(stepLevel1,stepDelay);
+}
+
+function stepLevel1(){
+	for(var i=0;i<steps;i++){
+		step();
+		if(doVsync){
+			clearInterval(interval);
+			window.requestAnimationFrame(stepLevel2);
+			break;
+		}
+	}
 }
 
 function stop(error){
@@ -63,16 +72,22 @@ function current(stack){
 }
 
 function callFunction(name,args){
-	assert(builtins[name],"Undefined function: \""+name+"\"")
-	assert(builtins[name][args.length],"\""+name+"\" does not accept "+args.length+" arguments");
+	assert(builtins[1][name],"Undefined function: \""+name+"\"")
+	assert(builtins[1][name][args.length],"\""+name+"\" does not accept "+args.length+" arguments");
 	//if(builtins[name] && builtins[name][args.length]){
-	return builtins[name][args.length].apply(null,args);
+	return builtins[1][name][args.length].apply(null,args);
 	/*}else{
 		var x=functions[name][args.length];
 		assert(x,"undefined function "+name);
 		assert(false,"feature not supported");
 	}
 	return false;*/
+}
+
+function callSub(name,args){
+	assert(builtins[0][name],"Undefined function: \""+name+"\"")
+	assert(builtins[0][name][args.length],"\""+name+"\" does not accept "+args.length+" arguments");
+	builtins[0][name][args.length].apply(null,args);
 }
 
 function expr(n){
@@ -93,10 +108,8 @@ function expr(n){
 				assert(args<=stack.length,"internal error: stack underflow");
 				var retval;
 				assert(retval=callFunction(n[i].name,stack.slice(-args)),"bad function/operator")
-				for(var j=0;j<args;j++){
+				for(var j=0;j<args;j++)
 					stack.pop();
-				}
-				
 				stack.push(retval);
 			break;default:
 				assert(false,"invalid expression: bad token "+n[i].type);
@@ -141,16 +154,14 @@ function step(){
 					var value=expr(now.step);
 					value.expect("number");
 					variable.value+=value.value;
-				}else{
+				}else
 					variable.value++;
-				}
 				var value=expr(now.end);
 				value.expect("number");
-				if(variable.value<=value.value){ //only works for loops that count upwards!
+				if(variable.value<=value.value) //only works for loops that count upwards!
 					jumpTo(0);
-				}else{
+				else
 					leaveBlock();
-				}
 			break;case "main":
 				stop();
 				return;
@@ -164,15 +175,14 @@ function step(){
 	//entering block
 	switch(now.type){
 		case "WHILE":
-			if(expr(now.condition).truthy());
+			if(expr(now.condition).truthy())
 				enterBlock();
 		break;case "REPEAT":
 			enterBlock();
 		break;case "PRINT":
 			var printString="";
-			for(var i=0;i<now.inputs.length;i++){
+			for(var i=0;i<now.inputs.length;i++)
 				printString+=(i>0?" ":"")+expr(now.inputs[i]).toString();
-			}
 			print(printString+"\n");
 		break;case "FOR":
 			var value=expr(now.start);
@@ -193,9 +203,9 @@ function step(){
 				levels=1;
 			while(1){
 				var x=current(block);
-				if(x.type==="main"){
+				if(x.type==="main")
 					break;
-				}else{
+				else{
 					levels--;
 					if(!levels){
 						leaveBlock();
@@ -204,6 +214,7 @@ function step(){
 				}
 				leaveBlock();
 			}
+			//wow why's this part so hecking long?
 		break;case "BREAK": //M U L T I - L E V E L   B R E A K !
 			var levels=now.levels
 			if(levels){
@@ -215,9 +226,9 @@ function step(){
 				levels=1;
 			while(1){
 				var x=current(block);
-				if(x.type==="main"){
+				if(x.type==="main")
 					break
-				}else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
+				else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
 					levels--
 					if(!levels){
 						leaveBlock();
@@ -229,9 +240,9 @@ function step(){
 		break;case "CONTINUE":
 			while(1){
 				var x=current(block);
-				if(x.type==="main"){
+				if(x.type==="main")
 					break
-				}else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
+				else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
 					jumpTo(Infinity);
 					break;
 				}
@@ -241,15 +252,8 @@ function step(){
 			stop();
 			return;
 		break;case "function":
-			assert(false,"Tried to call function \""+now.name+"\". Subroutine-type functions are not supported yet");
-		break;case "INPUT":
-			for(var i=0;i<now.inputs.length;i++){
-				var x=getNextInputValue();
-				assert(x,"Out of input");
-				if(typeFromName(now.inputs[i].name)==="number")
-					x=new Value("number",parseFloat("0"+x.value))
-				assignVar(now.inputs[i].name,x);
-			}
+			callSub(now.name,now.inputs);
+			//assert(false,"Tried to call function \""+now.name+"\". Subroutine-type functions are not supported yet");
 		break;case "assignment":
 			assignVar(now.variable.name,expr(now.value));
 		break;case "IF":

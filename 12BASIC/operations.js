@@ -1,4 +1,7 @@
-var builtins={
+var builtins=[{
+	CLS:  {0:clearScreen},
+	VSYNC:{0:vsync},
+},{
 	"^":  {2:exponent},
 	"*":  {2:multiply},
 	">":  {2:greaterThan},
@@ -39,7 +42,7 @@ var builtins={
 	RIGHT$:{2:right},
 	INPUT:{0:inputNumber},
 	INPUT$:{0:input},
-};
+}];
 
 function expect(x,type){
 	assert(x.type===type,"type mismatch")
@@ -47,10 +50,10 @@ function expect(x,type){
 
 function add(a,b){
 	if(a.type==="number"){
-		expect(b,"number");
+		b.expect("number");
 		return new Value("number",a.value+b.value);
 	}else{
-		expect(a,"string");
+		a.expect("string");
 		return new Value("string",a.value+b.toString());
 	}
 }
@@ -67,11 +70,11 @@ function negate(a){
 }
 
 function multiply(a,b){
-	if(a.isNumber()){
-		expect(b,"number");
+	b.expect("number");
+	if(a.type==="number"){
 		return new Value("number",a.value*b.value);
 	}else{
-		assert(a.type==="string" && b.type==="number","type mismatch");
+		a.expect("string");
 		return new Value("string",a.value.repeat(b.value));
 	}
 }
@@ -109,8 +112,8 @@ function greaterThan(a,b){
 }
 
 function exponent(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	b.expect("number");
 	return new Value("number",a.value**b.value);
 }
 
@@ -167,20 +170,20 @@ function bitwiseOr(a,b){
 }
 
 function bitwiseXor(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	b.expect("number");
 	return new Value("number",a.value ^ b.value);
 }
 
 function leftShift(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	b.expect("number");
 	return new Value("number",a.value<<b.value);
 }
 
 function rightShift(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	b.expect("number");
 	return new Value("number",a.value>>b.value);
 }
 
