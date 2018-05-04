@@ -1,0 +1,34 @@
+X$="""Hello""" 'quotes are "escaped" as ""
+PRINT X$
+PRINT
+
+PRINT "8 squared is",8^2
+PRINT
+
+X=14522
+PRINT "calculating the square root of",X,"..."
+GUESS=X/2
+FOR I=1 TO 10
+ GUESS=(GUESS+X/GUESS)/2
+NEXT
+PRINT "My guess:",GUESS
+PRINT "Actual square root:",X^(1/2)
+PRINT
+
+PRINT MID$("TEST",-1,2)
+PRINT ASC("W")
+PRINT CHR$(-50)
+PRINT VAL("BEEF",16)
+PRINT STR$(48879,16)
+PRINT
+
+PRINT "Generating alphabet ..."
+FOR I=0 TO 26-1
+ A$=A$+CHR$(I+ASC("A"))
+NEXT
+PRINT A$
+
+ANGLE=ANG(5,5)
+RADIUS=HYP(5,5)
+PRINT ANGLE,RADIUS
+PRINT COS(ANGLE,RADIUS),SIN(ANGLE,RADIUS)

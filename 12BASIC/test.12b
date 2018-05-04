@@ -1,0 +1,11 @@
+X$="""Hello""" 'quotes are "escaped" as ""
+PRINT X$
+PRINT "8 squared is",8^2
+X=24
+PRINT "calculating the square root of",X
+GUESS=X/2
+FOR I=1 TO 100
+ GUESS=(GUESS+X/GUESS)/2
+NEXT
+PRINT "My guess:",GUESS
+PRINT "Actual square root:",X^(1/2)
