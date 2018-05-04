@@ -51,10 +51,17 @@ function string(a){
 }
 
 //this should be more strict!
-function stringBase(a,b){
+function paddedString(a,b){
 	a.expect("number");
 	b.expect("number");
-	return new Value("string",a.toString(b.value));
+	return new Value("string",("0".repeat(b.value)+a.toString()).substr(-b.value));
+}
+
+function paddedStringBase(a,b,c){
+	a.expect("number");
+	b.expect("number");
+	c.expect("number");
+	return new Value("string",("0".repeat(b.value)+a.toString(c.value)).substr(-b.value));
 }
 
 function random1(a){

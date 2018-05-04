@@ -8,7 +8,7 @@ var lineNumber;
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
 var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","INPUT","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
 
-var constants={"#PI":Math.PI,"#VERSION":0.065}
+var constants={"#PI":Math.PI,"#VERSION":0.071}
 
 //TOKENIZER STREAM GENERATOR
 //input: code (string)

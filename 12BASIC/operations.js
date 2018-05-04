@@ -27,7 +27,7 @@ var builtins={
 	CHR$: {1:character},
 	LEN:  {1:length},
 	VAL:  {1:value,2:valueBase},
-	STR$: {1:string,2:stringBase},
+	STR$: {1:string,2:paddedString,3:paddedStringBase},
 	RND:  {1:random1,2:random2},
 	SIN:  {1:sine,2:sine2},
 	COS:  {1:cosine,2:cosine2},

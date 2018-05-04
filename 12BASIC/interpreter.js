@@ -77,7 +77,7 @@ function callFunction(name,args){
 
 function expr(n){
 	assert(n.constructor===Array,"internal error: invalid expression");
-	//console.log("expression",n);
+	console.log("expression",n);
 	var stack=[];
 	for(var i=0;i<n.length;i++){
 		//console.log("stack",stack.toSource(),n[i])
@@ -226,6 +226,17 @@ function step(){
 				}
 				leaveBlock();
 			}
+		break;case "CONTINUE":
+			while(1){
+				var x=current(block);
+				if(x.type==="main"){
+					break
+				}else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
+					jumpTo(Infinity);
+					break;
+				}
+				leaveBlock();
+			}
 		break;case "STOP":
 			stop();
 			return;
@@ -351,7 +362,8 @@ function defaultValue(type){
 function assert(condition,message){
 	if(!condition){
 		console.log(current(block).code[current(ip)])
-		message+=" on line "+current(block).code[current(ip)].line;
+		message=" On line "+current(block).code[current(ip)].line+"\n"+message;
+		//message+=" on line "+current(block).code[current(ip)].line;
 		stop(message);
 		console.log(message);
 		var error=new Error(message);
