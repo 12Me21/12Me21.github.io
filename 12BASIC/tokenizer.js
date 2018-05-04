@@ -8,7 +8,7 @@ var lineNumber;
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
 var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
 
-var constants={"#PI":Math.PI,"#VERSION":0.095}
+var constants={"#PI":Math.PI,"#VERSION":0.098}
 
 //TOKENIZER STREAM GENERATOR
 //input: code (string)
@@ -91,11 +91,13 @@ function tokenize(code){
 			do
 				next();
 			while(isDigit);;;
-			if(c==='.')
+			var c2=code.charAt(i+1)
+			if(c==='.' && c2>='0' && c2<='9'){
 				next();
-			//check for 1.function() here!
-			while(isDigit)
-				next();
+				while(isDigit)
+					next();
+				return push("number",parseFloat("0"+getWord()));
+			}
 			return push("number",parseFloat("0"+getWord()));
 		}else if(c==='.'){
 			next();
