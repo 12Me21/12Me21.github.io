@@ -1,6 +1,4 @@
-# `//=>==>==>==>=//`
-# `/// 12-BASIC ///`
-# `//=>==>==>==>=//`
+# `12-BASIC` documentation
 
 ## Flow control
 
