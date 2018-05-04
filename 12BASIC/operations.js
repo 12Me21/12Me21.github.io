@@ -33,10 +33,9 @@ var builtins={
 	COS:  {1:cosine,2:cosine2},
 	ANG:  {2:angle},
 	HYP:  {2:hypot},
-	CLS:  {0:function(){$console.value=""}},
 	INSTR:{2:instr2,3:instr3},
-	UCASE:{1:ucase},
-	LCASE:{1:lcase},
+	UCASE$:{1:ucase},
+	LCASE$:{1:lcase},
 	RIGHT$:{2:right},
 };
 
