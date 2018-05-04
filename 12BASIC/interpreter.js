@@ -77,7 +77,7 @@ function callFunction(name,args){
 
 function expr(n){
 	assert(n.constructor===Array,"internal error: invalid expression");
-	console.log("expression",n);
+	//console.log("expression",n);
 	var stack=[];
 	for(var i=0;i<n.length;i++){
 		//console.log("stack",stack.toSource(),n[i])
@@ -139,13 +139,13 @@ function step(){
 				var variable=getVar(now.variable.name);
 				if(now.step!==undefined){
 					var value=expr(now.step);
-					assert(value.isNumber(),"type mismatch");
+					value.expect("number");
 					variable.value+=value.value;
 				}else{
 					variable.value++;
 				}
 				var value=expr(now.end);
-				assert(value.isNumber(),"type mismatch");
+				value.expect("number");
 				if(variable.value<=value.value){ //only works for loops that count upwards!
 					jumpTo(0);
 				}else{
@@ -164,14 +164,14 @@ function step(){
 	//entering block
 	switch(now.type){
 		case "WHILE":
-			if(expr(now.condition).value!==0);
+			if(expr(now.condition).truthy());
 				enterBlock();
 		break;case "REPEAT":
 			enterBlock();
 		break;case "PRINT":
 			var printString="";
 			for(var i=0;i<now.inputs.length;i++){
-				printString+=(i>0?" ":"")+expr(now.inputs[i]).value.toString();
+				printString+=(i>0?" ":"")+expr(now.inputs[i]).toString();
 			}
 			print(printString+"\n");
 		break;case "FOR":
@@ -253,10 +253,7 @@ function step(){
 		break;case "assignment":
 			assignVar(now.variable.name,expr(now.value));
 		break;case "IF":
-			var condition=expr(now.condition);
-			condition.expect("number");
-			condition=condition.truthy()
-			if(condition){
+			if(expr(now.condition).truthy()){
 				ifs[ifs.length-1]=true;
 				enterBlock();
 			}else
@@ -266,8 +263,10 @@ function step(){
 				enterBlock();
 		break;case "ELSEIF":
 			if(!ifs[ifs.length-1]){
-				ifs[ifs.length-1]=true;
-				enterBlock();
+				if(expr(now.condition).truthy()){
+					ifs[ifs.length-1]=true;
+					enterBlock();
+				}
 			}
 		break;case "SWITCH":
 			var condition=expr(now.condition);
@@ -275,7 +274,6 @@ function step(){
 			switches[switches.length-1]=condition;
 		break;case "CASE":
 			if(now.condition){
-				console.log(switches)
 				var condition=expr(now.condition);
 				if(equal(switches[switches.length-1],condition).truthy())
 					enterBlock();
@@ -315,7 +313,6 @@ function getVar(name){
 	}
 	if(!ret)
 		ret=assignVar(name)
-	//console.log("found variable:",name,ret);
 	return ret;
 }
 
@@ -334,7 +331,6 @@ function assignVar(name,value){
 		break;case "default":
 			assert(false,"could not create variable, invalid tyoe");
 	}
-	//console.log("created variable:",name,currentVariables[name])
 	return currentVariables[name]
 }
 

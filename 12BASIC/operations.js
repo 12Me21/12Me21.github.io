@@ -69,7 +69,6 @@ function multiply(a,b){
 		expect(b,"number");
 		return new Value("number",a.value*b.value);
 	}else{
-		console.log(a,b)
 		assert(a.type==="string" && b.type==="number","type mismatch");
 		return new Value("string",a.value.repeat(b.value));
 	}
@@ -134,19 +133,17 @@ function notEqual(a,b){
 }
 
 function logicalAnd(a,b){
-	expect(a,"number");
-	expect(b,"number");
 	return new Value("number",(a.truthy() && b.truthy())?1:0);
 }
 
 function logicalOr(a,b){
-	expect(a,"number");
-	expect(b,"number");
-	return new Value("number",(a.truthy() || b.truthy())?1:0);
+	if(a.truthy())
+		return a.copy();
+	else
+		return b.copy();
 }
 
 function logicalNot(a){
-	expect(a,"number");
 	return new Value("number",a.truthy()?0:1);
 }
 

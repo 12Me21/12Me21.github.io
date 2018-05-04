@@ -4,10 +4,15 @@ function Value(type,value){
 	if(value===undefined)
 		this.value=defaultValue(type);
 	else{
-		//if(type==="number")
 		//	value=parseFloat("0"+value)||0;
 		this.value=value;
 	}
+}
+
+var BasicNumber=Object.create(Value)
+
+Value.prototype.copy=function(){
+	return new Value(this.type,this.value);
 }
 
 Value.prototype.toString=function(base){
@@ -18,7 +23,10 @@ Value.prototype.toString=function(base){
 }
 
 Value.prototype.truthy=function(){
-	return this.value!==0;
+	if(this.type==="string")
+		return this.value!=="";
+	else
+		return this.value!==0;
 }
 
 Value.prototype.expect=function(type){

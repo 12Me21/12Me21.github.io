@@ -335,13 +335,13 @@ function parse(nextToken){
 		for(var i=0;i<expr.length;i++){
 			var token=expr[i];
 			switch(token.type){
-				case "number":case "string":case "variable":case "function":case "unary": //see, functions are actually pushed AFTER their arguments, so we can just send them directly to the output!
+				case "number":case "string":case "variable":case "function": //see, functions are actually pushed AFTER their arguments, so we can just send them directly to the output!
 					rpn.push(token);
-				break;case "operator":
+				break;case "operator":case "unary":
 					while(stack.length){
 						var top=stack[stack.length-1]
 						//console.log(top)
-						if(top.type!="("&&(prec(top)>=prec(token) || (prec(top)==prec(token) && left(token)))){
+						if(top.type!="("&&(prec(top)>prec(token) || (prec(top)==prec(token) && left(token)))){
 							rpn.push(stack.pop());
 						}else{
 							break;
@@ -394,11 +394,11 @@ function parse(nextToken){
 			//operator (unary)
 			break;case "unary":case "minus":case "xor":
 				//unary op
-				var x=word;
-				expr.push({type:"("}); //actual fear
+				expr.push({type:"unary",name:word,args:1});
+				//expr.push({type:"("}); //actual fear
 				assert(readExpression2(),"Missing operator argument");
-				expr.push({type:")"});
-				expr.push({type:"unary",name:x,args:1});
+				//expr.push({type:")"});
+				
 			//open parenthesis
 			break;case "(":
 				expr.push({type:"("});
