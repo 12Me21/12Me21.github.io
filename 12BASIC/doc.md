@@ -1,3 +1,7 @@
+# `//=>==>==>==>=//`
+# `/// 12-BASIC ///`
+# `//=>==>==>==>=//`
+
 ## Flow control
 
 * ### Standard IF block  
@@ -12,19 +16,16 @@
   >**ENDIF**  
   
 * ### Short IF block (ELSE/ELSEIF not allowed)
-  
   >**IF** *condition* **THEN** *code*
     
 * ### FOR loop  
   Runs *code* for each value of *variable* between *start* and *end*
-  
   >**FOR** *variable* **=** *start* **TO** *end* [ **STEP** *step* ]  
   >&nbsp;&nbsp;&nbsp;&nbsp;*code*  
   >**NEXT** [ *variable* ]  
     
 * ### WHILE loop  
   Runs *code* repeatedly while *condition* is truthy.
-  
   >**WHILE** *condition*  
   >&nbsp;&nbsp;&nbsp;&nbsp;*code*  
   >**WEND**  
@@ -34,3 +35,57 @@
   >**REPEAT**  
   >&nbsp;&nbsp;&nbsp;&nbsp;*code*  
   >**UNTIL** *condition*  
+
+* ### SWITCH/CASE block
+  Runs *code* if any *value* equals *switchValue*. **BREAK** is not required.
+  >**SWITCH** *switchValue*  
+  >&nbsp;&nbsp;&nbsp;&nbsp;[ **CASE** *value* [ , ... ]  
+  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*code* ] [...]  
+  >&nbsp;&nbsp;&nbsp;&nbsp;[ **ELSE**  
+  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*code* ]  
+  >**ENDSWITCH**
+  
+* ### BREAK
+  Exits **FOR**, **WHILE**, **REPEAT** loops.
+  >**BREAK** [ *levels* ]  
+  
+* ### EXIT
+  Similar to **BREAK**, but works in all code blocks.
+  >**EXIT** [ *levels* ]  
+  
+* ### CONTINUE
+  Jumps to the end of a loop.
+  >**CONTINUE**
+  
+## Commands
+
+* ### PRINT
+  Outputs a list of values.
+  >**PRINT** [ *value* ] [ , ... ]  
+  
+* ### INPUT
+  Stores input into a list of variables.
+  >**INPUT** [ *variable* ] [ , ... ]
+  
+* ### STOP
+  Ends the program.
+  >**STOP**
+  
+## Operators
+
+  * ### Negation
+  >**-** *number* -> *number*
+  * ### Logical Not
+  >**!** *number* -> *number*  
+  >**NOT** *number* -> *number*
+  * ### Bitwise Not
+  >**~** *number* -> *number*
+  * ### Exponents
+  >*number* **^** *number* -> *number*
+  * ### Multiply
+  >*number* __*__ *number* -> *number*
+  * ### Addition
+  >*number* **+** *number* -> *number*
+  * ### String concatenation / type coercion
+  >*string* **+** *value* -> *string*
+  
