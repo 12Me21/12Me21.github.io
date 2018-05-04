@@ -1,5 +1,14 @@
 # `12-BASIC` documentation
 
+## Types
+
+* ### Number
+  >*name*
+* ### String
+  >*name*__$__  
+  
+  Falsey values are `0` and `""`
+
 ## Flow control
 
 * ### Standard IF block  
@@ -133,11 +142,16 @@
   >*number* **~** *number* -> *number*
   
   * ### Logical And
-  >*number* **AND** *number* -> *number*
-  * ### Logical Or
-  >*number* **OR** *number* -> *number*
+  >*value* **AND** *value* -> *number*
+  * ### Logical Or. Returns the first truthy value
+  >*value* **OR** *value* -> *value*
   * ### Logical Xor
-  >*number* **XOR** *number* -> *number*
+  >*value* **XOR** *value* -> *number*
+
+  * ### Alternate function syntax
+  The first argument can be written before the function:
+  >*argument1* **.** *function*__(__ *arguments* [ , ... ] **)**  
+  >*function*__(__ *argument1* **,** *arguments* [ , ... ] **)**
   
 ## Built-in Functions
 
@@ -178,3 +192,7 @@
   >**LCASE$(** *string$* **)** -> *lowercase$*
   * ### Get characters from end
   >**RIGHT$(** *string$* **,** *length* **)** -> *end$*
+  * ### Get number input
+  >**INPUT(** **)** -> *number*
+  * ### Get string input
+  >**INPUT$(** **)** -> *string$*
