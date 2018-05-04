@@ -73,19 +73,110 @@
   
 ## Operators
 
-  * ### Negation
+  * ### Negate
   >**-** *number* -> *number*
   * ### Logical Not
   >**!** *number* -> *number*  
   >**NOT** *number* -> *number*
   * ### Bitwise Not
   >**~** *number* -> *number*
-  * ### Exponents
+  
+  * ### Exponent
   >*number* **^** *number* -> *number*
+  
   * ### Multiply
   >*number* __*__ *number* -> *number*
-  * ### Addition
-  >*number* **+** *number* -> *number*
-  * ### String concatenation / type coercion
-  >*string* **+** *value* -> *string*
+  * ### String repeat
+  >*string* __*__ *number* -> *string*
+  * ### Divide
+  >*number* __/__ *number* -> *number*
+  * ### Mod (Remainder) a-floor(a/b)*b
+  >*number* __%__ *number* -> *number*
+  * ### Floored Division
+  >*number* __\\__ *number* -> *number*
   
+  * ### Add
+  >*number* **+** *number* -> *number*
+  * ### String concatenate / type coercion
+  >*string$* **+** *value* -> *string$*
+  * ### Subtract
+  >*number* **-** *number* -> *number*
+  
+  * ### Left Shift
+  >*number* **<<** *number* -> *number*
+  * ### Right Shift (unsigned)
+  >*number* **>>** *number* -> *number*
+  
+  * ### Greater
+  >*number* **>** *number* -> *number*  
+  >*string$* **>** *string$* -> *number*
+  * ### Less
+  >*number* **<** *number* -> *number*  
+  >*string$* **<** *string$* -> *number*
+  * ### Greater or Equal
+  >*number* **>=** *number* -> *number*  
+  >*string$* **>=** *string$* -> *number*
+  * ### Less or Equal
+  >*number* **<=** *number* -> *number*  
+  >*string$* **<=** *string$* -> *number*
+  
+  * ### Equal
+  >*number* **==** *number* -> *number*  
+  >*string$* **==** *string$* -> *number*
+  * ### Not Equal
+  >*number* **!=** *number* -> *number*  
+  >*string$* **!=** *string$* -> *number*
+  
+  * ### Bitwise And
+  >*number* **&** *number* -> *number*
+  * ### Bitwise Or
+  >*number* **|** *number* -> *number*
+  * ### Bitwise Xor
+  >*number* **~** *number* -> *number*
+  
+  * ### Logical And
+  >*number* **AND** *number* -> *number*
+  * ### Logical Or
+  >*number* **OR** *number* -> *number*
+  * ### Logical Xor
+  >*number* **XOR** *number* -> *number*
+  
+## Built-in Functions
+
+  * ### Substring
+  >**MID$(** *string$* **,** *start* **,** *length* **)** -> *substring$*
+  * ### Get ASCII code
+  >**ASC(** *string$* **)** -> *ascii*
+  * ### Get Character
+  >**CHR$(** *ascii* **)** -> *character$*
+  * ### Length
+  >**LEN(** *string$* **)** -> *length*
+  * ### String to Number
+  >**VAL(** *string$* **)** -> *number*  
+  >**VAL(** *string$* **,** *base* **)** -> *number*
+  * ### Number to String
+  >**STR$(** *number* **)** -> *string$*  
+  >**STR$(** *number* **,** *length* **)** -> *string$*  
+  >**STR$(** *number* **,** *length* **,** *base* **)** -> *string$*
+  * ### Random Number
+  >**RND(** *range* **)** -> *number*  
+  >**RND(** *minimum* **,** *maximum* **)** -> *number*
+  * ### Cosine (angles range from 0 to 1)
+  >**COS(** *angle* **)** -> *x*  
+  >**COS(** *angle* **,** *radius* **)** -> *x*
+  * ### Sine (angles range from 0 to 1)
+  >**SIN(** *angle* **)** -> *y*  
+  >**SIN(** *angle* **,** *radius* **)** -> *y*
+  * ### Angle from X and Y (atan)
+  >**ANG(** *x* **,** *y* **)** -> *angle*
+  * ### Hypotenuse
+  >**HYP(** *x* **,** *y* **)** -> *hypotenuse*
+  * ### String search (-1 = not found)
+  >**INSTR(** *string$* **,** *search$* **)** -> *location*  
+  >**INSTR(** *start* **,** *string$* **,** *search$* **)** -> *location*
+  * ### Uppercase
+  >**UCASE$(** *string$* **)** -> *uppercase$*
+  * ### Lowercase
+  >**LCASE$(** *string$* **)** -> *lowercase$*
+  * ### Get characters from end
+  >**RIGHT$(** *string$* **,** *length* **)** -> *end$*
