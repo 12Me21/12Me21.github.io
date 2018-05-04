@@ -17,10 +17,9 @@ FOR I=1 TO 10
  PRINT I
 NEXT</textarea>
 		<br>
-		<button id="$button2" onclick="var x=parse(tokenize($code.value));$console.value='';if(x.constructor===String)$console.value='ERROR: '+x;else run(x)">run (safe)</button>
-		<button id="$button4" disabled="true" onclick="var x=parse(tokenize($code.value));$console.value='';if(x.constructor===String)$console.value='ERROR: '+x;else run(x,true)">run (fast)</button>
-		<button id="$button3" onclick="stop('Break')">stop</button>
-		<button id="$button5" onclick="$console.value=''">clear</button>
+		<button id="$button2" onclick="var x=parse(tokenize($code.value));$console.value='';if(x.constructor===String)$console.value='ERROR: '+x;else run(x)">Run</button>
+		<button id="$button3" onclick="stop('Break')">Stop</button>
+		<button id="$button5" onclick="$console.value=''">Clear console</button>
 		<hr>
 		Input:<br>
 		<textarea id="$input" rows="2" cols="80" spellcheck="false"></textarea><br>
