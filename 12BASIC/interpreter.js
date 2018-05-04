@@ -8,7 +8,7 @@ var ip,block,ast,variables=[{TABSTEP:{value:4}}],functions={},ifs,switches;
 var stopped=true,interval;
 var inputs=[];
 
-var steps=100,stepDelay=1
+var steps=100,stepDelay=1,doVsync=false;
 
 function run(astIn,fastMode){
 	ast=astIn;
@@ -32,6 +32,7 @@ function stepLevel1(){
 	for(var i=0;i<steps;i++){
 		step();
 		if(doVsync){
+			doVsync=false;
 			clearInterval(interval);
 			window.requestAnimationFrame(stepLevel2);
 			break;
