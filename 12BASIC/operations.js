@@ -37,6 +37,8 @@ var builtins={
 	UCASE$:{1:ucase},
 	LCASE$:{1:lcase},
 	RIGHT$:{2:right},
+	INPUT:{0:inputNumber},
+	INPUT$:{0:input},
 };
 
 function expect(x,type){
@@ -81,7 +83,7 @@ function divide(a,b){
 	return new Value("number",a.value/b.value);
 }
 
-//integer division (idk if this works though)
+//floor division
 function div(a,b){
 	a.expect("number");
 	b.expect("number");
@@ -91,19 +93,19 @@ function div(a,b){
 
 //mod
 function mod(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	a.expect("number");
 	assert(b.value!==0,"divide by 0");
 	return new Value("number",a.value-Math.floor(a.value/b.value)*b.value);
 }
 
 function comparison(a,b,compareFunction){
-	assert(a.type===b.type,"type mismatch")
-	return new Value("number",compareFunction(a,b)?1:0);
+	assert(a.type===b.type,"type mismatch");
+	return new Value("number",compareFunction(a.value,b.value)?1:0);
 }
 
 function greaterThan(a,b){
-	return comparison(a,b,function(a,b){return a.value>b.value});
+	return comparison(a,b,function(a,b){return a>b});
 }
 
 function exponent(a,b){
@@ -113,23 +115,23 @@ function exponent(a,b){
 }
 
 function lessThan(a,b){
-	return comparison(a,b,function(a,b){return a.value<b.value});
+	return comparison(a,b,function(a,b){return a<b});
 }
 
 function lessOrEqual(a,b){
-	return comparison(a,b,function(a,b){return a.value<=b.value});
+	return comparison(a,b,function(a,b){return a<=b});
 }
 
 function greaterOrEqual(a,b){
-	return comparison(a,b,function(a,b){return a.value>=b.value});
+	return comparison(a,b,function(a,b){return a>=b});
 }
 
 function equal(a,b){
-	return comparison(a,b,function(a,b){return a.value===b.value});
+	return comparison(a,b,function(a,b){return a===b});
 }
 
 function notEqual(a,b){
-	return comparison(a,b,function(a,b){return a.value!==b.value});
+	return comparison(a,b,function(a,b){return a!==b});
 }
 
 function logicalAnd(a,b){
@@ -148,19 +150,19 @@ function logicalNot(a){
 }
 
 function bitwiseNot(a){
-	expect(a,"number");
+	a.expect("number");
 	return new Value("number",~a.value);
 }
 
 function bitwiseAnd(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	b.expect("number");
 	return new Value("number",a.value & b.value);
 }
 
 function bitwiseOr(a,b){
-	expect(a,"number");
-	expect(b,"number");
+	a.expect("number");
+	b.expect("number");
 	return new Value("number",a.value | b.value);
 }
 

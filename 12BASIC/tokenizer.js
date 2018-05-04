@@ -6,9 +6,9 @@ var lineNumber;
 
 //list of keywords
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
-var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","INPUT","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
+var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
 
-var constants={"#PI":Math.PI,"#VERSION":0.08}
+var constants={"#PI":Math.PI,"#VERSION":0.095}
 
 //TOKENIZER STREAM GENERATOR
 //input: code (string)
@@ -87,16 +87,25 @@ function tokenize(code){
 				next();
 			return pushWord();
 		//numbers
-		}else if(isDigit||c==='.'){
-			while(isDigit){
+		}else if(isDigit){
+			do
 				next();
-			}
+			while(isDigit);;;
 			if(c==='.')
 				next();
-			while(isDigit){
+			//check for 1.function() here!
+			while(isDigit)
 				next();
-			}
 			return push("number",parseFloat("0"+getWord()));
+		}else if(c==='.'){
+			next();
+			if(isDigit){
+				do
+					next();
+				while(isDigit);;;
+				return push("number",parseFloat("0"+getWord()));
+			}else
+				return push("dot");
 		}else switch(c){
 		//strings
 		case '"':

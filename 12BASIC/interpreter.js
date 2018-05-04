@@ -77,7 +77,7 @@ function callFunction(name,args){
 
 function expr(n){
 	assert(n.constructor===Array,"internal error: invalid expression");
-	//console.log("expression",n);
+	console.log("expression",n);
 	var stack=[];
 	for(var i=0;i<n.length;i++){
 		//console.log("stack",stack.toSource(),n[i])

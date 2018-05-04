@@ -34,6 +34,14 @@ function value(a){
 	return new Value("number",parseFloat(a.value)||0);
 }
 
+function input(){
+	return getNextInputValue();
+}
+
+function inputNumber(){
+	return new Value("number",parseFloat(getNextInputValue())||0);
+}
+
 //this should be more strict!
 function valueBase(a,b){
 	a.expect("string");

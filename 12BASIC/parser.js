@@ -41,7 +41,7 @@ function parse(nextToken){
 	}
 	
 	var ifThisLine=false,codeAfterThen;
-	
+	var nextFunctionGetsOneMore=0;
 	var expr=[];
 	
 	current.type="main";
@@ -176,11 +176,6 @@ function parse(nextToken){
 			break;case "PRINT":
 				current.type="PRINT"
 				current.inputs=readList(readExpression);
-			//RETURN
-			break;case "RETURN":
-				current.type="RETURN";
-				if(defType===2)
-					current.value=readExpression();
 			//OUT/THEN
 			break;case "OUT":case "THEN":
 				assert(false,"Illegal OUT/THEN");
@@ -381,7 +376,8 @@ function parse(nextToken){
 					expr.push({type:"("}); //all we needed!
 					var x=readList(readExpression2);
 					expr.push({type:")"});
-					expr.push({type:"function",name:name,args:x.length});
+					expr.push({type:"function",name:name,args:x.length+nextFunctionGetsOneMore});
+					nextFunctionGetsOneMore=0;
 					assert(readToken(")"),"Missing \")\" in function call");
 				}else
 					expr.push({type:"variable",name:name});
@@ -411,7 +407,14 @@ function parse(nextToken){
 				return false;
 		}
 		//read infix operators
-		while(readToken("operator")||readToken("minus")||readToken("xor")){
+		//console.log("approach")
+		//this might have to be WHILE not IF
+		if(readToken("dot")){
+			console.log("dot")
+			nextFunctionGetsOneMore=1;
+			assert(readExpression2(),"Dot missing second argument");
+		}else if(readToken("operator")||readToken("minus")||readToken("xor")){
+			//console.log("beep!")
 			expr.push({type:"operator",name:word,args:2});
 			assert(readExpression2(),"Operator missing second argument");
 		}
