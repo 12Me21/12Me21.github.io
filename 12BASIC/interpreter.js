@@ -63,7 +63,8 @@ function current(stack){
 }
 
 function callFunction(name,args){
-	assert(builtins[name] && builtins[name][args.length],"Undefined function: \""+name+"\"")
+	assert(builtins[name],"Undefined function: \""+name+"\"")
+	assert(builtins[name][args.length],"\""+name+"\" does not accept "+args.length+" arguments");
 	//if(builtins[name] && builtins[name][args.length]){
 	return builtins[name][args.length].apply(null,args);
 	/*}else{
@@ -353,9 +354,9 @@ function assert(condition,message){
 		message+=" on line "+current(block).code[current(ip)].line;
 		stop(message);
 		console.log(message);
-		//var error=new Error(message);
-		//error.name="RunError";
-		//throw error;
+		var error=new Error(message);
+		error.name="RunError";
+		throw error;
 	}
 }
 }

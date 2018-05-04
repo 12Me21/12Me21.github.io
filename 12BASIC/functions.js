@@ -104,3 +104,26 @@ function cosine2(a,b){
 	b.expect("number");
 	return new Value("number",Math.cos(a.value*(Math.PI*2))*b.value);
 }
+
+function instr2(a,b){
+	a.expect("string");
+	b.expect("string");
+	return new Value("number",a.value.indexOf(b.value));
+}
+
+function instr3(a,b,c){
+	a.expect("number");
+	b.expect("string");
+	c.expect("string");
+	return new Value("number",b.value.indexOf(c.value,a.value));
+}
+
+function ucase(a){
+	a.expect("string");
+	return new Value("string",a.value.toUpperCase());
+}
+
+function lcase(a){
+	a.expect("string");
+	return new Value("string",a.value.toLowerCase());
+}

@@ -33,7 +33,11 @@ var builtins={
 	COS:  {1:cosine,2:cosine2},
 	ANG:  {2:angle},
 	HYP:  {2:hypot},
-	CLS:  {0:function(){$console.value=""}}
+	CLS:  {0:function(){$console.value=""}},
+	INSTR:{2:instr2,3:instr3},
+	UCASE:{1:ucase},
+	LCASE:{1:lcase},
+	RIGHT$:{2:right},
 };
 
 function expect(x,type){
@@ -180,4 +184,11 @@ function rightShift(a,b){
 	expect(a,"number");
 	expect(b,"number");
 	return new Value("number",a.value>>b.value);
+}
+
+function right(a,b){
+	a.expect("string");
+	b.expect("number");
+	assert(b.value>=0,"domain error");
+	return new Value("string",a.value.substr(a.value.length-b.value));
 }
