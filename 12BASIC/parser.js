@@ -1,7 +1,3 @@
-//=>==>==>==>==>=//
-//12-BASIC parser//
-//=>==>==>==>==>=//
-
 ///to do
 //generate the variable lists during parsing
 //easy
@@ -9,6 +5,7 @@
 //maybe...
 
 //parser
+//tokens->ast
 //nextToken: function that returns the next token
 //callback: output function
 function parse(nextToken){
@@ -109,7 +106,7 @@ function parse(nextToken){
 				else
 					assert(currentType==="SWITCH","invalid CASE");
 				current.type="CASE"
-				assert(current.condition=readExpression(),"Missing argument to keyword");
+				assert(current.conditions=readList(readExpression),"Missing argument to keyword");
 				startBlock();
 			break;case "STOP":
 				current.type="STOP";
@@ -172,10 +169,6 @@ function parse(nextToken){
 				assert(currentBlock().type=="FOR","NEXT without FOR");
 				readExpression();
 				endBlock();
-			//PRINT
-			break;case "PRINT":
-				current.type="PRINT"
-				current.inputs=readList(readExpression);
 			//OUT/THEN
 			break;case "OUT":case "THEN":
 				assert(false,"Illegal OUT/THEN");
@@ -263,6 +256,22 @@ function parse(nextToken){
 	//reader: function to read item (readExpression etc.)
 	//noNull: throw an error if a null value is found
 	function readList(reader,noNull){
+		var ret=[];
+		var x=reader();
+		if(x)
+			ret.push(x);
+		if(readToken(",","")){
+			if(!x)
+				ret.push(x);
+			assert(x||!noNull,"Null value not allowed");
+			do
+				assert(ret.push(reader())||!noNull,"Null value not allowed");
+			while(readToken(","));;;
+		}
+		return ret;
+	}
+	
+	function readList2(reader,noNull){
 		var ret=[];
 		var x=reader();
 		if(x)
@@ -382,7 +391,7 @@ function parse(nextToken){
 				var name=word;
 				if(readToken("(")){
 					expr.push({type:"("}); //all we needed!
-					var x=readList(readExpression2);
+					var x=readList2(readExpression2);
 					expr.push({type:")"});
 					expr.push({type:"function",name:name,args:x.length+nextFunctionGetsOneMore});
 					nextFunctionGetsOneMore=0;

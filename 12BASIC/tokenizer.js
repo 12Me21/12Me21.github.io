@@ -1,20 +1,16 @@
 var lineNumber;
-
-//=>==>==>==>==>==>=//
-//12-BASIC tokenizer//
-//=>==>==>==>==>==>=//
-
 //list of keywords
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
-var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","NEXT","OUT","PRINT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
+var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","NEXT","OUT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
 
-var constants={"#PI":Math.PI,"#VERSION":0.110}
+var constants={"#PI":Math.PI,"#VERSION":0.115}
 //version system:
 //x.000 - major version number
 //0.xx0 - minor version number
 //0.00x - even less significant
 
-//TOKENIZER STREAM GENERATOR
+//code->tokens
+
 //input: code (string)
 //output: function that returns the next token when called
 function tokenize(code){
@@ -202,7 +198,7 @@ function tokenize(code){
 		//print shortcut
 		break;case '?':
 			next();
-			return push("PRINT");
+			return push("function","PRINT");
 		//other
 		break;default:
 			next();

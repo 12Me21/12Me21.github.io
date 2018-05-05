@@ -74,9 +74,15 @@ function current(stack){
 
 function callFunction(name,args){
 	assert(builtins[1][name],"Undefined function: \""+name+"\"")
-	assert(builtins[1][name][args.length],"\""+name+"\" does not accept "+args.length+" arguments");
+	if(builtins[1][name][args.length]){
+		return builtins[1][name][args.length].apply(null,args);
+	}else{
+		assert(builtins[1][name].any,"\""+name+"\" does not accept "+args.length+" arguments");
+		return builtins[1][name].any(args);
+	}
+	
 	//if(builtins[name] && builtins[name][args.length]){
-	return builtins[1][name][args.length].apply(null,args);
+	
 	/*}else{
 		var x=functions[name][args.length];
 		assert(x,"undefined function "+name);
@@ -87,8 +93,12 @@ function callFunction(name,args){
 
 function callSub(name,args){
 	assert(builtins[0][name],"Undefined function: \""+name+"\"")
-	assert(builtins[0][name][args.length],"\""+name+"\" does not accept "+args.length+" arguments");
-	builtins[0][name][args.length].apply(null,args);
+	if(builtins[0][name][args.length]){
+		builtins[0][name][args.length].apply(null,args);
+	}else{
+		assert(builtins[0][name].any,"\""+name+"\" does not accept "+args.length+" arguments");
+		builtins[0][name].any(args);
+	}
 }
 
 function expr(n){
@@ -180,11 +190,6 @@ function step(){
 				enterBlock();
 		break;case "REPEAT":
 			enterBlock();
-		break;case "PRINT":
-			var printString="";
-			for(var i=0;i<now.inputs.length;i++)
-				printString+=(i>0?" ":"")+expr(now.inputs[i]).toString();
-			print(printString+"\n");
 		break;case "FOR":
 			var value=expr(now.start);
 			value.expect("number");
@@ -273,15 +278,27 @@ function step(){
 					enterBlock();
 				}
 			}
+		break;case "SWAP":
+			var aName=now.variable.name;
+			var bName=now.variable2.name;
+			var a=getVar(aName);
+			var b=getVar(bName);
+			a.expect(b.type);
+			assignVar(aName,b)
+			assignVar(bName,a)
 		break;case "SWITCH":
 			var condition=expr(now.condition);
 			enterBlock();
 			switches[switches.length-1]=condition;
 		break;case "CASE":
-			if(now.condition){
-				var condition=expr(now.condition);
-				if(equal(switches[switches.length-1],condition).truthy())
-					enterBlock();
+			if(now.conditions){
+				for(var i=0;i<now.conditions.length;i++){
+					var condition=expr(now.conditions[i]);
+					if(equal(switches[switches.length-1],condition).truthy()){
+						enterBlock();
+						break;
+					}
+				}
 			}else
 				enterBlock();
 		break;default:

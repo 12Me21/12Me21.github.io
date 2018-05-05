@@ -1,6 +1,7 @@
 var builtins=[{
 	CLS:  {0:clearScreen},
 	VSYNC:{0:vsync},
+	PRINT:{any:printList},
 },{
 	"^":  {2:exponent},
 	"*":  {2:multiply},

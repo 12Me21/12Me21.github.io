@@ -4,13 +4,20 @@ function mid(a,b,c){
 	c.expect("number");
 	var start=b.value;
 	var length=c.value;
-	//if(start<0){
-	//	length-=-start;
-	//	start=0;
-	//}
+	if(start<0){
+		length-=-start;
+		start=0;
+	}
 	console.log(start,length)
 	assert(length>=0,"domain error mids "+start+" "+length);
 	return new Value("string",a.value.substr(start,length));
+}
+
+function printList(list){
+	var printString="";
+	for(var i=0;i<list.length;i++)
+		printString+=(i>0?" ":"")+expr(list[i]).toString();
+	print(printString+"\n");
 }
 
 function length(a){
