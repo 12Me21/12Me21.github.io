@@ -4,11 +4,12 @@ function mid(a,b,c){
 	c.expect("number");
 	var start=b.value;
 	var length=c.value;
-	if(start<0){
-		length-=-start;
-		start=0;
-	}
-	assert(length>=0,"domain error");
+	//if(start<0){
+	//	length-=-start;
+	//	start=0;
+	//}
+	console.log(start,length)
+	assert(length>=0,"domain error mids "+start+" "+length);
 	return new Value("string",a.value.substr(start,length));
 }
 

@@ -37,3 +37,5 @@ Value.prototype.expect=function(type){
 Value.prototype.isNumber=function(){
 	return this.type==="number";
 }
+
+//console.log=function(){} //go to hell

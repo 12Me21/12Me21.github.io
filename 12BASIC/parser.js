@@ -267,13 +267,13 @@ function parse(nextToken){
 		var x=reader();
 		if(x)
 			ret.push(x);
-		if(readToken(",","")){
+		if(readToken(",","")&&expr.push({type:"comma"})){
 			if(!x)
 				ret.push(x);
 			assert(x||!noNull,"Null value not allowed");
 			do
 				assert(ret.push(reader())||!noNull,"Null value not allowed");
-			while(readToken(","));;;
+			while(readToken(",")&&expr.push({type:"comma"}));;;
 		}
 		return ret;
 	}
@@ -290,7 +290,7 @@ function parse(nextToken){
 	}
 	
 	function prec(token){
-		if(token.type==="unary")
+		if(token.type==="unary" || token.type==="comma")
 			return Infinity;
 		else
 			switch(token.name){
@@ -325,7 +325,7 @@ function parse(nextToken){
 	}
 	
 	function rpnFromExpr(expr){
-		//console.log({...expr},"expr");
+		console.log({...expr},"expr");
 		var rpn=[],stack=[];
 		for(var i=0;i<expr.length;i++){
 			var token=expr[i];
@@ -336,13 +336,23 @@ function parse(nextToken){
 					while(stack.length){
 						var top=stack[stack.length-1]
 						//console.log(top)
-						if(top.type!="("&&(prec(top)>prec(token) || (prec(top)==prec(token) && left(token)))){
+						if(top.type!="("&&(prec(top)>=prec(token) || (prec(top)==prec(token) && left(token)))){
 							rpn.push(stack.pop());
 						}else{
 							break;
 						}
 					}
 					stack.push(token);
+				break;case "comma":
+					while(stack.length){
+						var top=stack[stack.length-1]
+						//console.log(top)
+						if(top.type!="("){
+							rpn.push(stack.pop());
+						}else{
+							break;
+						}
+					}
 				break;case "(":
 					stack.push(token);
 				break;case ")":
@@ -412,7 +422,7 @@ function parse(nextToken){
 			nextFunctionGetsOneMore=1;
 			assert(readExpression2(),"Dot missing second argument");
 		}else if(readToken("operator")||readToken("minus")||readToken("xor")){
-			//console.log("beep!")
+			console.log("beep!",word)
 			expr.push({type:"operator",name:word,args:2});
 			assert(readExpression2(),"Operator missing second argument");
 		}
