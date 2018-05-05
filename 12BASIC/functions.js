@@ -14,9 +14,12 @@ function mid(a,b,c){
 }
 
 function printList(list){
+	
 	var printString="";
-	for(var i=0;i<list.length;i++)
+	for(var i=0;i<list.length;i++){
+		console.log("PR",list[i])
 		printString+=(i>0?" ":"")+expr(list[i]).toString();
+	}
 	print(printString+"\n");
 }
 

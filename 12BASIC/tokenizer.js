@@ -3,7 +3,7 @@ var lineNumber;
 //does not include OPERATORS or CONSTANTS or fake keywords TO/STEP
 var KEYWORDS=["ENDSWITCH","SWITCH","CASE","BREAK","CALL","CONTINUE","DEF","ELSE","ELSEIF","ENDIF","FOR","IF","NEXT","OUT","REPEAT","RETURN","STOP","SWAP","THEN","UNTIL","VAR","WEND","WHILE"];
 
-var constants={"#PI":Math.PI,"#VERSION":0.115}
+var constants={"#PI":Math.PI,"#VERSION":0.130}
 //version system:
 //x.000 - major version number
 //0.xx0 - minor version number
@@ -28,7 +28,7 @@ function tokenize(code){
 	}
 	
 	function getWord(startSkip,endSkip){
-		return code.substring(startSkip?whitespace+startSkip:whitespace,endSkip?i-endSkip:i);
+		return code.substring(startSkip!==undefined?whitespace+startSkip:whitespace,endSkip!==undefined?i-endSkip:i);
 	}
 	
 	function jump(pos){
@@ -83,7 +83,7 @@ function tokenize(code){
 			next();
 			while(isAlpha||isDigit||c==='_')
 				next();
-			if(c==='$')
+			if(c==='$'||c==='#')
 				next();
 			return pushWord();
 		//numbers
@@ -125,7 +125,6 @@ function tokenize(code){
 				}else
 					stringValue+=c;
 			}
-			//console.log(stringValue)
 			return push("string",stringValue);
 		//comments
 		break;case '\'':
@@ -191,14 +190,14 @@ function tokenize(code){
 			next();
 			return push("linebreak");
 		//characters
-		break;case '(':case ')':case ',':case ':':
+		break;case '(':case ')':case '[':case ']':case ',':case ':':
 			var chr=c;
 			next();
 			return push(chr);
 		//print shortcut
 		break;case '?':
 			next();
-			return push("function","PRINT");
+			return push("word","PRINT");
 		//other
 		break;default:
 			next();

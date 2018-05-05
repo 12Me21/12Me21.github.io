@@ -38,7 +38,7 @@ function parse(nextToken){
 	}
 	
 	var ifThisLine=false,codeAfterThen;
-	var nextFunctionGetsOneMore=0;
+	//var nextFunctionGetsOneMore=0;
 	var expr=[];
 	
 	current.type="main";
@@ -61,7 +61,7 @@ function parse(nextToken){
 	//read a "line" of code
 	function readStatement(){
 		next();
-		if(ifThisLine&&type!="linebreak")
+		if(type!="comment" && ifThisLine && type!="linebreak")
 			codeAfterThen=true;
 		switch(type){
 			//keywords with no arguments
@@ -160,10 +160,6 @@ function parse(nextToken){
 				assert(currentBlock().type=="REPEAT","UNTIL without REPEAT");
 				assert(currentBlock().condition=readExpression(),"Missing UNTIL condition");
 				endBlock();
-			//INPUT
-			break;case "INPUT":
-				current.type="INPUT";
-				current.inputs=readList(readVariable);
 			//NEXT
 			break;case "NEXT":
 				assert(currentBlock().type=="FOR","NEXT without FOR");
@@ -173,14 +169,14 @@ function parse(nextToken){
 			break;case "OUT":case "THEN":
 				assert(false,"Illegal OUT/THEN");
 			//other words
-			break;case "word":case "(":
+			break;case "word":
 				//var name=text;
 				readNext=readNext-1;
 				var x=readVariable(true);
 				if(readToken("=")){
 					current.type="assignment";
 					current.variable=x;
-					current.value=readExpression();
+					assert(current.value=readExpression(),"Missing value in assignment");
 				}else{
 					current.type="function";
 					current.name=x.name;
@@ -192,11 +188,11 @@ function parse(nextToken){
 				}
 			//comment
 			break;case "comment":
-			//end
-			break;case "eof":
-			//line break, colon
+			//colon NOP
 			break;case ":":
-			break;case "linebreak":
+			//line break, end
+			break;case "eof":
+			case "linebreak":
 				if(ifThisLine){
 					ifThisLine=false;
 					if(codeAfterThen){
@@ -205,7 +201,7 @@ function parse(nextToken){
 					}
 				}
 			break;default:
-				assert(false,"Expected statement, got "+type);
+				assert(false,"Expected statement, got "+type+" '"+word+"'");
 		}
 		if(current.type){
 			current.line=lineNumber;
@@ -255,33 +251,29 @@ function parse(nextToken){
 	//Read list
 	//reader: function to read item (readExpression etc.)
 	//noNull: throw an error if a null value is found
-	function readList(reader,noNull){
+	function readList(reader){
 		var ret=[];
 		var x=reader();
 		if(x)
 			ret.push(x);
 		if(readToken(",","")){
-			if(!x)
-				ret.push(x);
-			assert(x||!noNull,"Null value not allowed");
+			assert(x,"Null value not allowed");
 			do
-				assert(ret.push(reader())||!noNull,"Null value not allowed");
+				assert(ret.push(reader()),"Null value not allowed");
 			while(readToken(","));;;
 		}
 		return ret;
 	}
 	
-	function readList2(reader,noNull){
+	function readList2(reader){
 		var ret=[];
 		var x=reader();
 		if(x)
 			ret.push(x);
 		if(readToken(",","")&&expr.push({type:"comma"})){
-			if(!x)
-				ret.push(x);
-			assert(x||!noNull,"Null value not allowed");
+			assert(x,"Null value not allowed");
 			do
-				assert(ret.push(reader())||!noNull,"Null value not allowed");
+				assert(ret.push(reader()),"Null value not allowed");
 			while(readToken(",")&&expr.push({type:"comma"}));;;
 		}
 		return ret;
@@ -339,7 +331,7 @@ function parse(nextToken){
 		for(var i=0;i<expr.length;i++){
 			var token=expr[i];
 			switch(token.type){
-				case "number":case "string":case "variable":case "function": //see, functions are actually pushed AFTER their arguments, so we can just send them directly to the output!
+				case "number":case "string":case "variable":case "function":case "array": //see, functions are actually pushed AFTER their arguments, so we can just send them directly to the output! :D
 					rpn.push(token);
 				break;case "operator":case "unary":
 					while(stack.length){
@@ -374,7 +366,7 @@ function parse(nextToken){
 					}
 					stack.pop();
 				break;default:
-				assert(false,"error typ")
+				assert(false,"error typ "+token.type)
 			}
 		}
 		while(stack.length)
@@ -392,10 +384,9 @@ function parse(nextToken){
 				if(readToken("(")){
 					expr.push({type:"("}); //all we needed!
 					var x=readList2(readExpression2);
-					expr.push({type:")"});
-					expr.push({type:"function",name:name,args:x.length+nextFunctionGetsOneMore});
-					nextFunctionGetsOneMore=0;
 					assert(readToken(")"),"Missing \")\" in function call");
+					expr.push({type:")"});
+					expr.push({type:"function",name:name,args:x.length});
 				}else
 					expr.push({type:"variable",name:name});
 			//number literals
@@ -418,6 +409,13 @@ function parse(nextToken){
 				readExpression2();
 				assert(readToken(")"),"Missing \")\"");
 				expr.push({type:")"});
+			break;case "[":
+				expr.push({type:"("});
+				var x=readList2(readExpression2);
+				expr.push({type:"array",args:x.length});
+				assert(readToken("]"),"Missing \"]\"");
+				expr.push({type:")"});
+				
 			//other crap
 			break;default:
 				readNext=0;
@@ -427,11 +425,16 @@ function parse(nextToken){
 		//console.log("approach")
 		//this might have to be WHILE not IF
 		if(readToken("dot")){
-			console.log("dot")
-			nextFunctionGetsOneMore=1;
-			assert(readExpression2(),"Dot missing second argument");
-		}else if(readToken("operator")||readToken("minus")||readToken("xor")){
-			console.log("beep!",word)
+			assert(readToken("word"),"Dot missing function");
+			var name=word;
+			assert(readToken("("),"Dot missing function");
+			expr.push({type:"("}); //all we needed!
+			var x=readList2(readExpression2);
+			assert(readToken(")"),"Missing \")\" in function call");
+			expr.push({type:")"});
+			expr.push({type:"function",name:name,args:x.length+1});
+		}
+		if(readToken("operator")||readToken("minus")||readToken("xor")){
 			expr.push({type:"operator",name:word,args:2});
 			assert(readExpression2(),"Operator missing second argument");
 		}
@@ -461,9 +464,10 @@ function parse(nextToken){
 	//keys:
 	//name: [variable name expr token list]
 	//indexes: [index list]
-	function readVariable(noPrintVarName){
+	function readVariable(){
 		var ret={name:""};
 		next();
+		return {name:word}
 		switch(type){
 			case "word":
 				ret.name=word;
@@ -477,6 +481,7 @@ function parse(nextToken){
 	//throw error with message if condition is false
 	function assert(condition,message){
 		if(!condition){
+			//message//+=" on line "+lineNumber;
 			console.log(message);
 			var error=new Error(message);
 			error.name="ParseError";
@@ -501,8 +506,16 @@ function parse(nextToken){
 			readNext=1;
 	}
 	
-	if(currentBlocks.length!==1)
-		return "unclosed thing";
+	if(ifThisLine){
+		ifThisLine=false;
+		if(codeAfterThen){
+			endBlock();
+			console.log("ended single line IF");
+		}
+	}
+	
+	if(currentBlocks.length>=2)
+		return "Unclosed "+currentBlocks[1].type;
 	currentBlocks[1]=defs;
 	return currentBlocks;
 }

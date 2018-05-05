@@ -106,7 +106,6 @@ function expr(n){
 	console.log("expression",n);
 	var stack=[];
 	for(var i=0;i<n.length;i++){
-		//console.log("stack",stack.toSource(),n[i])
 		switch(n[i].type){
 			case "variable":
 				stack.push(getVar(n[i].name));
@@ -122,6 +121,13 @@ function expr(n){
 				for(var j=0;j<args;j++)
 					stack.pop();
 				stack.push(retval);
+			break;case "array":
+				var args=n[i].args;
+				var array=new Value("array",stack.slice(-args));
+				for(var j=0;j<args;j++)
+					stack.pop();
+				stack.push(array);
+				console.log("stka",{...stack});
 			break;default:
 				assert(false,"invalid expression: bad token "+n[i].type);
 		}
@@ -130,6 +136,7 @@ function expr(n){
 	//	throw "too complex expression :(";
 	//
 	assert(stack.length===1,"invalid expression: stack not empty")
+	console.log("RETURNING THE FUCKING STACK IT BETTER NOT BE FUCKING EMPTY EVEN THOUGH I JUST FUCKING CHECKED",stack)
 	return stack[0];
 }
 
@@ -290,16 +297,18 @@ function step(){
 			var condition=expr(now.condition);
 			enterBlock();
 			switches[switches.length-1]=condition;
+			ifs[ifs.length-1]=false;
 		break;case "CASE":
 			if(now.conditions){
 				for(var i=0;i<now.conditions.length;i++){
 					var condition=expr(now.conditions[i]);
 					if(equal(switches[switches.length-1],condition).truthy()){
+						ifs[ifs.length-1]=true;
 						enterBlock();
 						break;
 					}
 				}
-			}else
+			}else if(ifs[ifs.length-1]===false)
 				enterBlock();
 		break;default:
 			assert(false,"unsupported instruction "+now.type);
@@ -350,6 +359,9 @@ function assignVar(name,value){
 		break;case "number":
 			assert(value.type==="number","type mismatch");
 			currentVariables[name]=value;
+		break;case "array":
+			assert(value.type==="array","type mismatch");
+			currentVariables[name]=value;
 		break;case "default":
 			assert(false,"could not create variable, invalid tyoe");
 	}
@@ -357,24 +369,18 @@ function assignVar(name,value){
 }
 
 function typeFromName(name){
-	if(name.substr(-1)==="$")
-		return "string";
-	else
-		return "number";
+	switch(name.substr(-1)){
+		case '$':
+			return "string";
+		case '#':
+			return "array";
+		default:
+			return "number";
+	}
 }
 
 function setVar(name,value){
 	return current(variables)[name]=value;
-}
-
-//vDefaultFromT
-function defaultValue(type){
-	if(type==="number")
-		return 0;
-	else if(type==="string")
-		return "";
-	else
-		assert(false,"invalid type: "+type);
 }
 
 function assert(condition,message){

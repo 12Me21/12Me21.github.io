@@ -1,5 +1,5 @@
 function Value(type,value){
-	assert(type==="number"||type==="string","invalid type when creating value");
+	assert(type==="number"||type==="string"||type==="array","invalid type when creating value");
 	this.type=type;
 	if(value===undefined)
 		this.value=defaultValue(type);
@@ -9,24 +9,34 @@ function Value(type,value){
 	}
 }
 
-var BasicNumber=Object.create(Value)
-
 Value.prototype.copy=function(){
 	return new Value(this.type,this.value);
 }
 
 Value.prototype.toString=function(base){
-	if(this.type==="string")
-		return this.value
-	else
-		return this.value.toString(base).toUpperCase();
+	switch(this.type){
+		case "number":
+			return this.value.toString(base).toUpperCase();
+		case "string":
+			return this.value;
+		case "array":
+			return "["+this.value.join(",")+"]";
+		default:
+			assert(false,"invalid type");
+	}
 }
 
 Value.prototype.truthy=function(){
-	if(this.type==="string")
-		return this.value!=="";
-	else
-		return this.value!==0;
+	switch(this.type){
+		case "number":
+			return this.value!==0;
+		case "string":
+			return this.value!=="";
+		case "array":
+			return this.value.length!==0;
+		default:
+			assert(false,"invalid type");
+	}
 }
 
 Value.prototype.expect=function(type){
@@ -36,6 +46,19 @@ Value.prototype.expect=function(type){
 //don't use
 Value.prototype.isNumber=function(){
 	return this.type==="number";
+}
+
+function defaultValue(type){
+	switch(type){
+		case "number":
+			return 0;
+		case "string":
+			return "";
+		case "array":
+			return [];
+		default:
+			assert(false,"invalid type ");
+	}
 }
 
 //console.log=function(){} //go to hell
