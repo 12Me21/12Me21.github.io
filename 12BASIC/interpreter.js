@@ -16,7 +16,7 @@ function run(astIn,fastMode){
 	block=[ast[0]];
 	ifs=[];
 	switches=[];
-	functions=ast[1];
+	//functions=ast[1];
 	variables=[{}];
 	stopped=false;
 	inputs=$input.value.split(",");
@@ -136,11 +136,11 @@ function expr(n){
 	//	throw "too complex expression :(";
 	//
 	assert(stack.length===1,"invalid expression: stack not empty")
-	console.log("RETURNING THE FUCKING STACK IT BETTER NOT BE FUCKING EMPTY EVEN THOUGH I JUST FUCKING CHECKED",stack)
 	return stack[0];
 }
 
 function print(text){
+	
 	$console.value+=text;
 	$console.scrollTop=$console.scrollTopMax
 }

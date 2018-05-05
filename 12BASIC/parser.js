@@ -421,10 +421,7 @@ function parse(nextToken){
 				readNext=0;
 				return false;
 		}
-		//read infix operators
-		//console.log("approach")
-		//this might have to be WHILE not IF
-		if(readToken("dot")){
+		while(readToken("dot")){
 			assert(readToken("word"),"Dot missing function");
 			var name=word;
 			assert(readToken("("),"Dot missing function");
@@ -434,6 +431,8 @@ function parse(nextToken){
 			expr.push({type:")"});
 			expr.push({type:"function",name:name,args:x.length+1});
 		}
+		//read infix operators
+		//this might have to be WHILE not IF
 		if(readToken("operator")||readToken("minus")||readToken("xor")){
 			expr.push({type:"operator",name:word,args:2});
 			assert(readExpression2(),"Operator missing second argument");
@@ -506,6 +505,7 @@ function parse(nextToken){
 			readNext=1;
 	}
 	
+	//handle single line IF blocks at the end of the program (temporary fix)
 	if(ifThisLine){
 		ifThisLine=false;
 		if(codeAfterThen){
@@ -516,6 +516,6 @@ function parse(nextToken){
 	
 	if(currentBlocks.length>=2)
 		return "Unclosed "+currentBlocks[1].type;
-	currentBlocks[1]=defs;
+	//currentBlocks[1]=defs;
 	return currentBlocks;
 }

@@ -19,6 +19,7 @@ var builtins=[{
 	">>": {2:rightShift},
 	"AND":{2:logicalAnd},
 	"OR": {2:logicalOr},
+	"XOR":{2:logicalXor},
 	"&":  {2:bitwiseAnd},
 	"|":  {2:bitwiseOr},
 	"~":  {2:bitwiseXor,1:bitwiseNot},
@@ -43,6 +44,7 @@ var builtins=[{
 	RIGHT$:{2:right},
 	INPUT:{0:inputNumber},
 	INPUT$:{0:input},
+	REPLACE$:{3:replace}
 }];
 
 function expect(x,type){
@@ -140,6 +142,10 @@ function notEqual(a,b){
 
 function logicalAnd(a,b){
 	return new Value("number",(a.truthy() && b.truthy())?1:0);
+}
+
+function logicalXor(a,b){
+	return new Value("number",(a.truthy() != b.truthy())?1:0);
 }
 
 function logicalOr(a,b){

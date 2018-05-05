@@ -13,6 +13,13 @@ function mid(a,b,c){
 	return new Value("string",a.value.substr(start,length));
 }
 
+function replace(a,b,c){
+	a.expect("string");
+	b.expect("string");
+	c.expect("string");
+	return new Value("string",a.value.split(b.value).join(c.value));
+}
+
 function printList(list){
 	
 	var printString="";
