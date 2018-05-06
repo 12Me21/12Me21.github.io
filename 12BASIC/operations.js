@@ -2,6 +2,8 @@ var builtins=[{
 	CLS:  {0:clearScreen},
 	VSYNC:{0:vsync},
 	PRINT:{any:printList},
+	SET:  {3:arraySet},
+	PUSH: {2:arrayPush}, //any
 },{
 	"^":  {2:exponent},
 	"*":  {2:multiply},
@@ -27,24 +29,29 @@ var builtins=[{
 	"\\": {2:div},
 	"NOT":{1:bitwiseNot},
 	
-	MID$: {3:mid},
-	ASC:  {1:ascii},
-	CHR$: {1:character},
-	LEN:  {1:length},
-	VAL:  {1:value,2:valueBase},
-	STR$: {1:string,2:paddedString,3:paddedStringBase},
-	RND:  {1:random1,2:random2},
-	SIN:  {1:sine,2:sine2},
-	COS:  {1:cosine,2:cosine2},
-	ANG:  {2:angle},
-	HYP:  {2:hypot},
-	INSTR:{2:instr2,3:instr3},
-	UCASE$:{1:ucase},
-	LCASE$:{1:lcase},
-	RIGHT$:{2:right},
-	INPUT:{0:inputNumber},
-	INPUT$:{0:input},
-	REPLACE$:{3:replace}
+	MID$:    {3:mid,2:mid1},
+	ASC:     {1:ascii},
+	CHR$:    {1:character},
+	LEN:     {1:length},
+	LENGTH:  {1:length},
+	NUMBER:  {1:value,2:valueBase},
+	//STR$:  {1:string,2:paddedString,3:paddedStringBase},
+	STRING$: {1:string,2:paddedString,3:paddedStringBase},
+	RANDOM:  {1:random1,2:random2},
+	SIN:     {1:sine,2:sine2},
+	COS:     {1:cosine,2:cosine2},
+	ANGLE:   {2:angle},
+	HYPOT:   {2:hypot},
+	FIND:    {2:instr2,3:instr3},
+	UPPER$:  {1:ucase},
+	LOWER$:  {1:lcase},
+	RIGHT$:  {2:right,3:right2},
+	INPUT:   {0:inputNumber},
+	INPUT$:  {0:input},
+	REPLACE$:{3:replace},
+	TRIMEND$:{2:cutright},
+	GET:     {2:arrayGet},
+	POP:     {1:arrayPop},
 }];
 
 function expect(x,type){
@@ -194,9 +201,4 @@ function rightShift(a,b){
 	return new Value("number",a.value>>b.value);
 }
 
-function right(a,b){
-	a.expect("string");
-	b.expect("number");
-	assert(b.value>=0,"domain error");
-	return new Value("string",a.value.substr(a.value.length-b.value));
-}
+

@@ -113,9 +113,6 @@ function parse(nextToken){
 			break;case "REPEAT":
 				current.type="REPEAT";
 				startBlock();
-			break;case "WEND":
-				assert(currentBlock().type=="WHILE","WEND without WHILE");
-				endBlock();
 			//SWAP
 			break;case "SWAP":
 				current.type="SWAP";
@@ -155,6 +152,16 @@ function parse(nextToken){
 				current.type="WHILE"
 				assert(current.condition=readExpression(),"Missing argument to keyword");
 				startBlock();
+			break;case "WEND":
+				assert(currentBlock().type=="WHILE","WEND without WHILE");
+				endBlock();
+			//do/LOOP
+			break;case "DO":
+				current.type="DO"
+				startBlock();
+			break;case "LOOP":
+				assert(currentBlock().type=="DO","LOOP without DO");
+				endBlock();
 			//UNTIL <condition>
 			break;case "UNTIL":
 				assert(currentBlock().type=="REPEAT","UNTIL without REPEAT");

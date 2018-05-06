@@ -73,6 +73,7 @@ function current(stack){
 }
 
 function callFunction(name,args){
+	console.log(name,args)
 	assert(builtins[1][name],"Undefined function: \""+name+"\"")
 	if(builtins[1][name][args.length]){
 		return builtins[1][name][args.length].apply(null,args);
@@ -91,7 +92,8 @@ function callFunction(name,args){
 	return false;*/
 }
 
-function callSub(name,args){
+function callSub(name,args2){
+	var args=args2.map(function(x){return expr(x)});
 	assert(builtins[0][name],"Undefined function: \""+name+"\"")
 	if(builtins[0][name][args.length]){
 		builtins[0][name][args.length].apply(null,args);
@@ -115,9 +117,10 @@ function expr(n){
 				stack.push(new Value("string",n[i].value));
 			break;case "operator":case "function":case "unary":
 				var args=n[i].args;
+				console.log(args)
 				assert(args<=stack.length,"internal error: stack underflow");
 				var retval;
-				assert(retval=callFunction(n[i].name,stack.slice(-args)),"bad function/operator")
+				assert(retval=callFunction(n[i].name,args?stack.slice(-args):[]),"bad function/operator")
 				for(var j=0;j<args;j++)
 					stack.pop();
 				stack.push(retval);
@@ -161,6 +164,9 @@ function step(){
 					jumpTo(0);
 				else
 					leaveBlock();
+			break;case "DO":
+				jumpTo(0);
+				//...
 			break;case "REPEAT":
 				if(!expr(now.condition).truthy())
 					jumpTo(0);
@@ -195,6 +201,8 @@ function step(){
 		case "WHILE":
 			if(expr(now.condition).truthy())
 				enterBlock();
+		break;case "DO":
+			enterBlock();
 		break;case "REPEAT":
 			enterBlock();
 		break;case "FOR":
@@ -241,7 +249,7 @@ function step(){
 				var x=current(block);
 				if(x.type==="main")
 					break
-				else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
+				else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"||x.type==="DO"){
 					levels--
 					if(!levels){
 						leaveBlock();
@@ -255,7 +263,7 @@ function step(){
 				var x=current(block);
 				if(x.type==="main")
 					break
-				else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"){
+				else if(x.type==="FOR"||x.type==="WHILE"||x.type==="REPEAT"||x.type==="DO"){
 					jumpTo(Infinity);
 					break;
 				}

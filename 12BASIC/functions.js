@@ -13,6 +13,63 @@ function mid(a,b,c){
 	return new Value("string",a.value.substr(start,length));
 }
 
+function arrayGet(a,b){
+	a.expect("array");
+	b.expect("number");
+	assert(b.value>=0 && b.value<a.value.length,"out of bounds");
+	var x=a.value[b.value];
+	return x.copy();
+}
+
+function arraySet(a,b,c){
+	a.expect("array");
+	b.expect("number");
+	assert(b.value>=0 && b.value<a.value.length,"out of bounds");
+	a.value[b.value]=c.copy();
+}
+
+function arrayPush(a,b){
+	console.log(a);
+	a.expect("array");
+	a.value.push(b);
+}
+
+function arrayPop(a){
+	a.expect("array");
+	assert(a.value.length>0,"array empty");
+	return a.value.pop();
+}
+
+function right(a,b){
+	a.expect("string");
+	b.expect("number");
+	assert(b.value>=0,"domain error");
+	return new Value("string",a.value.substr(a.value.length-b.value));
+}
+
+function cutright(a,b){
+	a.expect("string");
+	b.expect("number");
+	assert(b.value>=0,"domain error");
+	return new Value("string",a.value.slice(0,-b.value));
+}
+
+function right2(a,b,c){
+	a.expect("string");
+	b.expect("number");
+	c.expect("number");
+	assert(b.value>=0,"domain error");
+	return new Value("string",a.value.substr(a.value.length-b.value-c.value,b.value));
+}
+
+function mid1(a,b){
+	a.expect("string");
+	b.expect("number");
+	var start=b.value;
+	//assert(start>=0,"domain error mids "+start);
+	return new Value("string",a.value.charAt(start));
+}
+
 function replace(a,b,c){
 	a.expect("string");
 	b.expect("string");
@@ -24,14 +81,13 @@ function printList(list){
 	
 	var printString="";
 	for(var i=0;i<list.length;i++){
-		console.log("PR",list[i])
-		printString+=(i>0?" ":"")+expr(list[i]).toString();
+		printString+=(i>0?" ":"")+list[i].toString();
 	}
 	print(printString+"\n");
 }
 
 function length(a){
-	expect(a,"string");
+	assert(a.type==="string"||a.type==="array","type mismatch")
 	return new Value("number",a.value.length);
 }
 
@@ -145,10 +201,10 @@ function instr2(a,b){
 }
 
 function instr3(a,b,c){
-	a.expect("number");
+	c.expect("number");
+	a.expect("string");
 	b.expect("string");
-	c.expect("string");
-	return new Value("number",b.value.indexOf(c.value,a.value));
+	return new Value("number",a.value.indexOf(b.value,c.value));
 }
 
 function ucase(a){
