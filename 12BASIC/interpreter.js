@@ -340,6 +340,8 @@ function getNextInputValue(){
 	var x=inputs.shift();
 	if(x!==undefined)
 		return new Value("string",x);
+	else
+		return "";
 }
 
 //get variable from name
