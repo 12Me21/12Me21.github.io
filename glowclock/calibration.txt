@@ -8,8 +8,12 @@ Attach the servo arms:
  - left servo pointing up
  - right servo pointing right
 
+(see calibration_a.jpg)
+
 Press the button again. The light should turn off.
 Servo arms should rotate ~ 90 degrees to the left.
+
+(see calibration_b.jpg)
 
 Adjust the SERVO_LEFT_ZERO and SERVO_RIGHT_ZERO values so the arms are perfectly horizontal when pointing to the side in calibration mode.
 
