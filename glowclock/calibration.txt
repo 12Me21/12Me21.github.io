@@ -1,0 +1,24 @@
+Uncomment the #define CALIBRATE line and upload the program.
+
+Remove the arms from the servos if they are already attached.
+
+Press the time button. The light should turn on and the servos will rotate.
+
+Attach the servo arms:
+ - left servo pointing up
+ - right servo pointing right
+
+Press the button again. The light should turn off.
+Servo arms should rotate ~ 90 degrees to the left.
+
+Adjust the SERVO_LEFT_ZERO and SERVO_RIGHT_ZERO values so the arms are perfectly horizontal when pointing to the side in calibration mode.
+
+DO NOT adjust the SCALE values until the ZEROs are set correctly
+
+Then, adjust SERVO_LEFT_SCALE and SERVO_RIGHT_SCALE so the arms are perfectly vertical when pointing upwards in calibration mode.
+
+To test the calibration, comment #define CALIBRATE and uncomment #define GRID
+The clock should draw a grid of dots when you press the button
+(There will usually be a small area of misplaced dots along the bottom)
+
+Comment both lines to turn off calibration mode.
