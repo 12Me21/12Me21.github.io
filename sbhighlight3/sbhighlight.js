@@ -162,7 +162,7 @@ function parse(nextToken,callback,showErrors){
 					output("keyword");
 					readExpression();
 					assert(readToken("GOTO","keyword")||readToken("GOSUB","keyword"),"ON without GOTO/GOSUB");
-					assert(readList(readExpression,true),"Missing label list after ON");
+					assert(readList(readLabel,true),"Missing label list after ON");
 				//PRINT
 				break;case "PRINT":
 					output("keyword");
@@ -344,10 +344,14 @@ function parse(nextToken,callback,showErrors){
 		while((readToken(",","")||readToken(";",""))&&reader());
 	}
 	
+	function readLabel(){
+		return readToken("label","label");
+	}
+	
 	//read normal expression
 	function readExpression(){
 		var ret=false;
-    next();
+		next();
 		switch(type){
 			//VAR()
 			case "VAR":
