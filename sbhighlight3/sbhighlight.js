@@ -375,8 +375,10 @@ function parse(nextToken,callback,showErrors){
 					assert(false,"invalid CALL");
 				}
 			//literal value
-			break;case "number":case "string":case "label":
-				output(type);
+			break;case "number":
+				output("number");
+			case "string":case "label":
+				output("string");
 			//operator (unary)
 			break;case "unary":case "minus":
 				output("operator");
