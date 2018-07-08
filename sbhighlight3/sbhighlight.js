@@ -377,7 +377,7 @@ function parse(nextToken,callback,showErrors){
 			//literal value
 			break;case "number":
 				output("number");
-			case "string":case "label":
+			break;case "string":case "label":
 				output("string");
 			//operator (unary)
 			break;case "unary":case "minus":
