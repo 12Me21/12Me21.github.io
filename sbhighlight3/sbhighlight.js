@@ -207,23 +207,32 @@ function parse(nextToken,callback,showErrors){
 								switch(oldWord){
 									case "XON":
 										output("keyword");
-										if(readToken("word")){
-											assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word==="WIIU"||word=="COMPAT","invalid option");
+										if(peekToken("word")){
+											assert(newWord==="MOTION"||newWord==="EXPAD"||newWord==="MIC"||newWord==="WIIU"||newWord=="COMPAT","invalid option");
+											readToken("word","keyword");
 										}else{
 											//what the [heck] were you THINKING!?!??!
-											assert(readToken("number","keyword"),"invalid option");
-											assert(word==="3","invalid option");
-											assert(readToken("word","keyword"),"invalid option");
-											assert(word==="DS","invalid option");
+											assert(peekToken("number"),"invalid option");
+											assert(/^[ \t]*3$/.test(newText),"invalid option");
+											var owo=newText;
+											next();
+											if(!(peekToken("word") && newWord==="DS")){
+												callback(owo,"error");
+												assert(false,"invalid option");
+											}
+											callback(owo,"keyword");
+											readToken("word","keyword");
 										}
 									break;case "XOFF":
 										output("keyword");
-										assert(readToken("word"));
-										assert(word==="MOTION"||word==="EXPAD"||word==="MIC"||word=="COMPAT","invalid option");
+										assert(peekToken("word"),"invalid option");
+										assert(newWord==="MOTION"||newWord==="EXPAD"||newWord==="MIC"||newWord=="COMPAT","invalid option");
+										readToken("word","keyword");
 									break;case "OPTION":
 										output("keyword");
-										assert(readToken("word","keyword"),"invalid option");
-										assert(word==="STRICT"||word==="DEFINT"||word==="TOOL","invalid option");
+										assert(peekToken("word"),"invalid option");
+										assert(newWord==="STRICT"||newWord==="DEFINT"||newWord==="TOOL","invalid option");
+										readToken("word","keyword");
 									//return to sanity, normal function call!
 									break;default:
 										output("function");
