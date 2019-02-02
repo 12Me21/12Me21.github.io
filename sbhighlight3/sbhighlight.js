@@ -606,7 +606,7 @@ function tokenize(code){
 				next();
 			if(c==='#'||c==='%'||c==='$'){
 				next();
-				return push("word");
+				//return push("word");
 			}
 			return pushWord();
 		//numbers
