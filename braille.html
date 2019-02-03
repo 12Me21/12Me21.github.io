@@ -1,0 +1,15 @@
+<meta charset="UTF-8">
+<script>
+function to_braille(numbers){
+	return String.fromCharCode(
+		0x2800 + [... numbers]
+			.map(key => "741852".indexOf(key))
+			.filter(dot => dot>=0)
+			.reduce((pattern,dot) => pattern | 1<<dot,0)
+	)
+}
+</script>
+<form onsubmit="event.preventDefault(); this.output.value+=to_braille(this.input.value); this.input.value=''">
+<input name="input"></input>
+<output name="output"></output>
+</form>
