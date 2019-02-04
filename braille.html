@@ -5,12 +5,13 @@ function to_braille(numbers){
 		[... numbers]
 			.map(key => "/85*9623".indexOf(key))
 			.filter(dot => dot>=0)
-			.reduce((pattern,dot) => pattern | 1<<dot,0)
-	
-	return [String.fromCharCode(0x2800 + id)," A1B'K2L@CIF/MSP\"E3H9O6R^DJG>NTQ,*5<-U8V.%[$+X!&;:4\\0Z7(_?W]#Y)=".charAt(id)];
+			.reduce((pattern,dot) => pattern | 1<<dot, 0)
+	if(id || numbers=="")
+		return String.fromCharCode(0x2800 + id);
+	return ""
 }
 function atob(text){
-	return [...text]
+	return [...text.toUpperCase()]
 		.map(chr=>" A1B'K2L@CIF/MSP\"E3H9O6R^DJG>NTQ,*5<-U8V.%[$+X!&;:4\\0Z7(_?W]#Y)=".indexOf(chr))
 		.filter(id=>id>=0)
 		.map(id=>String.fromCharCode(id+0x2800))
@@ -23,8 +24,8 @@ function btoa(braille){
 		.join("");
 }
 </script>
-<form onsubmit="event.preventDefault(); [braille,text]=to_braille($input.value); $braille.value+=braille; $braille.oninput(); $input.value=''">
-<input name="$input"></input>
+<form onsubmit="event.preventDefault(); if($input.value[0]=='-') $braille.value=$braille.value.slice(0,-1);else $braille.value+=to_braille($input.value); $braille.oninput(); $input.value=''">
+<input name="$input" autocomplete="off"></input>
 <hr>
 <textarea name="$braille" oninput="$text.value=btoa($braille.value)"></textarea>
 <br>
