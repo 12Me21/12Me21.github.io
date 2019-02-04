@@ -1,15 +1,32 @@
 <meta charset="UTF-8">
 <script>
 function to_braille(numbers){
-	return String.fromCharCode(
-		0x2800 + [... numbers]
-			.map(key => "741852".indexOf(key))
+	var id = 
+		[... numbers]
+			.map(key => "/85*9623".indexOf(key))
 			.filter(dot => dot>=0)
 			.reduce((pattern,dot) => pattern | 1<<dot,0)
-	)
+	
+	return [String.fromCharCode(0x2800 + id)," A1B'K2L@CIF/MSP\"E3H9O6R^DJG>NTQ,*5<-U8V.%[$+X!&;:4\\0Z7(_?W]#Y)=".charAt(id)];
+}
+function atob(text){
+	return [...text]
+		.map(chr=>" A1B'K2L@CIF/MSP\"E3H9O6R^DJG>NTQ,*5<-U8V.%[$+X!&;:4\\0Z7(_?W]#Y)=".indexOf(chr))
+		.filter(id=>id>=0)
+		.map(id=>String.fromCharCode(id+0x2800))
+		.join("");
+}
+function btoa(braille){
+	return [...braille]
+		.map(chr=>chr.charCodeAt()-0x2800)
+		.map(id=>" A1B'K2L@CIF/MSP\"E3H9O6R^DJG>NTQ,*5<-U8V.%[$+X!&;:4\\0Z7(_?W]#Y)=".charAt(id))
+		.join("");
 }
 </script>
-<form onsubmit="event.preventDefault(); this.output.value+=to_braille(this.input.value); this.input.value=''">
-<input name="input"></input>
-<output name="output"></output>
+<form onsubmit="event.preventDefault(); [braille,text]=to_braille($input.value); $braille.value+=braille; $braille.oninput(); $input.value=''">
+<input name="$input"></input>
+<hr>
+<textarea name="$braille" oninput="$text.value=btoa($braille.value)"></textarea>
+<br>
+<textarea name="$text" oninput="$braille.value=atob($text.value)"></textarea>
 </form>
