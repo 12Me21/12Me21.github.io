@@ -3740,9 +3740,16 @@ var glyphs={[9]:[72,0],
 [65372]:[120,48],
 [65374]:[256,16]}
 
+window.bgcolor="black";
+window.threshold=32;
+window.font_y=7;
+
 function convert(fontname){
 	var c2d=$canvas.getContext("2d");
-	c2d.fillStyle="black";
+	$canvas.style.backgroundColor=bgcolor;
+	$canvas.width+=0;
+	
+	c2d.fillStyle="transparent";
 	c2d.fillRect(0,0,512,512);
 	
 	c2d.font=fontname;
@@ -3758,19 +3765,41 @@ function convert(fontname){
 		region.rect(pos[0], pos[1], 8, 8);
 		c2d.clip(region);
 		
-		c2d.fillText(String.fromCodePoint(chr),pos[0]+4,pos[1]+7);
+		c2d.fillText(String.fromCodePoint(chr),pos[0]+4,pos[1]+font_y);
 		c2d.restore();
 	}
+	var imgData = c2d.getImageData(0, 0, 512, 512);
+	var data=imgData.data;
+	
+	c2d.save();
+	c2d.globalCompositeOperation="destination-over";
+	c2d.fillStyle=bgcolor;
+	c2d.fillRect(0,0,512,512);
+	c2d.restore();
+	
+	var imgData2 = c2d.getImageData(0, 0, 512, 512);
+	var data2=imgData2.data;
+	for(var i=0;i<data2.length;i+=4){
+		if(data[i+3]<threshold)
+			data2[i+3]=0;
+	}
+	c2d.putImageData(imgData2,0,0)
+	
 }
 
 </script>
 <style>
 
+canvas {
+	background-color: black;
+}
+
+
 @font-face {
 	font-family: 'SmileBASIC';
 	font-weight: 400;
 	font-style: normal;
-	
-	src: url('external/SMILEBASIC.ttf');
+
+	src: url('./SMILEBASIC.ttf');
 }
 </style>
