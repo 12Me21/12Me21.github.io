@@ -3742,7 +3742,7 @@ var glyphs={[9]:[72,0],
 
 function convert(fontname){
 	var c2d=$canvas.getContext("2d");
-	c2d.fillStyle="transparent";
+	c2d.fillStyle="black";
 	c2d.fillRect(0,0,512,512);
 	
 	c2d.font=fontname;
@@ -3765,10 +3765,6 @@ function convert(fontname){
 
 </script>
 <style>
-
-canvas {
-	background-color: black;
-}
 
 @font-face {
 	font-family: 'SmileBASIC';
