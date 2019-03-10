@@ -6,7 +6,7 @@
 <input id="$fontsize" type="number" value="8"> Font size<br>
 <input id="$font_y" type="number" value="0"> Font vertical offset<br>
 <input id="$big" type="checkbox"> 16x16 BIG font?<br>
-<input id="$bgcolor" type="color"> Editor background color<br>
+<input id="$bgcolor" type="color" onchange="$canvas.style.backgroundColor=this.value"> Editor background color<br>
 <input id="$threshold" type="number" value="32"> Minimum alpha<br>
 <button onclick="convert($fontname.value)">Eated Cereal Go!</button><br>
 
@@ -3752,7 +3752,7 @@ function convert(fontname){
 	var c2d=$canvas.getContext("2d");
 	
 	var bgcolor=$bgcolor.value;
-	$canvas.style.backgroundColor=bgcolor;
+	
 	var threshold=Number($threshold.value);
 	var big=$big.checked;
 	var scale=big?2:1;
