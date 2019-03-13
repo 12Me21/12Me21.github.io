@@ -1,0 +1,82 @@
+<meta charset="UTF-8"> 
+<input type="file" oninput="(eated_file_go.bind(this))()"><br>
+<input type="text" id="$url"> <button onclick="eated_url_go()">Load from URL</button>
+<hr>
+<textarea id="$textarea" spellcheck="false"></textarea>
+
+<script>
+
+function eated_url_go(){
+	doCORSRequest($url.value,function(response){
+		//console.log($url.value,response)
+		//window.x=response;
+		if(response){
+			[text,width,height] = hexView(response)
+			$textarea.value=text
+			$textarea.cols=width
+			$textarea.rows=height
+		}else
+			$textarea.value="err"
+	});
+	
+}
+
+//get image from file browser
+function eated_file_go(){
+	var reader=new FileReader();
+	reader.onload=function(){
+		[text,width,height] = hexView(reader.result)
+		$textarea.value=text
+		$textarea.cols=width
+		$textarea.rows=height
+	};
+	reader.readAsArrayBuffer(this.files[0]);
+}
+
+var cors_api_url = 'https://cors-anywhere.herokuapp.com/';
+function doCORSRequest(url, callback) {
+	var x = new XMLHttpRequest();
+	x.open("GET", cors_api_url + url);
+	x.responseType = "arraybuffer";
+	x.onload = function() {
+		callback(x.status==200?x.response:undefined);
+	};
+	x.send();
+}
+
+function hexView(data){
+	data=new Uint8Array(data);
+	var s = HEX$(data.length)
+	var addressWidth = s.length //16
+	s+=" "
+	for(var i=0;i<16;i++)
+		s+=" "+HEX$(i,2)
+	s+="\n\n"
+	for(var i=0;i<data.length;i+=16){
+		s+=HEX$(i & ~15,addressWidth)+" "
+		for(var j=0;j<16;j++){
+			if(i+j<data.length){
+				var chr=data[i+j];
+				s+=" "+HEX$(chr,2)
+			}else
+				s+="   "
+		}
+		s+="  "
+		for(var j=0;j<16 && i+j<data.length;j++){
+			var chr=data[i+j];
+			if(chr>=32&&chr<127)
+				s+=String.fromCharCode(chr);
+			else
+				s+="."
+		}
+		s+="\n"
+	}
+	return [s, addressWidth+1+3*16+2+16, Math.ceil(data.length/16)+2]
+}
+
+function HEX$(number,length){
+	if(length!==undefined)
+		return ("0".repeat(length)+number.toString(16).toUpperCase()).substr(-length);
+	return number.toString(16).toUpperCase();
+}
+</script>
