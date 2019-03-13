@@ -6,29 +6,23 @@
 
 <script>
 
+//takes arraybuffer
+function updatehex(data){
+	var [text,width,height] = hexView(data);
+	$textarea.value=text;
+	$textarea.cols=width;
+	$textarea.rows=height;
+}
+
 function eated_url_go(){
-	doCORSRequest($url.value,function(response){
-		//console.log($url.value,response)
-		//window.x=response;
-		if(response){
-			[text,width,height] = hexView(response)
-			$textarea.value=text
-			$textarea.cols=width
-			$textarea.rows=height
-		}else
-			$textarea.value="err"
-	});
-	
+	doCORSRequest($url.value, updatehex);
 }
 
 //get image from file browser
 function eated_file_go(){
 	var reader=new FileReader();
-	reader.onload=function(){
-		[text,width,height] = hexView(reader.result)
-		$textarea.value=text
-		$textarea.cols=width
-		$textarea.rows=height
+	reader.onload=function(x){
+		updatehex(reader.result);
 	};
 	reader.readAsArrayBuffer(this.files[0]);
 }
@@ -39,7 +33,8 @@ function doCORSRequest(url, callback) {
 	x.open("GET", cors_api_url + url);
 	x.responseType = "arraybuffer";
 	x.onload = function() {
-		callback(x.status==200?x.response:undefined);
+		if(x.status==200)
+			callback(x.response);
 	};
 	x.send();
 }
@@ -50,7 +45,10 @@ function hexView(data){
 	var addressWidth = s.length //16
 	s+=" "
 	for(var i=0;i<16;i++)
-		s+=" "+HEX$(i,2)
+		s+="  "+HEX$(i,1)
+	s+="  "
+	for(var i=0;i<16;i++)
+		s+=HEX$(i,1)
 	s+="\n\n"
 	for(var i=0;i<data.length;i+=16){
 		s+=HEX$(i & ~15,addressWidth)+" "
