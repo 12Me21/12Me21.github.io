@@ -1,0 +1,143 @@
+<meta charset="UTF-8"> 
+Upload config.dat: <input id="$file" type="file" oninput="doLoad(this)"> <br>
+Smile tool: <input id="$smiletool" type="text">              <br>
+Active project: <input id="$activeproject" type="text">      <br>
+Comment: <input id="$commentcolor" type="color">             <br>
+Keyword: <input id="$keywordcolor" type="color">             <br>
+String: <input id="$stringcolor" type="color">               <br>
+Label: <input id="$labelcolor" type="color">                 <br>
+Numeric: <input id="$numericcolor" type="color">             <br>
+Text: <input id="$textcolor" type="color">                   <br>
+Statement: <input id="$statementcolor" type="color">         <br>
+Background: <input id="$backgroundcolor" type="color">       <br>
+Key repeat delay: <input id="$keydelay" type="number">       <br>
+Key repeat interval: <input id="$keyinterval" type="number"> <br>
+Text wrap: <input id="$textwrap" type="checkbox">            <br>
+Gold member badge: <input id="$goldmember" type="checkbox">  <br>
+<button onclick="doSave()">Download config.dat</button>
+<a id="$download" style="display:none;" download="config.dat"></a>
+
+<script>
+DataView.prototype.getSBString = function(start, maxBytes){
+	var string="";
+	for(var i=0;i<maxBytes;i+=2){
+		var c = this.getUint16(start+i,true);
+		if(c==0)
+			break;
+		string+=String.fromCodePoint(c);
+	}
+	return string;
+}
+
+DataView.prototype.setSBString = function(start, string, maxBytes){
+	if(string.length+1>maxBytes/2)
+		return false;
+	for(var i=0;i<string.length;i++)
+		this.setUint16(start+i*2,string.codePointAt(i),true);
+	this.setUint16(start+string.length*2,0,true);
+	return true;
+}
+
+//config is arraybuffer
+function readConfig(config){
+	console.log("reading config");
+	if(config.byteLength != 0x610)
+		return null;
+	console.log("reading config.");
+	config = new DataView(config);
+	return ({
+		smileTool: config.getSBString(0x004,128),
+		activeProject: config.getSBString(0x084,28),
+		colors: {
+			comment: config.getInt32(0x0A4,true),
+			keyword: config.getInt32(0x0A8,true),
+			string: config.getInt32(0x0AC,true),
+			label: config.getInt32(0x0B0,true),
+			numeric: config.getInt32(0x0B4,true),
+			text: config.getInt32(0x0B8,true),
+			statement: config.getInt32(0x600,true),
+			background: config.getInt32(0x604,true)
+		},
+		keyDelay: config.getInt32(0x0BC,true),
+		keyInterval: config.getInt32(0x0C0,true),
+		textWrap: config.getInt32(0x0C4,true),
+		goldMember: config.getInt8(0x608,true)
+	})
+}
+
+function writeConfig(data){
+	var config = new ArrayBuffer(0x610);
+	var configView = new DataView(config);
+	configView.setSBString(0x004,data.smileTool,128);
+	configView.setSBString(0x084,data.activeProject,28);
+	configView.setInt32(0x0A4,data.colors.comment,true);
+	configView.setInt32(0x0A8,data.colors.keyword,true);
+	configView.setInt32(0x0AC,data.colors.string,true);
+	configView.setInt32(0x0B0,data.colors.label,true);
+	configView.setInt32(0x0B4,data.colors.numeric,true);
+	configView.setInt32(0x0B8,data.colors.text,true);
+	configView.setInt32(0x600,data.colors.statement,true);
+	configView.setInt32(0x604,data.colors.background,true);
+	configView.setInt32(0x0BC,data.keyDelay,true);
+	configView.setInt32(0x0C0,data.keyInterval,true);
+	configView.setInt32(0x0C4,data.textWrap,true);
+	configView.setInt8(0x608,data.goldMember,true);
+	return config;
+}
+
+function argbToHex(argb){
+	return "#"+((argb & 0xFFFFFF) | 0x1000000).toString(16).substr(1)// + (argb>>>8*3 | 0x100).toString(16).substr(1);
+}
+
+function hexToARGB(hex){
+	return 0xFF000000 | parseInt(hex.substr(1),16);
+}
+
+function doLoad(th){
+	var reader=new FileReader();
+	reader.onload=function(){
+		data = readConfig(reader.result);
+		console.log(data);
+		$smiletool.value = data.smileTool;
+		$activeproject.value = data.activeProject;
+		$commentcolor.value = argbToHex(data.colors.comment);
+		$keywordcolor.value = argbToHex(data.colors.keyword);
+		$stringcolor.value = argbToHex(data.colors.string);
+		$labelcolor.value = argbToHex(data.colors.label);
+		$numericcolor.value = argbToHex(data.colors.numeric);
+		$textcolor.value = argbToHex(data.colors.text);
+		$statementcolor.value = argbToHex(data.colors.statement);
+		$backgroundcolor.value = argbToHex(data.colors.background);
+		$keydelay.value = data.keyDelay;
+		$keyinterval.value = data.keyInterval;
+		$textwrap.checked = data.textWrap != 0;
+		$goldmember.checked = data.goldMember != 0;
+	};
+	reader.readAsArrayBuffer(th.files[0]);
+}
+
+function doSave(){
+	var blob = new Blob([writeConfig({
+		smileTool: $smiletool.value,
+		activeProject: $activeproject.value,
+		colors: {
+			comment:    hexToARGB($commentcolor.value),
+			keyword:    hexToARGB($keywordcolor.value),
+			string:     hexToARGB($stringcolor.value),
+			label:      hexToARGB($labelcolor.value),
+			numeric:    hexToARGB($numericcolor.value),
+			text:       hexToARGB($textcolor.value),
+			statement:  hexToARGB($statementcolor.value),
+			background: hexToARGB($backgroundcolor.value)
+		},
+		keyDelay: Number($keydelay.value),
+		keyInterval: Number($keyinterval.value),
+		textWrap: $textwrap.checked?1:0,
+		goldMember: $goldmember.checked?1:0
+	})],{"type":"octet/stream"});
+	
+	$download.href=URL.createObjectURL(blob);
+	$download.click();
+}
+
+</script>
