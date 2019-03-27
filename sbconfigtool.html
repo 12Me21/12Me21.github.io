@@ -1,21 +1,26 @@
-<meta charset="UTF-8"> 
-Upload config.dat: <input id="$file" type="file" oninput="doLoad(this)"> <br>
-Smile tool: <input id="$smiletool" type="text">              <br>
-Active project: <input id="$activeproject" type="text">      <br>
-Comment: <input id="$commentcolor" type="color">             <br>
-Keyword: <input id="$keywordcolor" type="color">             <br>
-String: <input id="$stringcolor" type="color">               <br>
-Label: <input id="$labelcolor" type="color">                 <br>
-Numeric: <input id="$numericcolor" type="color">             <br>
-Text: <input id="$textcolor" type="color">                   <br>
-Statement: <input id="$statementcolor" type="color">         <br>
-Background: <input id="$backgroundcolor" type="color">       <br>
-Key repeat delay: <input id="$keydelay" type="number">       <br>
-Key repeat interval: <input id="$keyinterval" type="number"> <br>
-Text wrap: <input id="$textwrap" type="checkbox">            <br>
-Gold member badge: <input id="$goldmember" type="checkbox">  <br>
-<button onclick="doSave()">Download config.dat</button>
-<a id="$download" style="display:none;" download="config.dat"></a>
+<meta charset="UTF-8">
+<table><tr>
+<td colspan="2">Upload config.dat: <input id="$file" type="file" oninput="doLoad(this)"></td>
+</tr>
+<tr><td>Smile tool:         </td> <td><input id="$smiletool" type="text">       </td></tr>     
+<tr><td>Active project:     </td> <td><input id="$activeproject" type="text">   </td></tr> 
+<tr><td>Comment:            </td> <td><input id="$commentcolor" type="color">   </td></tr>        
+<tr><td>Keyword:            </td> <td><input id="$keywordcolor" type="color">   </td></tr>        
+<tr><td>String:             </td> <td><input id="$stringcolor" type="color">    </td></tr>         
+<tr><td>Label:              </td> <td><input id="$labelcolor" type="color">     </td></tr>          
+<tr><td>Numeric:            </td> <td><input id="$numericcolor" type="color">   </td></tr>        
+<tr><td>Text:               </td> <td><input id="$textcolor" type="color">      </td></tr>           
+<tr><td>Statement:          </td> <td><input id="$statementcolor" type="color"> </td></tr>      
+<tr><td>Background:         </td> <td><input id="$backgroundcolor" type="color"></td></tr>     
+<tr><td>Key repeat delay:   </td> <td><input id="$keydelay" type="number">      </td></tr>
+<tr><td>Key repeat interval:</td> <td><input id="$keyinterval" type="number">   </td></tr>
+<tr><td>Text wrap:          </td> <td><input id="$textwrap" type="checkbox">    </td></tr>      
+<tr><td>???:                </td> <td><input id="$mystery" type="number" ondblclick='window.location="http://smilebasicsource.com/chat"'>       </td></tr>
+<tr><td>Gold member badge:  </td> <td><input id="$goldmember" type="checkbox">  </td></tr>
+<tr>
+<td colspan="2"><button onclick="doSave()">Download config.dat</button>
+<a id="$download" style="display:none;" download="config.dat"></a></td>
+</tr></table>
 
 <script>
 DataView.prototype.getSBString = function(start, maxBytes){
@@ -61,6 +66,7 @@ function readConfig(config){
 		keyDelay: config.getInt32(0x0BC,true),
 		keyInterval: config.getInt32(0x0C0,true),
 		textWrap: config.getInt32(0x0C4,true),
+		mystery: config.getInt32(0x5F8,true),
 		goldMember: config.getInt8(0x608,true)
 	})
 }
@@ -68,6 +74,7 @@ function readConfig(config){
 function writeConfig(data){
 	var config = new ArrayBuffer(0x610);
 	var configView = new DataView(config);
+	configView.setInt32(0x000, 0x63334253, false);
 	configView.setSBString(0x004,data.smileTool,128);
 	configView.setSBString(0x084,data.activeProject,28);
 	configView.setInt32(0x0A4,data.colors.comment,true);
@@ -81,6 +88,8 @@ function writeConfig(data){
 	configView.setInt32(0x0BC,data.keyDelay,true);
 	configView.setInt32(0x0C0,data.keyInterval,true);
 	configView.setInt32(0x0C4,data.textWrap,true);
+	configView.setInt32(0x5F8,data.mystery, true);
+	configView.setInt32(0x5FC, 0x6D436544, false);
 	configView.setInt8(0x608,data.goldMember,true);
 	return config;
 }
@@ -111,6 +120,7 @@ function doLoad(th){
 		$keydelay.value = data.keyDelay;
 		$keyinterval.value = data.keyInterval;
 		$textwrap.checked = data.textWrap != 0;
+		$mystery.value = data.mystery;
 		$goldmember.checked = data.goldMember != 0;
 	};
 	reader.readAsArrayBuffer(th.files[0]);
@@ -133,6 +143,7 @@ function doSave(){
 		keyDelay: Number($keydelay.value),
 		keyInterval: Number($keyinterval.value),
 		textWrap: $textwrap.checked?1:0,
+		mystery: Number($mystery.value),
 		goldMember: $goldmember.checked?1:0
 	})],{"type":"octet/stream"});
 	
