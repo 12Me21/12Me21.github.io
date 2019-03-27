@@ -2,23 +2,23 @@
 <table><tr>
 <td colspan="2">Upload config.dat: <input id="$file" type="file" oninput="doLoad(this)"></td>
 </tr>
-<tr><td>Smile tool:         </td> <td><input id="$smiletool" type="text">       </td></tr>     
-<tr><td>Active project:     </td> <td><input id="$activeproject" type="text">   </td></tr> 
-<tr><td>Comment:            </td> <td><input id="$commentcolor" type="color">   </td></tr>        
-<tr><td>Keyword:            </td> <td><input id="$keywordcolor" type="color">   </td></tr>        
-<tr><td>String:             </td> <td><input id="$stringcolor" type="color">    </td></tr>         
-<tr><td>Label:              </td> <td><input id="$labelcolor" type="color">     </td></tr>          
-<tr><td>Numeric:            </td> <td><input id="$numericcolor" type="color">   </td></tr>        
-<tr><td>Text:               </td> <td><input id="$textcolor" type="color">      </td></tr>           
-<tr><td>Statement:          </td> <td><input id="$statementcolor" type="color"> </td></tr>      
-<tr><td>Background:         </td> <td><input id="$backgroundcolor" type="color"></td></tr>     
-<tr><td>Key repeat delay:   </td> <td><input id="$keydelay" type="number">      </td></tr>
-<tr><td>Key repeat interval:</td> <td><input id="$keyinterval" type="number">   </td></tr>
-<tr><td>Text wrap:          </td> <td><input id="$textwrap" type="checkbox">    </td></tr>      
-<tr><td>???:                </td> <td><input id="$mystery" type="number" ondblclick='window.location="http://smilebasicsource.com/chat"'>       </td></tr>
+<tr><td>Smile tool:         </td> <td><input id="$smiletool" type="text" value="SYS/SBSMILE">       </td></tr>
+<tr><td>Active project:     </td> <td><input id="$activeproject" type="text" value="">   </td></tr>
+<tr><td>Text:               </td> <td><input id="$textcolor" type="color" value="#ffffff"><!--839496-->      </td></tr>
+<tr><td>Numeric:            </td> <td><input id="$numericcolor" type="color" value="#f77bb5"><!--C4716C-->   </td></tr>
+<tr><td>String:             </td> <td><input id="$stringcolor" type="color" value="#a5ada5"><!--2AA198-->    </td></tr>
+<tr><td>Statement:          </td> <td><input id="$statementcolor" type="color" value="#7b7bf7"><!--859900--> </td></tr>
+<tr><td>Keyword:            </td> <td><input id="$keywordcolor" type="color" value="#7bb5f7"><!--268BD2-->   </td></tr>
+<tr><td>Comment:            </td> <td><input id="$commentcolor" type="color" value="#10bd42"><!--CB4B16-->   </td></tr>
+<tr><td>Label:              </td> <td><input id="$labelcolor" type="color" value="#f7a500"><!--D33682-->     </td></tr>
+<tr><td>Background:         </td> <td><input id="$backgroundcolor" type="color" value="#000000"><!--002B36--></td></tr>
+<tr><td>Key repeat delay:   </td> <td><input id="$keydelay" type="number" value="14">      </td></tr>
+<tr><td>Key repeat interval:</td> <td><input id="$keyinterval" type="number" value="2">   </td></tr>
+<tr><td>Text wrap:          </td> <td><input id="$textwrap" type="checkbox" checked="checked">    </td></tr>
+<tr><td>???:                </td> <td><input id="$mystery" type="number" ondblclick='//window.location="http://smilebasicsource.com/chat"' value="0">       </td></tr>
 <tr><td>Gold member badge:  </td> <td><input id="$goldmember" type="checkbox">  </td></tr>
 <tr>
-<td colspan="2"><button onclick="doSave()">Download config.dat</button>
+<td colspan="2"><button onclick="doSave()">Download config.dat</button>  
 <a id="$download" style="display:none;" download="config.dat"></a></td>
 </tr></table>
 
