@@ -12,6 +12,9 @@ BGMPLAY @310T1N0*99
 'BGMPLAY@310T1N0*99...
 'BGMPLAY"310T1[N0]"...
 'It doesn't actually save any characters lol
+'EDIT:
+'Nevermind, I made a misake:
+'BGMPLAY"@310T1[N0]"... would be 1 char longer
 
 ACLS
 
