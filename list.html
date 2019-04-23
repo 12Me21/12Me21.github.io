@@ -1,0 +1,10 @@
+<script>
+var x = new XMLHttpRequest();
+x.onload = function(){
+	document.open();
+	document.write(x.response);
+	document.close();
+};
+x.open("GET","https://smilebasicsource.com/query/tinycomputerprograms?username="+window.location.hash.substr(1)+"&program=list");
+x.send();
+</script>
