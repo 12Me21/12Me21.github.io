@@ -1,0 +1,272 @@
+<meta charset="utf-8">
+
+Key: <input id="$key" autocomplete="off" onchange="loadKey(this.value)"><br>
+
+<table>
+<tr>
+	<td>Name:</td>
+	<td id="$name"></td>
+</tr><tr>
+	<td>Size:</td>
+	<td id="$size"></td>
+</tr><tr>
+	<td>Date:</td>
+	<td id="$date"></td>
+</tr><tr>
+	<td>Author:</td>
+	<td id="$author"></td>
+</tr><tr>
+	<td>Downloads:</td>
+	<td id="$downloads"></td>
+</tr><tr>
+	<td>Data:</td>
+	<td>
+		<table id="$data">
+		</table>
+	</td>
+</tr><tr>
+	<td>Files:</td>
+	<td>
+		<table id="$files">
+		</table>
+	</td>
+</tr>
+</table>
+<div id="$view"></div>
+
+<style>
+	table,td {
+		border-collapse: collapse;
+		border: 1px solid gray;
+	}
+	[id="$view"] img {
+		background-color: black;
+	}
+	
+	iframe {
+		width:100%;
+		height:100%;
+	}
+	
+	td[id="$name"] {
+		font-size: 1.5em;
+	}
+	
+	body, button {
+		font-family: monospace;
+	}
+</style>
+
+<script>
+	var localCache = {};
+	var projectName; //this is a terrible hack that only works when nested projects don't exist
+	
+	//(can't just use https:// because the 3DS browser sucks)
+	if(location.protocol=="https:")
+		var urlprefix="//";
+	else
+		urlprefix="http://";
+	
+	function loadKey(key){
+		//history.pushState("uwu","owo",window.location+"?"+key);
+		//if(!(key=validKey(key)))
+		//	return;
+		getInfo(key,putInfo);
+	}
+	
+	function getInfo(key,callback){
+		if(localCache[key]==undefined){ //key has not been requested yet
+			console.log("requesting `"+key+"`");
+			localCache[key]={};
+			var finished=false;
+			request(""+urlprefix+"sbapi.me/get/"+key+"/info?json=1",function(response){
+				if(response===null){ //request failed
+					localCache[key]=undefined;
+					callback(null);
+					return;
+				}
+				response=jsonParse(response);
+				if(response===null){ //json invalid
+					localCache[key]=undefined;
+					callback(null);
+					return;
+				}
+				
+				if(finished){
+					console.log("got info, finished");
+					var encodings=localCache[key].encodings;
+					localCache[key]=response;
+					localCache[key].encodings=encodings;
+					callback(localCache[key],key);
+				}else{
+					console.log("got info, waiting for encodings");
+					finished=true;
+					localCache[key]=response;
+				}
+			});
+			//get encodings list I wish this was not separate ugh
+			request(""+urlprefix+"sbapi.me/get/"+key+"/encodings?json=1",function(response){
+				if(response===null){ //request failed
+					//localCache[key]=undefined;
+					callback(null);
+					return;
+				}
+				response=jsonParse(response);
+				if(response===null){ //json invalid
+					//localCache[key]=undefined;
+					callback(null);
+					return;
+				}
+				
+				localCache[key].encodings=response;
+				if(finished){
+					console.log("got encodings, finished");
+					callback(localCache[key],key);
+				}else{
+					console.log("got encodings, waiting for info");
+					finished=true;
+				}
+			});
+		}else if(localCache[key]=={}){ //key has been requested but not finished
+			console.log("already requested `"+key+"`, still awaiting response");
+			//do nothing
+		}else{ //key has been gotten
+			console.log("`"+key+"` is cached");
+			callback(localCache[key],key);
+		}
+	}
+	
+	function putInfo(info,key){
+		console.log(info);
+		var name=formatFileName(info.filename);
+		$name.textContent=name;
+		$size.textContent=formatFileSize(Number(info.size));
+		$date.textContent=formatDate(new Date(info.uploaded));
+		$author.textContent=formatAuthor(info.author);
+		$downloads.textContent=info.downloads;
+		var folder=info.extInfo && info.extInfo.files!==undefined;
+		
+		$files.innerHTML="";
+		$data.innerHTML="";
+		$view.innerHTML="";
+		
+		if(key.indexOf("/")!=-1){
+			var row=document.createElement("tr");
+			row.innerHTML="<button onclick='loadKey(\""+key.split("/").slice(0,-1).join("/")+"\")'>"+projectName+"</button> (Back)";
+			$files.appendChild(row);
+		}
+		
+		for(var i=0;i<info.encodings.length;i++){
+			switch(info.encodings[i]){
+				case "zip":
+					var row=document.createElement("tr");
+					row.innerHTML=
+						"<td><a href='"+urlprefix+"sbapi.me/get/"+key+"/zip' download='"+info.filename.substr(1)+".zip'>"+
+						"Download .zip"+
+						"</a></td>";
+					$data.appendChild(row);
+				break;case "raw":
+					var row=document.createElement("tr");
+					row.innerHTML=
+						"<td><a href='"+urlprefix+"sbapi.me/get/"+key+"/raw' download='"+info.filename+"'>"+
+						"Download raw SB file"+
+						"</a></td>";
+					$data.appendChild(row);
+				break;case "text":
+					var row=document.createElement("tr");
+					row.innerHTML=
+						"<td><a href='"+urlprefix+"sbapi.me/get/"+key+"/text' download='"+info.filename.substr(1)+".txt'>"+
+						"Download text"+
+						"</a></td>";
+					$data.appendChild(row);
+				break;case "code":
+					$view.innerHTML="<iframe src='"+urlprefix+"sbapi.me/get/"+key+"/code?wrap=1'></iframe>";
+				break;case "png":
+					$view.innerHTML="<img src='"+urlprefix+"sbapi.me/get/"+key+"/png'></img>";
+				break;case "csv":
+					var row=document.createElement("tr");
+					row.innerHTML=
+						"<td><a href='"+urlprefix+"sbapi.me/get/"+key+"/csv' download='"+info.filename.substr(1)+".csv'>"+
+						"Download CSV"+
+						"</a></td>";
+					$data.appendChild(row);
+			}
+		}
+		
+		if(folder){
+			projectName=name;
+			var files=info.extInfo.files;
+			for(var i=0;i<files.length;i++){
+				var row=document.createElement("tr");
+				row.innerHTML=
+					"<td>"+
+					"<button onclick='loadKey(\""+key+"/"+files[i].name+"\")'>"+formatFileName(files[i].name)+"</button>"+
+					"</td><td>"+
+					formatFileSize(files[i].size)+
+					"</td>";
+				$files.appendChild(row);
+			}
+		}
+		
+	}
+	
+	function formatAuthor(author){
+		if(author.uid==0)
+			return "(none)";
+		return author.name+" (uid:"+(author.uid & 65535)+")"; //uid is PROBABLY only the lower 16 bits. Have not seen any uids lower than 65536 except SmileBoom's.
+	}
+	
+	function formatFileName(filename){
+		if(filename[0]=="P")
+			return filename.substr(1)+"/";
+		if(filename[0]=="T")
+			return "TXT:"+filename.substr(1);
+		if(filename[0]=="B")
+			return "DAT:"+filename.substr(1);
+	}
+	
+	function formatFileSize(size){
+		if(size>=1024){
+			size/=1024;
+			if(size>=1024){
+				size/=1024;
+				return size.toFixed(2)+" MiB";
+			}
+			return size.toFixed(2)+" KB";
+		}
+		return size+" Bytes";
+	}
+	
+	var months=["January","February","March","May","April","June","July","September","August","October","November","December","December 2"];
+	
+	function formatDate(date){
+		return date.toLocaleString("default",{timeZone:"UTC"});
+	}
+	
+	function jsonParse(text){
+		try{
+			return JSON.parse(text);
+		}catch(e){
+			return null;
+		}
+	}
+	
+	function validKey(key){
+		key=key.toUpperCase();
+		if(/^[A-HJ-NP-TV-Z0-9]{1,8}$/.test(key))
+			return key;
+	}
+	
+	function request(url,callback,arg){
+		var x=new XMLHttpRequest;
+		x.open("GET",url);
+		x.responseType = "text";
+		x.onload=function(){
+			callback(x.response,arg);
+		};
+		x.onerror=function(){
+			callback(null,arg);
+		};
+		x.send();
+	}
+</script>
