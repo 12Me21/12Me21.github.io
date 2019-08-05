@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>R16K1S60</title>
+		<link rel="stylesheet" href="style.css">
+		<link rel="icon" href="http://lbphacker.hu/_design/favicon.png" type="image/png">
+		<script src="run.js"></script><link rel="stylesheet" type="text/css" href="desert.css">
+		<script src="MathJax.js" id=""></script>
+		<meta charset="utf-8">
+	<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+	<body><div id="MathJax_Message" style="display: none;"></div>
+		<div id="container">
+		Archived from <a href=http://www.lbphacker.hu/powdertoy/R16K1S60/manual.md>http://www.lbphacker.hu/powdertoy/R16K1S60/manual.md</a>
+<h1>Manual and Instruction Reference for R16K1S60</h1>
+
+<h2>Index</h2>
+
+<ul>
+<li><a href="#foreword">Foreword</a></li>
+<li><a href="#links">Links</a></li>
+<li><a href="#driving">Driving the thing</a></li>
+<li><a href="#arch">Architecture</a></li>
+<li><a href="#programming">Programming</a></li>
+<li><a href="#instructions">Instruction reference</a></li>
+<li><a href="#shifts">Shift sorcery</a></li>
+<li><a href="#examples">Example programs</a></li>
+<li><a href="#subframe">Handling subframe tech safely</a></li>
+<li><a href="#changelog">Changelog</a></li>
+</ul>
+
+<p>Feel free to PM me if something is unclear or you have an improvement in mind for this manual.</p>
+
+<h2><a id="foreword"></a> Foreword</h2>
+
+<p>Sometime in 2015 <a href="http://powdertoy.co.uk/Discussions/Thread/View.html?Thread=19916">I published <strong>Ray162K</strong></a> (or <strong>R162K</strong> in short), my first ever <strong>TPT</strong>
+ computer. It was huge (360x330 particle area), it was slow (16 frame 
+clock cycle), but it was a bloody 16-bit computer nonetheless. It was 
+fun to build and, in my opinion, to use.</p>
+
+<p>The day I published <strong>R162K</strong>, <a href="http://powdertoy.co.uk/User.html?Name=Schmolendevice">Schmolendevice</a>
+ contacted me and introduced me to the world of subframe technology 
+(thanks for that!). I was amazed by how smoothly everything worked in 
+subframe, but since I’d just finished building <strong>R162K</strong>, I couldn’t muster the strength to look deeper into it right away. I was out of it for quite some time.</p>
+
+<p>When I came back to <strong>TPT</strong>, I half-expected to be 
+greeted by the sight of countless subframe computers on FP. As you can 
+probably guess, that’s not what happened. I thought, well, I could just 
+build one myself. I set my goals and built <strong>R16K1S60</strong>, which features:</p>
+
+<ul>
+<li>16-bit architecture (<strong>“R16”</strong>, R stands for Ray)</li>
+<li>a RAM with 1024 16-bit cells (<strong>“K1”</strong>, 1 kibi-cell)</li>
+<li>Single frame clock cycles (<strong>“S60”</strong>, 60Hz with the default framerate cap)</li>
+<li>5 general purpose registers, instruction pointer and stack pointer</li>
+<li>4 16-bit IO ports</li>
+<li>Shifts, rotates, arithmetical and logical instructions</li>
+<li>Conditional jumps</li>
+<li>Stack pointer based stack instructions, subroutine calls and returns</li>
+<li>3 addressing modes</li>
+<li>16-bit instruction set; code can write code (<strong>R162K</strong> had a 28-bit instruction set and couldn’t write code)</li>
+<li>Exactly zero WIFI particles</li>
+<li>Subframe technology (<a href="#subframe">careful with that</a>)</li>
+</ul>
+
+<p>Also, it’s so small that you can fit four of them in a standard 612x384 <strong>TPT</strong> simulation.</p>
+
+<h2><a id="links"></a> Links</h2>
+
+<ul>
+<li><a href="http://powdertoy.co.uk/Discussions/Thread/View.html?Thread=20691">Link to the <strong>R16K1S60</strong> thread</a></li>
+<li><a href="http://powdertoy.co.uk/Browse/View.html?ID=1932845">Link to the <strong>R16K1S60</strong> showcase save</a></li>
+<li><a href="ptsave:1932845">Link using the ptsave protocol</a> (opens <strong>TPT</strong> if configured properly)</li>
+</ul>
+
+<h2><a id="driving"></a> Driving the thing</h2>
+
+<p>On its bottom side it has four buttons, a cartridge slot and an LRCY lamp. These are, from left to right:</p>
+
+<ul>
+<li>the Reset button (resets Ray, copies the full ROM into the RAM, sets <code>IP</code> to 0x0000, doesn’t reset any other register)</li>
+<li>the Start button (starts execution of the code in the RAM from address 0x0000)</li>
+<li>the Resume button (starts execution of the code in the RAM from the address where execution last stopped)</li>
+<li>the Stop button (stops execution, doesn’t reset anything, equivalent of a <code>HLT</code> instruction)</li>
+<li>a cartridge slot (contains the 1024-cell ROM and a partial reset circuit)</li>
+<li>the Execution Indicator (some LRCY that turns on when code is being executed)</li>
+</ul>
+
+<p>On its right side, it has 4 IO ports: #0, #1, #2 and #3 from top to bottom.</p>
+
+<p>To run a program on a cartridge, insert the cartridge into the 
+cartridge slot and press the Start button. Install the peripherals 
+required by the program beforehand.</p>
+
+<h2><a id="arch"></a> Architecture</h2>
+
+<p>A 16-bit ALU, 4 16-bit read-write IO ports, 1024 16-bit cells of RAM,
+ shared code/data/stack space. Five general purpose registers (called <code>AX</code>, <code>BX</code>, <code>CX</code>, <code>DX</code> and <code>EX</code>), stack pointer (<code>SP</code>, always points to the bottom of the stack), instruction pointer (<code>IP</code>, which always points to the first cell of the next instruction about to be executed).</p>
+
+<p>The stack grows downward, and zeroing <code>SP</code> might be the first thing your program should do if it uses the stack (as none of the registers are reset apart from <code>IP</code> when Ray is reset).</p>
+
+<p>Flags that reflect properties of the result of the last instruction executed are present. These flags are the Zero Flag (<code>Zf</code>, set if the result is <code>0</code>), the Sign Flag (<code>Sf</code>, set if the signed result is negative), the Carry Flag (<code>Cf</code>, set if an unsigned operation yielded a carry) and the Overflow Flag (<code>Of</code>, set if a signed operation yielded a carry).</p>
+
+<p>Unconditional and conditional jumps (based on the above flags), 
+subroutine calls and returns, stack operations and base-plus-offset 
+addressing are supported.</p>
+
+<p>A subroutine call pushes the return address (the address of the instruction after the <code>CALL</code> instruction) to the stack and jumps. A subroutine return pops said address and jumps to it.</p>
+
+<h2><a id="programming"></a> Programming</h2>
+
+<p><em>This section assumes a basic knowledge of assembly programming.</em></p>
+
+<p>There’s an instruction reference below this section. The mnemonics used there are recognized by <strong>rasm</strong> and even highlighted by <strong>RasmUI</strong>.</p>
+
+<p>Once you’ve downloaded <a href="http://lbphacker.hu/powdertoy/R16K1S60/rasm.lua">rasm.lua</a> (<strong>Ray assembler</strong>) and <a href="http://lbphacker.hu/powdertoy/R16K1S60/rasmui.lua">rasmui.lua</a> (user interface for <strong>rasm</strong>), there are several ways of going about this:</p>
+
+<ul>
+<li>The sensible way: Bring up an instance of <strong>RasmUI</strong> by issuing <code>dofile("/path/to/rasmui.lua")</code>
+ in the console. Load an assembly file, open the same file in a text 
+editor, enable “Reload source on Assemble”, select a Ray with the 
+“Select next/previous machine” buttons. Hit “Assemble” when you feel 
+like flashing the code into Ray’s ROM.</li>
+<li>The fun way: The same thing as above without an external text editor, using the crappy editor in <strong>RasmUI</strong>.</li>
+<li>The hardcore way: Use <strong>rasm</strong> from the console. Issue <code>loadfile("/path/to/rasm.lua")("/path/to/source.asm", ramPosX, ramPosY)</code> in the console. <code>ramPosX</code> and <code>ramPosY</code> are the coordinates of the one and only QRTZ particle present in Ray with a <code>.ctype</code> of <code>0x1864A205</code>.</li>
+<li>The insane way: Grabbing the PROP tool and setting the <code>.ctype</code> of the FILT particles in the ROM by hand to <code>0x20000000 | opcode</code>.</li>
+</ul>
+
+<p><strong>RasmUI</strong> is also good for debugging. You can choose which instance of Ray to monitor (yes, as I’ve mentioned before, you <em>can</em>
+ have multiple Rays on screen). It’s also got tooltips to make it more 
+difficult to get lost in the mess of its controls. You can even open 
+several <strong>RasmUI</strong> instances simultaneously.</p>
+
+<p>A few words about <strong>rasm</strong>:</p>
+
+<ul>
+<li>Only accepts Intel-style assembly syntax (<code>opcode destination, source</code>).</li>
+<li>Doesn’t encode immediate values with a value of <code>0</code>, since immediate values default to <code>0</code> anyway (holy crap, optimization).</li>
+<li>Supports forward references of not-yet-defined labels.</li>
+<li>Supports hexadecimal numbers.</li>
+</ul>
+
+<p>A few words about <strong>RasmUI</strong>:</p>
+
+<ul>
+<li>Has an “Advance the simulation by a single frame” button. It’s like pressing <code>F</code>.</li>
+<li>Can draw an overlay over the currently selected Ray.</li>
+<li>Can’t find on-screen Rays by itself. You have to use “Select next/previous machine” to make it search for one.</li>
+<li>In a later version you’ll be able to follow the execution of the code in the editor. <em>[02-02-2016]</em></li>
+<li>While <strong>rasm</strong> is case insensitive when it comes to mnemonic names, <strong>RasmUI</strong> doesn’t highlight mnemonic names with capital letters. I might have to fix that. <em>[02-05-2016]</em></li>
+<li>You can choose between keyboard layouts by setting <code>tpt.RASMUI_KBDLAYOUT</code>. If it’s <code>nil</code>, <strong>RasmUI</strong> defaults to <strong>en</strong> layout. Currently upported layouts: <em>[02-09-2016]</em>
+
+<ul>
+<li><strong>en</strong></li>
+<li><strong>hu</strong></li>
+</ul></li>
+</ul>
+
+<p>In an assembly source, the following symbols have special meaning:</p>
+
+<ul>
+<li>Registers: <code>ax</code>, <code>bx</code>, <code>cx</code>, <code>dx</code>, <code>ex</code>, <code>sp</code>, <code>ip</code></li>
+<li>Mnemonics: <code>xchg</code>, <code>nop</code>, <code>hlt</code>, <code>call</code>, <code>ret</code>, <code>push</code>, <code>pop</code>, <code>jnb</code>, <code>jae</code>, <code>jnc</code>, <code>jb</code>, <code>jnae</code>, <code>jc</code>, <code>jno</code>, <code>jo</code>, <code>jns</code>, <code>js</code>, <code>jne</code>, <code>jnz</code>, <code>je</code>, <code>jz</code>, <code>jg</code>, <code>jnle</code>, <code>jle</code>, <code>jng</code>, <code>jge</code>, <code>jnl</code>, <code>jl</code>, <code>jnge</code>, <code>ja</code>, <code>jnbe</code>, <code>jbe</code>, <code>jna</code>, <code>jmp</code>, <code>send</code>, <code>recv</code>, <code>shl</code>, <code>shr</code>, <code>shld</code>, <code>shrd</code>, <code>rol</code>, <code>ror</code>, <code>add</code>, <code>adc</code>, <code>sub</code>, <code>sbb</code>, <code>bump</code>, <code>wait</code>, <code>cmp</code>, <code>mov</code>, <code>and</code>, <code>or</code>, <code>xor</code>, <code>test</code></li>
+<li>Mnemonic prefixes: <code>@flags</code>, <code>@noflags</code> (these override the default flag setting for updating the flags)</li>
+<li>Data fields: <code>dw</code>, <code>db</code> (these store word or byte sized initialized data)</li>
+<li>Address override: <code>@org</code> (this changes the current output address)</li>
+</ul>
+
+<h2><a id="instructions"></a> Instruction reference</h2>
+
+<p>Instructions are encoded as 16-bit opcodes. They have zero to three 
+input operands and zero to two output operands. These operands may be 
+registers or 16-bit immediate values. Any instruction is capable of 
+encoding a single immediate value and not more than that, which means 
+that instructions such as <code>mov [0xCAFE], 0xBABE</code> are not 
+possible to encode. An immediate value defaults to 0 if an instruction 
+references it and no immediate value is encoded in the opcode. In the 
+reference, the flag that determines whether an immediate value is 
+encoded or not is referred to as <code>g</code> (set if an immediate value <em>is</em> encoded).</p>
+
+<p>Flags are set according to the result written to the Primary operand 
+line, if any. In the reference, the flag that determines whether the 
+flags are to be updated or not is referred to as <code>f</code> (set if they <em>are</em> to be updated).</p>
+
+<p>Instructions read their inputs from the Primary, Secondary and/or 
+Tertiary operand lines and write results to the Primary and/or the 
+Secondary operand lines. 2- or 3-bit fields in the instruction tell the 
+operand lines which register (or immediate value) to map to. A 3-bit <code>000</code> field maps to the immediate value encoded in the instruction, <code>001</code> maps to <code>AX</code>, <code>010</code> maps to <code>BX</code>, etc. <code>110</code> maps to <code>SP</code> and <code>111</code> maps to <code>IP</code>. These fields are expressed as 3 letters in the opcodes below, <code>ppp</code> for the primary operand, <code>sss</code> for the secondary operand and <code>tt</code> for the tertiary operand. You might notice that <code>tt</code> fields are only 2-bit long. This means that only an immediate value, <code>AX</code>, <code>BX</code> or <code>CX</code> can be encoded as tertiary operands.</p>
+
+<p>Keep in mind that e.g. <em>secondary operand</em> doesn’t necessarily mean <em>second operand</em>, as the former is an architectural detail, while the latter only exists in the assembly source and is translated by <strong>rasm</strong>.</p>
+
+<p>Some opcodes include hacks such as discarding the result of an instruction by saving it to operand <code>000</code>, effectively the immediate value. Since the immediate value is a read-only value, the result is discarded.</p>
+
+<p>Dots mean indifferent bits; they have no effect on the instruction encoded in the opcode they appear in.</p>
+
+<ul>
+<li><h3><code>XCHG ppp, sss</code> - Exchange values</h3>
+
+<ul>
+<li>Description: Exchanges the contents of its two operands.</li>
+<li>Opcode: <code>0000 ..pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>NOP</code> - No operation</h3>
+
+<ul>
+<li>Description: Special case of <code>XCHG</code>. <code>ppp</code> and <code>sss</code> are the same and thus nothing actually happens, while a cycle is wasted.</li>
+<li>Useful for: Timing.</li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>HLT</code> - Halt</h3>
+
+<ul>
+<li>Description: Stops execution. Execution may be resumed by pressing 
+the Resume button. Execution is resumed from the instruction after <code>HLT</code>.</li>
+<li>Useful for: Debug breaks.</li>
+<li>Opcode: <code>0001 .... .... ....</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>CALL sss</code> - Call subroutine</h3>
+
+<ul>
+<li>Description: Pushes <code>IP</code> onto the stack and jumps to the address pointed to by <code>sss</code>.</li>
+<li>Opcode: <code>0010 00.. .sss f..g</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>PUSH sss</code> - Push value</h3>
+
+<ul>
+<li>Description: Pushes the value of <code>sss</code> onto the stack.</li>
+<li>Opcode: <code>0010 01.. .sss f..g</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>RET</code> - Return from subroutine</h3>
+
+<ul>
+<li>Description: Pops an instruction pointer from the stack and jumps to it.</li>
+<li>Opcode: <code>0010 10.. .000 ....</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>POP sss</code> - Pop value</h3>
+
+<ul>
+<li>Description: Pops a value from the stack into <code>sss</code>.</li>
+<li>Opcode: <code>0010 11.. .sss ....</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>MOV [ppp], sss</code> - Write to memory</h3>
+
+<ul>
+<li>Description: Writes the value of <code>sss</code> to the address pointed to by <code>ppp</code>.</li>
+<li>Opcode: <code>0011 00pp psss 0..g</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>MOV [ppp+tt], sss</code> - Write to memory with positive offset</h3>
+
+<ul>
+<li>Description: Writes the value of <code>sss</code> to the address pointed to by <code>ppp+tt</code>.</li>
+<li>Opcode: <code>0011 00pp psss 1ttg</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>MOV [ppp-tt], sss</code> - Write to memory with negative offset</h3>
+
+<ul>
+<li>Description: Writes the value of <code>sss</code> to the address pointed to by <code>ppp-tt</code>.</li>
+<li>Opcode: <code>0011 01pp psss 1ttg</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>MOV sss, [ppp]</code> - Read from memory</h3>
+
+<ul>
+<li>Description: Reads a value from the address pointed to by <code>ppp</code> into <code>sss</code>.</li>
+<li>Opcode: <code>0011 10pp psss 0..g</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>MOV sss, [ppp+tt]</code> - Read from memory with positive offset</h3>
+
+<ul>
+<li>Description: Reads a value from the address pointed to by <code>ppp+tt</code> into <code>sss</code>.</li>
+<li>Opcode: <code>0011 10pp psss 1ttg</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>MOV sss, [ppp-tt]</code> - Read from memory with negative offset</h3>
+
+<ul>
+<li>Description: Reads a value from the address pointed to by <code>ppp-tt</code> into <code>sss</code>.</li>
+<li>Opcode: <code>0011 11pp psss 1ttg</code></li>
+<li>Execution time: 2 cycles</li>
+</ul></li>
+<li><h3><code>Jcc sss</code> - Jump (similar to <a href="http://unixwiz.net/techtips/x86-jumps.html">x86 jumps</a>)</h3>
+
+<ul>
+<li>Description: Jumps to <code>sss</code> if condition <code>cc</code> is met.</li>
+<li><code>Jcc</code> refers to one of the following:
+
+<ul>
+<li><code>0100 1110 .sss f..g</code> - <code>JMP</code>: jump unconditionally</li>
+<li><code>0100 0010 .sss f..g</code> - <code>JO</code>: jump if overflow (signed)</li>
+<li><code>0100 0011 .sss f..g</code> - <code>JNO</code>: jump if not overflow (signed)</li>
+<li><code>0100 0100 .sss f..g</code> - <code>JS</code>: jump if sign</li>
+<li><code>0100 0101 .sss f..g</code> - <code>JNS</code>: jump if not sign</li>
+<li><code>0100 0110 .sss f..g</code> - <code>JE</code>: jump if equal</li>
+<li><code>0100 0110 .sss f..g</code> - <code>JZ</code>: jump if zero</li>
+<li><code>0100 0111 .sss f..g</code> - <code>JNE</code>: jump if not equal</li>
+<li><code>0100 0111 .sss f..g</code> - <code>JNZ</code>: jump if not zero</li>
+<li><code>0100 0000 .sss f..g</code> - <code>JB</code>: jump if below (unsigned)</li>
+<li><code>0100 0000 .sss f..g</code> - <code>JNAE</code>: jump if not above or equal (unsigned)</li>
+<li><code>0100 0000 .sss f..g</code> - <code>JC</code>: jump if carry (unsigned)</li>
+<li><code>0100 0001 .sss f..g</code> - <code>JNB</code>: jump if not below (unsigned)</li>
+<li><code>0100 0001 .sss f..g</code> - <code>JAE</code>: jump if above or equal (unsigned)</li>
+<li><code>0100 0001 .sss f..g</code> - <code>JNC</code>: jump if not carry (unsigned)</li>
+<li><code>0100 1100 .sss f..g</code> - <code>JBE</code>: jump if below or equal (unsigned)</li>
+<li><code>0100 1100 .sss f..g</code> - <code>JNA</code>: jump if not above (unsigned)</li>
+<li><code>0100 1101 .sss f..g</code> - <code>JA</code>: jump if above (unsigned)</li>
+<li><code>0100 1101 .sss f..g</code> - <code>JNBE</code>: jump if not below or equal (unsigned)</li>
+<li><code>0100 1010 .sss f..g</code> - <code>JL</code>: jump if less (signed)</li>
+<li><code>0100 1010 .sss f..g</code> - <code>JNGE</code>: jump if not greater or equal (signed)</li>
+<li><code>0100 1011 .sss f..g</code> - <code>JGE</code>: jump if greater or equal (signed)</li>
+<li><code>0100 1011 .sss f..g</code> - <code>JNL</code>: jump if not less (signed)</li>
+<li><code>0100 1000 .sss f..g</code> - <code>JLE</code>: jump if less or equal (signed)</li>
+<li><code>0100 1000 .sss f..g</code> - <code>JNG</code>: jump if not greater (signed)</li>
+<li><code>0100 1001 .sss f..g</code> - <code>JG</code>: jump if greater (signed)</li>
+<li><code>0100 1001 .sss f..g</code> - <code>JNLE</code>: jump if not less or equal (signed)</li>
+</ul></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SEND sss, ppp</code> - Send value on port</h3>
+
+<ul>
+<li>Description: Sends the value of <code>ppp</code> on port # value of <code>sss</code>.</li>
+<li>Opcode: <code>0101 00pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>RECV ppp, sss</code> - Receive value from port</h3>
+
+<ul>
+<li>Description: Waits for a value on port # value of <code>sss</code> and stores it into <code>ppp</code>.</li>
+<li>Opcode: <code>0101 01pp psss f..g</code></li>
+<li>Execution time: 1 cycle in the best case</li>
+</ul></li>
+<li><h3><code>BUMP sss</code> - Send Bump on port</h3>
+
+<ul>
+<li>Description: Asserts the Bump line on port # value of <code>sss</code>. The Bump line remains asserted until a <code>SEND</code> instruction overwrites the state of the port.</li>
+<li>Opcode: <code>0101 10.. .sss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>WAIT sss</code> - Wait for Bump on any port</h3>
+
+<ul>
+<li>Description: Waits until the Bump line is asserted on any of the 
+ports, then returns the number of the port on which the Bump line was 
+asserted in <code>sss</code>. The first port to be checked for an asserted Bump line is #0, then #1, #2 and #3 are checked.</li>
+<li>Opcode: <code>0101 11.. .sss f..g</code></li>
+<li>Execution time: 1 cycle in the best case</li>
+</ul></li>
+<li><h3><code>ADD ppp, sss</code> - Integer addition</h3>
+
+<ul>
+<li>Description: Adds the value of <code>sss</code> to the value of <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1000 00pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SUB ppp, sss</code> - Integer subtraction</h3>
+
+<ul>
+<li>Description: Subtracts the value of <code>sss</code> from the value of <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1000 01pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>CMP ppp, sss</code> - Value comparison</h3>
+
+<ul>
+<li>Description: Same as <code>SUB</code>, but the result is discarded.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1001 01pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>ADC ppp, sss</code> - Integer addition with carry</h3>
+
+<ul>
+<li>Description: Adds the value of <code>sss</code> and <code>Cf</code> (<code>0</code> or <code>1</code>) to the value of <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1000 10pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SBB ppp, sss</code> - Integer subtraction with borrow</h3>
+
+<ul>
+<li>Description: Subtracts the value of <code>sss</code> and <code>Cf</code> (<code>0</code> or <code>1</code>) from the value of <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1000 11pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SHL ppp, tt</code> and <code>SHL ppp, sss, tt</code> - Shift left</h3>
+
+<ul>
+<li>Description: Shifts the value of <code>ppp</code> to the left by value of <code>tt</code> bits, stores the result in <code>ppp</code>. All bits shifted in are <code>0</code>. The 3-operand variant saves the bits shifted out into <code>sss</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcodes
+
+<ul>
+<li>2-operand variant: <code>1010 00pp p000 fttg</code> (<code>sss</code> is hardcoded to <code>000</code>)</li>
+<li>3-operand variant: <code>1010 00pp psss fttg</code></li>
+</ul></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SHR ppp, tt</code> and <code>SHR ppp, sss, tt</code> - Shift right</h3>
+
+<ul>
+<li>Description: Shifts the value of <code>ppp</code> to the right by value of <code>tt</code> bits, stores the result in <code>ppp</code>. All bits shifted in are <code>0</code>. The 3-operand variant saves the bits shifted out into <code>sss</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcodes
+
+<ul>
+<li>2-operand variant: <code>1010 01pp p000 fttg</code> (<code>sss</code> is hardcoded to <code>000</code>)</li>
+<li>3-operand variant: <code>1010 01pp psss fttg</code></li>
+</ul></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SHLD ppp, sss, tt</code> - Shift left through two operands</h3>
+
+<ul>
+<li>Description: Shifts the value of <code>ppp</code> to the left by value of <code>tt</code> bits, stores the result in <code>ppp</code>. The bits shifted in are the most significant bits of <code>sss</code>. The bits shifted out are saved back into <code>sss</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Useful for: Multiword left shifts</li>
+<li>Opcode: <code>1010 10pp psss fttg</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>ROL ppp, sss</code> - Rotate left</h3>
+
+<ul>
+<li>Description: Special case of <code>SHLD</code>. <code>ppp</code> and <code>sss</code> are the same and thus the value of <code>ppp</code> is rotated left by value of <code>tt</code> bits.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>SHRD ppp, sss, tt</code> - Shift right through two operands</h3>
+
+<ul>
+<li>Description: Shifts the value of <code>ppp</code> to the right by value of <code>tt</code> bits, stores the result in <code>ppp</code>. The bits shifted in are the least significant bits of <code>sss</code>. The bits shifted out are saved back into <code>sss</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Useful for: Multiword right shifts</li>
+<li>Opcode: <code>1010 11pp psss fttg</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>ROR ppp, sss</code> - Rotate right</h3>
+
+<ul>
+<li>Description: Special case of <code>SHRD</code>. <code>ppp</code> and <code>sss</code> are the same and thus the value of <code>ppp</code> is rotated right by value of <code>tt</code> bits.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>MOV ppp, sss</code> - Value copy</h3>
+
+<ul>
+<li>Description: Copies the value of <code>sss</code> into <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1100 00pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>AND ppp, sss</code> - Bitwise AND</h3>
+
+<ul>
+<li>Description: Performs a bitwise AND on the values of <code>sss</code> and <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1100 01pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>TEST ppp, sss</code> - Bit test</h3>
+
+<ul>
+<li>Description: Same as <code>AND</code>, but the result is discarded.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1101 01pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>OR ppp, sss</code> - Bitwise OR</h3>
+
+<ul>
+<li>Description: Performs a bitwise OR on the values of <code>sss</code> and <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1100 10pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+<li><h3><code>XOR ppp, sss</code> - Bitwise XOR</h3>
+
+<ul>
+<li>Description: Performs a bitwise XOR on the values of <code>sss</code> and <code>ppp</code>, stores the result in <code>ppp</code>.</li>
+<li>Updates the flags by default when compiled with <strong>rasm</strong></li>
+<li>Opcode: <code>1100 11pp psss f..g</code></li>
+<li>Execution time: 1 cycle</li>
+</ul></li>
+</ul>
+
+<h2><a id="shifts"></a> Shift sorcery</h2>
+
+<p>Ray implements shifts in a funny way: No <code>SAR</code>, no MSB 
+preservation, no nothing. It makes up for that with multiword shifts and
+ rotates. This section describes the inner workings of the Shifter Unit 
+and how it can be used to do all sorts of fun stuff.</p>
+
+<p>Consider <code>SHL</code> (the 2-operand variant). It shifts <code>ppp</code> left by <code>tt</code> bits. Let’s say <code>tt</code> is <code>1</code>. That’s easy: <code>a</code> is discarded, <code>0</code> appears on the right (the LSB).</p>
+
+<pre><code>              PPP
+
+before: abcdefghijklmnop
+after:  bcdefghijklmnop0
+</code></pre>
+
+<p>The 3-operand variant does some more work and makes a backup of <code>ppp</code> in <code>sss</code>. Let’s use that and shift <code>ppp</code> to the left by 3 bits this time:</p>
+
+<pre><code>              PPP              SSS
+
+before: abcdefghijklmnop ................
+after:  defghijklmnop000 abcdefghijklmnop
+</code></pre>
+
+<p><code>a</code>, <code>b</code> and <code>c</code> are discarded, <code>sss</code> now contains the initial value of <code>ppp</code>.</p>
+
+<p>Do another shift using <code>SHLD</code>. It gets the bits to shift in from <code>sss</code>. <code>A</code>, <code>B</code> and <code>C</code> are discarded once again, but instead of <code>0</code>s, <code>a</code>, <code>b</code> and <code>c</code>, the MSBs of the initial value of <code>ppp</code> from the previous <code>SHL</code>, appear on the right:</p>
+
+<pre><code>              PPP              SSS
+
+before: ABCDEFGHIJKLMNOP abcdefghijklmnop
+after:  DEFGHIJKLMNOPabc ABCDEFGHIJKLMNOP
+</code></pre>
+
+<p>The initial value of <code>ppp</code> is once again backed up in <code>sss</code>.</p>
+
+<p>So, with an <code>SHL</code> followed by as many <code>SHLD</code>s as you want, you can shift as big a number as you want by 16 bits at most. The same applies to right shifts (<code>SHR</code> and <code>SHRD</code>).</p>
+
+<p>To see how <code>ROL</code> works, we have to break the above before/after diagram of <code>SHLD</code> into steps:</p>
+
+<pre><code>              PPP              SSS        temporal storage
+
+step 0: ABCDEFGHIJKLMNOP abcdefghijklmnop ................ // initial state
+step 1: ABCDEFGHIJKLMNOP abcdefghijklmnop abcdefghijklmnop // sss is copied into temp
+step 2: ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP abcdefghijklmnop // ppp is copied into sss
+step 3: DEFGHIJKLMNOPabc ABCDEFGHIJKLMNOP abcdefghijklmnop // ppp is shifted, bits get shifted in from temp
+</code></pre>
+
+<p>What happens if <code>ppp</code> and <code>sss</code> map to the same source? We get a rotate:</p>
+
+<pre><code>              PPP              SSS        temporal storage
+
+step 0: ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP ................
+step 1: ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP
+step 2: ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP
+step 3: DEFGHIJKLMNOPABC ABCDEFGHIJKLMNOP ABCDEFGHIJKLMNOP
+</code></pre>
+
+<p>Since <code>ppp</code> and <code>sss</code> map to the same 
+destination as well, the question of whether the Primary result or the 
+Secondary result is saved to that destination arises. The answer is 
+simple: the Primary operand has precedence over the Secondary operand, 
+so the Primary result is saved. So after the <code>ROL</code> above, <code>ppp</code> will hold <code>DEFGHIJKLMNOPABC</code>.</p>
+
+<p>This means that <code>ROL x, y</code> is just a shorthand for <code>SHLD x, x, y</code>. The same applies to <code>ROR</code>.</p>
+
+<p>A mutliword rotate is just a big shift (chained <code>SHLD</code>s) and a bit of playing around with the bits shifted out at the end:</p>
+
+<!--prettify lang=rasm-->
+
+<pre class=" prettyprinted" style=""><code><span class="com">; Let's rotate the cx:bx:ax 48-bit integer left by 9 bits.</span><span class="pln">
+</span><span class="com">; Yeah, it's not pretty. We're basically doing shld's work *before*</span><span class="pln">
+</span><span class="com">; the other shifts take place.</span><span class="pln">
+
+</span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">dx</span><span class="pun">, </span><span class="typ">ax</span><span class="pun">          </span><span class="com">; * ((shl ax, dx, 9)) would do the same to dx</span><span class="pln">
+</span><span class="kwd">shld</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="typ">dx</span><span class="pun">, </span><span class="lit">9</span><span class="pun">      </span><span class="com">; * go on with the multiword shift</span><span class="pln">
+</span><span class="kwd">shld</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="typ">dx</span><span class="pun">, </span><span class="lit">9</span><span class="pun">      </span><span class="com">; * go on with the multiword shift</span><span class="pln">
+</span><span class="kwd">shld</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="typ">dx</span><span class="pun">, </span><span class="lit">9</span><span class="pun">      </span><span class="com">; * shift ax, get bits to shift in from the previous shld</span></code></pre>
+
+<p>And to think that I wasn’t even planning to support rotates at all …</p>
+
+<h2><a id="examples"></a> Example programs</h2>
+
+<!--prettify lang=rasm-->
+
+<pre class=" prettyprinted" style=""><code><span class="com">; fibonacci.asm</span><span class="pln">
+</span><span class="com">;</span><span class="pln">
+</span><span class="com">; Calculates the first few elements</span><span class="pln">
+</span><span class="com">; of the Fibonacci sequence using</span><span class="pln">
+</span><span class="com">; 16-bit unsigned integers, outputs</span><span class="pln">
+</span><span class="com">; them on port #3.</span><span class="pln">
+
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">dx</span><span class="pun">, </span><span class="lit">3</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="lit">0</span><span class="pun">       </span><span class="com">; * start off with 0, 1 (we won't output those)</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+spin</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="typ">ax</span><span class="pun">      </span><span class="com">; * backup ax</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="typ">bx</span><span class="pun">      </span><span class="com">; * calculate the next element</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jc</span><span class="pun"> </span><span class="pln">stop</span><span class="pun">         </span><span class="com">; * stop of addition had a carry</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="typ">cx</span><span class="pun">      </span><span class="com">; * recall old ax</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">send</span><span class="pun"> </span><span class="typ">dx</span><span class="pun">, </span><span class="typ">ax</span><span class="pun">     </span><span class="com">; * output element</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> </span><span class="pln">spin
+stop</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">hlt</span></code></pre>
+
+<!--prettify lang=rasm-->
+
+<pre class=" prettyprinted" style=""><code><span class="com">; showcase.asm</span><span class="pln">
+</span><span class="com">;</span><span class="pln">
+</span><span class="com">; The program that runs in the showcase save.</span><span class="pln">
+</span><span class="com">;</span><span class="pln">
+</span><span class="com">; 32-bit fibonacci sequence. Elements output on ports #2 and #3.</span><span class="pln">
+</span><span class="com">; High word on #2, low word on #3.</span><span class="pln">
+
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">dx</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+spin</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">recv</span><span class="pun"> </span><span class="typ">ex</span><span class="pun">, </span><span class="lit">0</span><span class="pun">              </span><span class="com">; * wait for a send on port #0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ex</span><span class="pun">, </span><span class="typ">ax</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">sp</span><span class="pun">, </span><span class="typ">bx</span><span class="pun">              </span><span class="com">; * lol, we're not using the stack, so ...</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="typ">cx</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">adc</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="typ">dx</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jc</span><span class="pun"> </span><span class="pln">die
+</span><span class="pun">    </span><span class="kwd">send</span><span class="pun"> </span><span class="lit">2</span><span class="pun">, </span><span class="typ">bx</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">send</span><span class="pun"> </span><span class="lit">3</span><span class="pun">, </span><span class="typ">ax</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">recv</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">3</span><span class="pun">              </span><span class="com">; * wait for the low word display to finish</span><span class="pln">
+</span><span class="pun">                            </span><span class="com">; * don't worry about cx</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="typ">ex</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">dx</span><span class="pun">, </span><span class="typ">sp</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> </span><span class="pln">spin
+die</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">hlt</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> </span><span class="pln">die</span></code></pre>
+
+<!--prettify lang=rasm-->
+
+<pre class=" prettyprinted" style=""><code><span class="com">; bfc.asm</span><span class="pln">
+</span><span class="com">;</span><span class="pln">
+</span><span class="com">; Brainf**k compiler. Yeah. I mean it.</span><span class="pln">
+</span><span class="com">; Writes compiled code to 0x200 (plus the bootstrapper).</span><span class="pln">
+</span><span class="com">; Clears a 0x200 cell array for the BF program.</span><span class="pln">
+</span><span class="com">; Not optimized at all. 23 +'s will compile to 23 ((add ax, 1))'s.</span><span class="pln">
+</span><span class="com">; . and , send and expect raw character codes.</span><span class="pln">
+</span><span class="com">;</span><span class="pln">
+</span><span class="com">; Unusable without a peripheral that can interpret those character codes.</span><span class="pln">
+</span><span class="com">;</span><span class="pln">
+</span><span class="com">; In theory, a sanity check could be added to check if the BF source overlaps</span><span class="pln">
+</span><span class="com">; with the region reserved for the compiled code. Something like</span><span class="pln">
+</span><span class="com">;     if (compile.end &gt; util_bootstrap) nope();</span><span class="pln">
+
+compile</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">sp</span><span class="pun">, </span><span class="lit">0x0200</span><span class="pun">              </span><span class="com">; * so the stack doesn't interfere with the result</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="pln">util_bootstrap</span><span class="pun">.</span><span class="pln">code_end
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, .</span><span class="pln">source
+</span><span class="pun">.</span><span class="pln">loop</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, [</span><span class="typ">bx</span><span class="pun">]</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jz</span><span class="pun"> .</span><span class="pln">done
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">60</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__inc_in_dec_out</span><span class="pun">      </span><span class="com">; * char's below 60, it's one of '+' (43), ',' (44), '-' (45) and '.' (46)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 60, it's one of '&lt;' (60), '&gt;' (62), '[' (91) and ']' (93)</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">91</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__left_right</span><span class="pun">          </span><span class="com">; * char's below 91, it's either '&lt;' (60) or '&gt;' (62)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 91, it's either '[' (91) or ']' (93)</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">93</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__while</span><span class="pun">               </span><span class="com">; * char's below 93, it's '[' (91)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 93, it's ']' (93)</span><span class="pln">
+</span><span class="com">; HANDLING ']' HERE</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">pop</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">                      </span><span class="com">; * pop address of the previous '['</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * there's no error checking here, although it'd be as simple as "cmp sp, 0" and "jz error"</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x4E01</span><span class="pun">            </span><span class="com">; * we're jumping to the previous '[' unconditionally</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="lit">+1</span><span class="pun">], </span><span class="typ">ax</span><span class="pun">              </span><span class="com">; * we also need the address for the jump stored as an immediate value</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">2</span><span class="pun">                   </span><span class="com">; * skip to the instruction after the ']',</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">ax</span><span class="lit">+2</span><span class="pun">], </span><span class="typ">cx</span><span class="pun">              </span><span class="com">;   the conditional jump at the previous '[' needs its address to know where to jump</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">sub</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pun">                   </span><span class="com">; * but we're not there yet</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">loop
+</span><span class="pun">.</span><span class="pln">br__while</span><span class="pun">:</span><span class="pln">
+</span><span class="com">; HANDLING '[' HERE</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">push</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">                     </span><span class="com">; * push the address for the next ']'</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x9488</span><span class="pun">            </span><span class="com">; * encodes "cmp ax, 0"</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pun">                   </span><span class="com">; * skip one cell for the conditional jump</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x4601</span><span class="pun">            </span><span class="com">; * encodes "jz imm"</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pun">                   </span><span class="com">; * skip one cell for the immediate value</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">loop
+</span><span class="pun">.</span><span class="pln">br__left_right</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">62</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">-1</span><span class="pun">                  </span><span class="com">; * _something_ is -1 at a '&lt;' (flags are not affected)</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__left</span><span class="pun">                </span><span class="com">; * char's below 62, it's '&lt;' (60)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 62, it's '&gt;' (62)</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">1</span><span class="pun">                   </span><span class="com">; * _something_ is +1 at a '&gt;'</span><span class="pln">
+</span><span class="pun">.</span><span class="pln">br__left</span><span class="pun">:</span><span class="pln">
+</span><span class="com">; HANDLING '&lt;' AND '&gt;' HERE</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x3110</span><span class="pun">            </span><span class="com">; * encodes "mov [bx], ax", which writes back the data to the pointer</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x8101</span><span class="pun">            </span><span class="com">; * encodes "add bx, _something_", bumping the pointer</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0xC501</span><span class="pun">            </span><span class="com">; * encodes "and bx, 0x1FF", masking the pointer</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x01FF</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="typ">ax</span><span class="pun">                </span><span class="com">; * actually, _something_ is encoded here</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x3910</span><span class="pun">            </span><span class="com">; * encodes "mov ax, [bx]", which gets the data pointer over to data</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">loop
+</span><span class="pun">.</span><span class="pln">br__inc_in_dec_out</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">45</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__inc_in</span><span class="pun">              </span><span class="com">; * char's below 45, it's either '+' (43) or ',' (44)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 45, it's either '-' (45) or '.' (46)</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">46</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__dec</span><span class="pun">                 </span><span class="com">; * char's below 46, it's '-' (45)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 46, it's '.' (46)</span><span class="pln">
+</span><span class="com">; HANDLING '.' HERE</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x50C0</span><span class="pun">            </span><span class="com">; * encodes "send dx, ax"</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">loop
+</span><span class="com">; HANDLING '-' HERE</span><span class="pln">
+</span><span class="pun">.</span><span class="pln">br__dec</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">-1</span><span class="pun">                  </span><span class="com">; * _something_ is -1 at a '-'</span><span class="pln">
+</span><span class="com">; HANDLING THE REST OF '+' AND '-' HERE</span><span class="pln">
+</span><span class="pun">.</span><span class="pln">br__dec_inc_common</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x8081</span><span class="pun">            </span><span class="com">; * encodes "add ax, _something_", bumping the data</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">add</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pun">                   </span><span class="com">; * skip to the immediate value</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="typ">ax</span><span class="pun">                </span><span class="com">; * actually, _something_ is encoded here</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">loop
+</span><span class="pun">.</span><span class="pln">br__inc_in</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">cmp</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">44</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jb</span><span class="pun"> .</span><span class="pln">br__inc</span><span class="pun">                 </span><span class="com">; * char's below 44, it's '+' (43)</span><span class="pln">
+</span><span class="pun">                                </span><span class="com">; * char's not below 44, it's ',' (44)</span><span class="pln">
+</span><span class="com">; HANDLING ',' HERE</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x54C0</span><span class="pun">            </span><span class="com">; * encodes "recv ax, dx"</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">loop
+</span><span class="com">; HANDLING '+' HERE</span><span class="pln">
+</span><span class="pun">.</span><span class="pln">br__inc</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">1</span><span class="pun">                   </span><span class="com">; * _something_ is +1 at a '+'</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> .</span><span class="pln">br__dec_inc_common
+</span><span class="pun">.</span><span class="pln">done</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0x1000</span><span class="pun">            </span><span class="com">; * encodes "hlt" at the end of the code</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">hlt</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jmp</span><span class="pun"> </span><span class="pln">util_bootstrap
+</span><span class="pun">.</span><span class="pln">source</span><span class="pun">: </span><span class="kwd">dw</span><span class="pun"> </span><span class="str">"++++++++++[&gt;+++++++&gt;++++++++++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;++.&gt;+.+++++++..+++.&gt;++.&lt;&lt;+++++++++++++++.&gt;.+++.------.--------.&gt;+.&gt;."</span><span class="pun">, </span><span class="lit">0</span><span class="pun"> </span><span class="pln">
+</span><span class="pun">.</span><span class="pln">end</span><span class="pun">:                           </span><span class="com">; ^ helloworld taken from Wikipedia</span><span class="pln">
+
+</span><span class="kwd">@org</span><span class="pun"> </span><span class="lit">0x0200</span><span class="pln">
+util_bootstrap</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="pln">compile</span><span class="pun">.</span><span class="pln">end</span><span class="pun">         </span><span class="com">; * part that kills the compiler begins</span><span class="pln">
+</span><span class="pun">.</span><span class="pln">loop</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">sub</span><span class="pun"> </span><span class="typ">cx</span><span class="pun">, </span><span class="lit">1</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> [</span><span class="typ">cx</span><span class="pun">], </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">jnz</span><span class="pun"> .</span><span class="pln">loop</span><span class="pun">                   </span><span class="com">; * part that kills the compiler ends</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">sp</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">ax</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">bx</span><span class="pun">, </span><span class="lit">0</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">mov</span><span class="pun"> </span><span class="typ">dx</span><span class="pun">, </span><span class="lit">3</span><span class="pun">                   </span><span class="com">; * configure this - this is the output port</span><span class="pln">
+</span><span class="pun">.</span><span class="pln">code_end</span><span class="pun">:</span><span class="pln">
+</span><span class="pun">    </span><span class="kwd">nop</span></code></pre>
+
+<h2><a id="subframe"></a>Handling subframe tech safely</h2>
+
+<p><strong><em>— Oh noes, it broke!</em></strong></p>
+
+<p>That most likely happened because you tried adding something to the 
+save when it was not paused or messed up the particle order some other 
+way. When it comes to subframe tech, you can’t just place or remove 
+particles, as doing that might change the order of evaluation.</p>
+
+<p>Subframe tech relies on that order of evaluation, or <strong>particle order</strong>,
+ which determines which particle is evaluated after which. When you open
+ a save, particles are assigned their IDs in a way that the ID of a 
+particle is always bigger than that of a particle above it or on its 
+left. This order must be preserved as subframe tech uses it to schedule 
+its tasks inside a frame (hence the term <strong>subframe</strong>).</p>
+
+<p>If this order is broken by any means (typically by placing or 
+removing particles), it must be restored before a frame elapses, 
+otherwise the results may be catastrophic. This restoration is done by 
+saving and reopening the save, as this resets particle order in the 
+manner described above. The simulation must be paused while particles 
+are being placed or removed for this technique to be effective.</p>
+
+<p>I also recommend turning Heat Simulation, Air and any sort of Gravity off.</p>
+
+<h2><a id="changelog"></a> Changelog</h2>
+
+<ul>
+<li>12-30-2015: Initial WIP release</li>
+<li>01-30-2016: Huge overhaul, added <strong>Programming</strong> section</li>
+<li>02-02-2016: Minor fixes, added <strong>Shift sorcery</strong> section</li>
+<li>02-03-2016: Minor fixes, added <strong>Example programs</strong> section</li>
+<li>02-05-2016: Added <strong>Handling subframe tech safely</strong> section</li>
+</ul>
+			<div id="jumptotop">Jump to top</div>
+		</div>
+		<script type="text/javascript">
+			(function(){
+				var div_jumptotop = document.getElementById("jumptotop");
+				div_jumptotop.addEventListener("click", function() {
+					window.scrollTo(undefined, 0);
+				})
+				window.addEventListener("scroll", function() {
+					div_jumptotop.style.display = ((window.scrollY > 300) ? "block" : "none");
+				})
+			})();
+		</script>
+	
+
+
+</body></html>
