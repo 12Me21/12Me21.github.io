@@ -1,0 +1,36 @@
+<button onclick="step()">step</button>
+<table id="$table"><tr id="$row0"></tr></table>
+<style>
+.show {
+	text-align:center;
+	border: 1px solid black;
+	
+}
+.set{
+	width:100px;
+}
+table {
+	border-collapse: collapse;
+}
+</style>
+
+<script>
+	var row = [1n]
+	function step(){
+		var nr = [1n];
+		for(var i=1;i<row.length;i++)
+			nr[i]=row[i-1]-row[i];
+		nr[i]=1n;
+		
+		var tr = document.createElement("tr");
+		
+		tr.innerHTML="<td id='$row"+row.length+"'></td>" + nr.reduce((a,x)=>a+"<td class='show' colspan=2>"+x+"</td>","") + "<td></td>"
+		$table.appendChild(tr);
+		for(var i=1;i<row.length;i++){
+			window["$row"+i].colSpan=(row.length-i+1);
+		}
+		$row0.innerHTML="<td class='set'></td>".repeat((row.length+1)*2+2);
+		row=nr;
+	}
+</script>
+<br/>
