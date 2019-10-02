@@ -1,10 +1,14 @@
 <button onclick="step()">step</button>
+expr: <input id="$rule" value="x => mod(x,2n)==0n"></input> (n is bigint suffix)
 <table id="$table"><tr id="$row0"></tr></table>
 <style>
 .show {
 	text-align:center;
 	border: 1px solid black;
 	
+}
+.red {
+	background-color:red;
 }
 .set{
 	width:100px;
@@ -15,8 +19,18 @@ table {
 </style>
 
 <script>
+	
+	
+	function mod(a,b){
+		a = a % b;
+		if (a<0n)
+			a = b+a;
+		return a;
+	}
+	
 	var row = [1n]
 	function step(){
+	rule = eval($rule.value);
 		var nr = [1n];
 		for(var i=1;i<row.length;i++)
 			nr[i]=row[i-1]-row[i];
@@ -24,13 +38,15 @@ table {
 		
 		var tr = document.createElement("tr");
 		
-		tr.innerHTML="<td id='$row"+row.length+"'></td>" + nr.reduce((a,x)=>a+"<td class='show' colspan=2>"+x+"</td>","") + "<td></td>"
+		tr.innerHTML=nr.reduce((a,x)=>{
+			console.log(rule(x))
+			if(rule(x))
+			
+				return a+"<td class='show red' colspan=2>"+x+"</td>"
+			else
+				return a+"<td class='show' colspan=2>"+x+"</td>"
+		},"")
 		$table.appendChild(tr);
-		for(var i=1;i<row.length;i++){
-			window["$row"+i].colSpan=(row.length-i+1);
-		}
-		$row0.innerHTML="<td class='set'></td>".repeat((row.length+1)*2+2);
 		row=nr;
 	}
 </script>
-<br/>
