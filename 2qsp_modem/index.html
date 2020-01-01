@@ -1,11 +1,20 @@
+<!DOCTYPE html>
 <meta charset="utf-8">
+
 <script src="script.js"></script>
-<input id="btn_afile" type="file" name="srcfile"><br>
-<div id="div_info"></div>
-<audio id="audio_data" controls></audio>
-<script>
-setDivElementForInfo(div_info);
-setAudioElementForData(audio_data);
-btn_afile.onchange = fileOpen;
-displayInfo(null);
-</script>
+<style>
+* {
+	font-family: sans-serif;
+}
+
+[id="$checksum"] {
+	font-weight: bold;
+}
+</style>
+
+<input id="$browse" type="file"><br><br>
+Size: <span id="$size" class="result"></span><br>
+Checksum: <span id="$checksum" class="result"></span><br><br>
+<audio id="$audio" controls></audio>
+
+<script>$browse.onchange = file_upload;</script>
