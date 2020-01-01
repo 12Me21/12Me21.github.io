@@ -1,0 +1,11 @@
+<meta charset="utf-8">
+<script src="script.js"></script>
+<input id="btn_afile" type="file" name="srcfile"><br>
+<div id="div_info"></div>
+<audio id="audio_data" controls></audio>
+<script>
+setDivElementForInfo(div_info);
+setAudioElementForData(audio_data);
+btn_afile.onchange = fileOpen;
+displayInfo(null);
+</script>
