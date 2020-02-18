@@ -99,6 +99,7 @@ Attack: <input id="$damage" type="number" onchange="update()"> <br>
 <output id="$taken_blast"></output> Explosions <br>
 <output id="$taken_projectile"></output> Projectiles <br>
 <output id="$taken_fall"></output> Fall damage <br>
+(number in parentheses is protection given by enchantments (limited to 20))
 
 <br>
 
@@ -150,9 +151,10 @@ Attack: <input id="$damage" type="number" onchange="update()"> <br>
 			var epf = epfs[type]
 			if (type!="protection")
 				epf+=epfs.protection;
+			var fail = epf > 20;
 			input *= 1 - Math.min(20, epf)/25;
 			input *= 1 - ($resistance.value || 0)*.20;
-			document.getElementById("$taken_"+type).value = input.toString();
+			document.getElementById("$taken_"+type).value = input.toString() + " (" + epf + "/20)";
 		}
 	}
 </script>
