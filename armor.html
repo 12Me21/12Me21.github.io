@@ -1,0 +1,158 @@
+Helmet: <select id="$armor0" onchange="update()">
+<option value="">none</option>
+<option value="turtle">Turtle</option>
+<option value="leather">Leather</option>
+<option value="gold">Gold</option>
+<option value="chainmail">Chainmail</option>
+<option value="iron">Iron</option>
+<option value="diamond">Diamond</option>
+<option value="netherite">Netherite</option>
+</select>
+
+<select id="$enchant0" onchange="update()">
+<option value="">none</option>
+<option value="protection">Protection</option>
+<option value="blast">Blast Protection</option>
+<option value="fire">Fire Protection</option>
+<option value="projectile">Projectile Protection</option>
+</select>
+
+<input id="$level0" type="number" min="0" max="4" onchange="update()">
+
+<br>
+
+Chestplate: <select id="$armor1" onchange="update()">
+<option value="">none</option>
+<option value="leather">Leather</option>
+<option value="gold">Gold</option>
+<option value="chainmail">Chainmail</option>
+<option value="iron">Iron</option>
+<option value="diamond">Diamond</option>
+<option value="netherite">Netherite</option>
+</select>
+
+<select id="$enchant1" onchange="update()">
+<option value="">none</option>
+<option value="protection">Protection</option>
+<option value="blast">Blast Protection</option>
+<option value="fire">Fire Protection</option>
+<option value="projectile">Projectile Protection</option>
+</select>
+
+<input id="$level1" type="number" min="0" max="4" onchange="update()">
+
+<br>
+
+Leggings: <select id="$armor2" onchange="update()">
+<option value="">none</option>
+<option value="leather">Leather</option>
+<option value="gold">Gold</option>
+<option value="chainmail">Chainmail</option>
+<option value="iron">Iron</option>
+<option value="diamond">Diamond</option>
+<option value="netherite">Netherite</option>
+</select>
+
+<select id="$enchant2" onchange="update()">
+<option value="">none</option>
+<option value="protection">Protection</option>
+<option value="blast">Blast Protection</option>
+<option value="fire">Fire Protection</option>
+<option value="projectile">Projectile Protection</option>
+</select>
+
+<input id="$level2" type="number" min="0" max="4" onchange="update()">
+
+<br>
+
+Boots: <select id="$armor3" onchange="update()">
+<option value="">none</option>
+<option value="leather">Leather</option>
+<option value="gold">Gold</option>
+<option value="chainmail">Chainmail</option>
+<option value="iron">Iron</option>
+<option value="diamond">Diamond</option>
+<option value="netherite">Netherite</option>
+</select>
+
+<select id="$enchant3" onchange="update()">
+<option value="">none</option>
+<option value="protection">Protection</option>
+<option value="blast">Blast Protection</option>
+<option value="fire">Fire Protection</option>
+<option value="projectile">Projectile Protection</option>
+</select>
+
+<input id="$level3" type="number" min="0" max="4" onchange="update()">
+
+<input id="$featherfalling" type="number" min="0" max="4" onchange="update()"> (Feather Falling)
+
+<br>
+
+Resistance: <input id="$resistance" type="number" min="0" max="2" onchange="update()">
+
+<hr>
+
+Attack: <input id="$damage" type="number" onchange="update()"> <br>
+<output id="$taken_protection"></output> Normal damage <br>
+<output id="$taken_fire"></output> Fire <br>
+<output id="$taken_blast"></output> Explosions <br>
+<output id="$taken_projectile"></output> Projectiles <br>
+<output id="$taken_fall"></output> Fall damage <br>
+
+<br>
+
+<script>
+	var data = {
+		"": [0],
+		undefined: [0],
+		none: [0],
+		turtle: [0, 2],
+		leather: [0, 1, 3, 2, 1],
+		gold: [0, 2, 5, 3, 1],
+		chainmail: [0, 2, 5, 4, 1],
+		iron: [0, 2, 6, 5, 2],
+		diamond: [2, 3, 8, 6, 3],
+		netherite: [3, 3, 8, 6, 3]
+	}
+	var epfmul = {
+		protection: 1,
+		fire: 2,
+		blast: 2,
+		projectile: 2,
+		fall: 3
+	}
+	
+	function update() {
+		var toughness = 0;
+		var armor = 0;
+		var epfs = {
+			protection: 0,
+			fire: 0,
+			blast: 0,
+			projectile: 0,
+			fall: 0
+		}
+		for(var i=0; i<4; i++){
+			var type = document.getElementById("$armor"+i).value;
+			console.log(type);
+			var enchant = document.getElementById("$enchant"+i).value;
+			var level = Number(document.getElementById("$level"+i).value) || 0;
+			toughness += data[type][0] || 0;
+			armor += data[type][1+i] || 0;
+			if (enchant)
+				epfs[enchant] += level * epfmul[enchant];
+		}
+		epfs.fall = Number($featherfalling.value);
+		for (type in epfs) {
+			var input = $damage.value || 1;
+			input *= 1 - Math.min(20, Math.max(armor/5, armor-input/(2+toughness/4)))/25;
+			var epf = epfs[type]
+			if (type!="protection")
+				epf+=epfs.protection;
+			input *= 1 - Math.min(20, epf)/25;
+			input *= 1 - ($resistance.value || 0)*.20;
+			document.getElementById("$taken_"+type).value = input.toString();
+		}
+	}
+</script>
