@@ -1,0 +1,70 @@
+color: <input id="$color" type="color" onchange="go()"><br>
+16 bit? <input id="$16bit" type="checkbox" onchange="go()"><br>
+H: <output id="$h">*</output>/30<br>
+S: <output id="$s">*</output>/15<br>
+V: <output id="$v">*</output>/15<br><br>
+original/matched<br>
+<div style="width:5em;height:3em;" id="$out1"></div><div style="width:5em;height:3em;" id="$out2"></div>
+
+<script>
+function go() {
+	var color=parseInt($color.value.substr(1),16);
+	console.log(color);
+	color = [color>>16&255,color>>8&255,color&255];
+	if ($16bit.checked)
+		color=color.map(x => (x>>3)/31)
+	else
+		color=color.map(x => x/255)
+	$out1.style.backgroundColor = "rgb("+color.map(x=>Math.floor(x*255))+")";
+	var [h,s,v] = rgbToHsv(color);
+	console.log(color,h,s,v);
+	h=Math.round(h*30)%30+1;
+	s=Math.min(Math.floor(s*15),14)+1;
+	v=Math.min(Math.floor(v*15),14)+1;
+	$h.value=h;
+	$s.value=s;
+	$v.value=v;
+	$out2.style.backgroundColor = "rgb("+hsvToRgb([(h-1)/30,(s-1)/14,(v-1)/14])+")";
+	//$out.value = "H:"+h+"/30 S:"+s+"/15 V:"+v+"/15";
+}
+
+function rgbToHsv([r, g, b]) {
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h, s, v = max;
+  var d = max - min;
+  s = max == 0 ? 0 : d / max;
+  if (max == min) {
+    h = 0; // achromatic
+  } else {
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return [ h, s, v ];
+}
+
+function hsvToRgb([h, s, v]) {
+  var r, g, b;
+  var i = Math.floor(h * 6);
+  var f = h * 6 - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+
+  switch (i % 6) {
+    case 0: r = v, g = t, b = p; break;
+    case 1: r = q, g = v, b = p; break;
+    case 2: r = p, g = v, b = t; break;
+    case 3: r = p, g = q, b = v; break;
+    case 4: r = t, g = p, b = v; break;
+    case 5: r = v, g = p, b = q; break;
+  }
+  return [ r * 255, g * 255, b * 255 ];
+}
+
+
+</script>
+
