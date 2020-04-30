@@ -1,0 +1,12 @@
+<textarea id="text">
+var x=new XMLHttpRequest();
+x.open("GET","http://12Me21.github.io/test/xhr.html");
+x.send();
+x.onload = function(){
+ document.getElementById('out').value=x.response;
+}
+</textarea>
+<button onclick="eval(document.getElementById('text').value)">run</button>
+<textarea id="out">
+
+</textarea>
