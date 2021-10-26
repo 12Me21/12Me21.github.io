@@ -1,5 +1,6 @@
 <meta charset='utf-8'>
 <script src="./data.js"></script>
+<script src="./data2.js"></script>
 
 <script>
 	window.onload = function() {
@@ -15,7 +16,7 @@
 			var data = JSON.parse(reader.result)
 			let items = data.profile.data
 			console.log(items)
-			$output.value = `await fetch("https://a.nook.exchange/@me/items/import", {
+			$output.value = `fetch("https://a.nook.exchange/@me/items/import", {
   "headers": {
     "authorization": "Bearer "+localStorage.sessionId,
     "content-type": "application/json",
@@ -57,9 +58,17 @@
 			
 			id = fix_id(id)
 			if (id!=null) {
-				for (let variant of variants) {
-					list.push([id, variant, 4])
+				let m = 1;
+				if (DATA2[id] && DATA2[id][1]) {
+					if (DATA2[id][1] instanceof Array) {
+						m *= DATA2[id][1].length
+					}
 				}
+				//if (m>1) {
+					for (let variant of variants) {
+						list.push([id, variant*m, 4])
+					}
+				//}
 			}
 		}
 		return {updates: list}
