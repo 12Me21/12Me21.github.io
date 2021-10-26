@@ -35,25 +35,28 @@
 		for (let cat in DATA.data) {
 			let f = DATA.data[cat][id]
 			if (f) {
+				if (!["housewares", "misc", "wall_mounted", "walls", "floors", "rugs", "other", "fencing", "tops", "bottoms", "dresses", "hats", "accs", "socks", "shoes", "bags", "umbrellas", "wetsuits", "fossils", "photos", "posters", "music", "tools"].includes(cat)) {
+					return [null];
+				}
 				id = f.iid || +id
 				if (id instanceof Array)
 					id = Math.min(...id)
 				if (typeof id == "number") {
 					if (isNaN(id))
-						console.log('darn', id)
-					if (!["housewares", "misc", "wall_mounted", "walls", "floors", "rugs", "other", "fencing", "tops", "bottoms", "dresses", "hats", "accs", "socks", "shoes", "bags", "umbrellas", "wetsuits", "fossils", "art", "photos", "posters", "music", "tools", "diy"].includes(cat)) {
-						console.log("filtered", cat, id)
-						return null;
-					}
-					return id
+						console.log('darn', f)
+					return [id,f.iid instanceof Array ? f.iid : undefined]
 				}
 				// ?
 			}
 		}
 		
 		console.log("failed to decode id:", id)
-		return null
+		return [null]
 		// fail?
+	}
+	
+	function fix_variant() {
+		
 	}
 	
 	// convert {id: [variant1, variant2], ...} into [ [id, variant1, variant2], ...]
@@ -63,7 +66,8 @@
 			let variants = map[id]
 			if (!(variants instanceof Array)) variants = [0]
 			
-			id = fix_id(id)
+			let ids
+			[id, ids] = fix_id(id)
 			if (id!=null) {
 				let m = 1;
 				if (DATA2[id] && DATA2[id][1]) {
@@ -71,7 +75,21 @@
 						m *= DATA2[id][1].length
 					}
 				}
+				let vmap = null
+				if (ids) {
+					vmap = []
+					for (let i=0; i<ids.length; i++) {
+						vmap[i] = [i, ids[i]]
+					}
+					vmap.sort((a,b)=>a[1]-b[1])
+					vmap = vmap.map(x=>x[0])
+					console.log("vmap",ids,id,vmap)
+				}
 				for (let variant of variants) {
+					if (vmap)
+						variant = vmap.indexOf(variant)
+					if (id==5295)
+						console.log('f', variants, variant)
 					list.push([id, variant*m, 4])
 				}
 			}
