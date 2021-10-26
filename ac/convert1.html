@@ -1,0 +1,63 @@
+<script src="./data.js"></script>
+
+<script>
+	window.onload = function() {
+		$file.onchange = file_upload
+	}
+	
+	function file_upload(event) {
+		var files = event.target.files
+		if (!files[0])
+			return
+		var reader = new FileReader()
+		reader.onload = function(event) {
+			var data = JSON.parse(reader.result)
+			let items = data.profile.data
+			console.log(items)
+			$output.value = JSON.stringify(convert_data(items))
+		}
+		reader.readAsText(files[0])
+	}
+	
+	function fix_id(id) {
+		if (/^\d+$/.test(id))
+			return +id
+		
+		for (let cat in DATA.data) {
+			let f = DATA.data[cat][id]
+			if (f && f.iid) {
+				let id = f.iid
+				if (id instanceof Array)
+					id = Math.min(...id)
+				if (typeof id == "number")
+					return id
+				// ?
+			}
+		}
+		
+		console.log("failed to decode id:", id)
+		return null
+		// fail?
+	}
+	
+	// convert {id: [variant1, variant2], ...} into [ [id, variant1, variant2], ...]
+	function convert_data(map) {
+		let list = []
+		for (let id in map) {
+			let variants = map[id]
+			if (!(variants instanceof Array)) variants = [0]
+			
+			id = fix_id(id)
+			if (id!=null) {
+				for (let variant of variants) {
+					list.push([id, variant, 4])
+				}
+			}
+		}
+		return {updates: list}
+	}
+
+</script>
+
+exported data file from https://catalogue.ac: <input id=$file type=file><br>
+nook exchange request data: <textarea id=$output></textarea>
