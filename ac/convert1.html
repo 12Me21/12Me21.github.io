@@ -14,7 +14,14 @@
 			var data = JSON.parse(reader.result)
 			let items = data.profile.data
 			console.log(items)
-			$output.value = JSON.stringify(convert_data(items))
+			$output.value = `await fetch("https://a.nook.exchange/@me/items/import", {
+  "headers": {
+    "authorization": "Bearer "+localStorage.sessionId,
+    "content-type": "application/json",
+  },
+  "body": JSON.stringify(${JSON.stringify(convert_data(items))}),
+  "method": "POST"
+});`
 		}
 		reader.readAsText(files[0])
 	}
@@ -60,4 +67,4 @@
 </script>
 
 exported data file from https://catalogue.ac: <input id=$file type=file><br>
-nook exchange request data: <textarea id=$output></textarea>
+run this code in the js console at https://nook.exchange/ (while logged in) <textarea id=$output></textarea>
