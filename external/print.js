@@ -1,4 +1,4 @@
 function print_things(msg) {
 	console.log(msg)
 }
-y=>0<!--y; export default print_things
+if(0)typeof await/2//2; export default print_things
