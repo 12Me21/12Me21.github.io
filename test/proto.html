@@ -1,0 +1,15 @@
+<!doctype html><html lang=en><meta charset=utf-8>
+<title>__proto__ support test</title>
+<body>
+<script>
+	document.open()
+	document.writeln("Starting test...<dl>");
+	var x = {__proto__:null};
+	document.writeln("<dt>Supports `{__proto__: ... }`<dd>", x.constructor?"no":"yes");
+	var y = {};
+	x.__proto__ = null;
+	document.writeln("<dt>Supports `Object.prototype.__proto__`<dd>", x.constructor?"no":"yes");
+	document.writeln("<dt>Supports `Object.create`<dd>", Object.create?"yes":"no");
+	document.writeln("<dt>Supports `Object.setPrototypeOf`<dd>", Object.setPrototypeOf?"yes":"no");
+	document.close()
+</script>
