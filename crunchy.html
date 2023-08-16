@@ -1,0 +1,153 @@
+<!doctype html><html lang=en-QS><meta charset=utf-8>
+<title> crunchy </title>
+<meta name=viewport content="width=device-width,height=device-height,initial-scale=1,user-scalable=no">
+
+
+
+<style>
+	button {
+		font-family: monospace;
+	}
+	input[type=range] {
+		width: 220px;
+	}
+	input[type=number] {
+		width: 6ch;
+	}
+	.row {
+		display: flex;
+		justify-items: center;
+	}
+	.row > :nth-child(n+1), .row span {
+		margin-left: 4px;
+	}
+	.row label {
+		display: contents;
+	}
+	.row span {
+		flex: none;
+		align-self: center;
+	}
+	form > * {
+		margin: 4px 0;
+	}
+	#\$output {
+		border: 1px solid silver;
+	}
+</style>
+
+<form id=$form method=dialog onsubmit=event.preventDefault()>
+	<div class='row'>
+		<input type=file accept=image/* name=upload>
+	</div>
+	<div class='row'>
+		<label><span>white background:</span><input type=checkbox name=white checked></label>
+	</div>
+	<div class='row'>
+		<button type=button name=jpeg>JPEG</button>
+		<label><span>quality %:</span><input type=number min=0 max=100 name=jpeg_label></label>
+		<input type=range name=jpeg_quality min=0 max=100 value=0 aria-hidden=true>
+	</div>
+	<div class='row'>
+		<button type=button name=webp>WEBP</button>
+		<label><span>quality %:</span><input type=number min=0 max=100 name=webp_label></label>
+		<input type=range name=webp_quality min=0 max=100 value=3 aria-hidden=true>
+	</div>
+</form>
+<hr>
+<canvas id=$canvas hidden></canvas>
+<img id=$output alt="output">
+
+<script>
+	document.onpaste = ev=>{
+		let data = ev.clipboardData
+		if (data && data.files) {
+			let file = data.files[0]
+			if (file && /^image[/]/.test(file.type))
+				got_file(file)
+		}
+	}
+	document.ondragover = ev=>{
+		if (ev.dataTransfer.types.includes('Files')) {
+			ev.preventDefault()
+			ev.dataTransfer.dropEffect = 'copy'
+		}
+	}
+	document.ondrop = ev=>{
+		let file = ev.dataTransfer.files[0]
+		if (file) {
+			ev.preventDefault()
+			if (/^image[/]/.test(file.type))
+				got_file(file)
+		}
+	}
+	
+	//todo: write decoder for xpm :)
+	$form.upload.onchange = function(ev) {
+		let file = this.files[0]
+		try {
+			if (file)
+				got_file(file)
+		} finally {
+			this.value = ""
+		}
+	}
+	
+	let c2d = $canvas.getContext('2d')
+	
+	async function encode_image(img, settings, white) {return{then:(ret,err)=>{
+		$canvas.width = img.naturalWidth
+		$canvas.height = img.naturalHeight
+		if (white) {
+			c2d.fillStyle = 'white'
+			c2d.fillRect(0, 0, $canvas.width, $canvas.height)
+		}
+		c2d.drawImage(img, 0, 0)
+		$canvas.toBlob(blob=>{
+			blob ? ret(blob) : err(blob)
+		}, ...settings)
+	}}}
+	
+	function blob_url(blob) {
+		let url = URL.createObjectURL(blob)
+		return url
+	}
+	
+	function got_file(file) {
+		set_src(blob_url(file), true)
+	}
+	
+	function set_src(src, clear) {
+		if ($output.src) {
+			try {
+				URL.revokeObjectURL($output.src)
+				if (clear)
+					$output.src = ""
+			} catch(e) {
+			}
+		}
+		$output.src = src
+	}
+	
+	$form.jpeg.onclick = async function(ev) {
+		set_src(blob_url(await encode_image($output, ['image/jpeg', +this.form.jpeg_quality.value], this.form.white.checked)))
+	}
+	$form.webp.onclick = async function(ev) {
+		set_src(blob_url(await encode_image($output, ['image/webp', +this.form.webp_quality.value])))
+	}
+	
+	$form.jpeg_quality.oninput = function() {
+		this.form.jpeg_label.value = this.value
+	}
+	$form.webp_quality.oninput = function() {
+		this.form.webp_label.value = this.value
+	}
+	$form.jpeg_label.oninput = function() {
+		this.form.jpeg_quality.value = this.value
+	}
+	$form.webp_label.oninput = function() {
+		this.form.webp_quality.value = this.value
+	}
+	$form.jpeg_quality.oninput()
+	$form.webp_quality.oninput()
+</script>
