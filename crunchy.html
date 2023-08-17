@@ -130,10 +130,10 @@
 	}
 	
 	$form.jpeg.onclick = async function(ev) {
-		set_src(blob_url(await encode_image($output, ['image/jpeg', +this.form.jpeg_quality.value], this.form.white.checked)))
+		set_src(blob_url(await encode_image($output, ['image/jpeg', +this.form.jpeg_quality.value/100], this.form.white.checked)))
 	}
 	$form.webp.onclick = async function(ev) {
-		set_src(blob_url(await encode_image($output, ['image/webp', +this.form.webp_quality.value])))
+		set_src(blob_url(await encode_image($output, ['image/webp', +this.form.webp_quality.value/100])))
 	}
 	
 	$form.jpeg_quality.oninput = function() {
